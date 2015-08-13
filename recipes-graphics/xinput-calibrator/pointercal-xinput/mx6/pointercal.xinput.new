@@ -1,0 +1,4 @@
+xinput set-int-prop "ADS7846 Touchscreen" "Evdev Axis Calibration" 16 4184 7939 4294 7984
+xinput set-int-prop "ADS7846 Touchscreen" "Evdev Axes Swap" 8 0
+xinput set-int-prop "ft5x06_ts" "Evdev Axis Calibration" 32 00 800 00 480
+xinput set-int-prop "ctw6120-tsc" "Evdev Axis Calibration" 32 00 800 00 480
