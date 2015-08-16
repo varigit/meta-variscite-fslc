@@ -1,4 +1,4 @@
-require recipes-bsp/u-boot/u-boot.inc
+require recipes-bsp/u-boot/u-boot1.inc
 
 DESCRIPTION = "u-boot for Variscite SOM platforms"
 LICENSE = "GPLv2+"
