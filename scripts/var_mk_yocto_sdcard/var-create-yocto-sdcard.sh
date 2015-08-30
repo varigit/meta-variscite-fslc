@@ -169,21 +169,21 @@ sudo cp tmp/deploy/images/var-som-mx6/u-boot-sd-2014.04-r0.img			./var_tmp/rootf
 function copy_scripts
 {
 echo "scripts..."
-sudo cp  ../sources/meta-variscite/scripts/var_mk_yocto_sdcard/variscite_scripts/nand-recovery.sh 	./var_tmp/rootfs/sbin/
-#sudo cp  ../sources/meta-variscite/scripts/var_mk_yocto_sdcard/variscite_scripts/android-nand.sh  	./var_tmp/rootfs/sbin/
-#sudo cp  ../sources/meta-variscite/scripts/var_mk_yocto_sdcard/variscite_scripts/android-emmc.sh  	./var_tmp/rootfs/sbin/
-sudo cp  ../sources/meta-variscite/scripts/var_mk_yocto_sdcard/variscite_scripts/yocto-nand.sh    	./var_tmp/rootfs/sbin/
-sudo cp  ../sources/meta-variscite/scripts/var_mk_yocto_sdcard/variscite_scripts/yocto-emmc.sh    	./var_tmp/rootfs/sbin/
-sudo cp  ../sources/meta-variscite/scripts/var_mk_yocto_sdcard/variscite_scripts/yocto-dart.sh		./var_tmp/rootfs/sbin/
+sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/nand-recovery.sh 	./var_tmp/rootfs/sbin/
+#sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/android-nand.sh  	./var_tmp/rootfs/sbin/
+#sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/android-emmc.sh  	./var_tmp/rootfs/sbin/
+sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/yocto-nand.sh    	./var_tmp/rootfs/sbin/
+sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/yocto-emmc.sh    	./var_tmp/rootfs/sbin/
+sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/yocto-dart.sh		./var_tmp/rootfs/sbin/
 #
-#sudo cp  ../sources/meta-variscite/scripts/var_mk_yocto_sdcard/variscite_scripts/mkmmc_android.sh    	./var_tmp/rootfs/sbin/
-sudo cp  ../sources/meta-variscite/scripts/var_mk_yocto_sdcard/variscite_scripts/mkmmc_yocto.sh      	./var_tmp/rootfs/sbin/
+#sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/mkmmc_android.sh    	./var_tmp/rootfs/sbin/
+sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/mkmmc_yocto.sh      	./var_tmp/rootfs/sbin/
 sudo cp  tmp/work/cortexa9hf-vfp-neon-poky-linux-gnueabi/e2fsprogs/1.42.9-r0/image/sbin/e2label 	./var_tmp/rootfs/sbin
 sudo cp  tmp/work/cortexa9hf-vfp-neon-poky-linux-gnueabi/util-linux/2.25.2-r1/build/sfdisk 		./var_tmp/rootfs/sbin/
 #
 echo "desktop icons..."
-sudo cp ../sources/meta-variscite/scripts/var_mk_yocto_sdcard/variscite_scripts/*.desktop      	./var_tmp/rootfs/usr/share/applications/ 
-sudo cp ../sources/meta-variscite/scripts/var_mk_yocto_sdcard/variscite_scripts/terminal*      	./var_tmp/rootfs/usr/bin
+sudo cp ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/*.desktop      	./var_tmp/rootfs/usr/share/applications/ 
+sudo cp ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/terminal*      	./var_tmp/rootfs/usr/bin
 }
 
 # destroy the partition table
