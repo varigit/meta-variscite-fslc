@@ -15,9 +15,9 @@
 #Check if device exist
 #
 #Work around
-cp /etc/pointercal.xinput.new /etc/pointercal.xinput
-touch /etc/pointercal.xinput
-chmod 444 /etc/pointercal.xinput
+#cp /etc/pointercal.xinput.new /etc/pointercal.xinput
+#touch /etc/pointercal.xinput
+#chmod 444 /etc/pointercal.xinput
 
 (dmesg | grep " CTW6120: revid 0 touchscreen")  # Check ifctw6120-tsc
 if [ $? -eq 0 ]      # check exit code; if 0 No BT else BT

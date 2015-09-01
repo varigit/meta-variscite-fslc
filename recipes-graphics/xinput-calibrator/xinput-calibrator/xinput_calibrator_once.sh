@@ -7,41 +7,18 @@
 # original script: Martin Jansa <Martin.Jansa@gmail.com>, 2010-01-31
 # updated by Tias Guns <tias@ulyssis.org>, 2010-02-15
 # updated by Koen Kooi <koen@dominion.thruhere.net>, 2012-02-28
+# updated by Ron Donio <ron.d@variscite.com>, 2015-1-9 Updated for Variscite.
 
 PATH="/usr/bin:$PATH"
 
 BINARY="xinput_calibrator"
 SYS_CALFILE="/etc/pointercal.xinput"
-USER_CALFILE="$HOME/.pointercal/pointercal.xinput"
-
-if [ "$USER" = "root" ]; then
-  LOGFILE="/var/log/xinput_calibrator.pointercal.log"
-  CALFILES="$SYS_CALFILE"
-else
-  LOGFILE="$HOME/.pointercal/xinput_calibrator.pointercal.log"
-  CALFILES="$USER_CALFILE $SYS_CALFILE"
-  mkdir -p "$HOME/.pointercal"
-fi
+LOGFILE="/var/log/xinput_calibrator.pointercal.log"
+CALFILES="$SYS_CALFILE"
 
 
-. $CALFILE && exit 0
 
-for CALFILE in $CALFILES; do
-  if [ -e $CALFILE ]; then
-    if grep replace $CALFILE ; then
-      echo "Empty calibration file found, removing it"
-      rm $CALFILE 2>/dev/null || true
-    else
-      echo "Using calibration data stored in $CALFILE"
-      . $CALFILE && exit 0
-    fi
-  fi
-done
+. $CALFILE
 
-[ "$USER" != "root" ] && CALFILE=$USER_CALFILE
+exit 0
 
-CALDATA=`$BINARY --output-type xinput -v | tee $LOGFILE | grep '    xinput set' | sed 's/^    //g; s/$/;/g'`
-if [ ! -z "$CALDATA" ] ; then
-  echo $CALDATA > $CALFILE
-  echo "Calibration data stored in $CALFILE (log in $LOGFILE)"
-fi
