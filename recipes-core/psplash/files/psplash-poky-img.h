@@ -1,4 +1,4 @@
-/* Yocto Project logo for psplash
+/* Variscite Yocto Project logo for psplash
  *
  * Created using make-image-header.sh (distributed with psplash)
  */

@@ -51,6 +51,7 @@ clean_up()
 
 # get command line options
 OLD_OPTIND=$OPTIND
+unset FSLDISTRO
 
 while getopts "k:r:t:b:e:gh" fsl_setup_flag
 do
@@ -61,7 +62,6 @@ do
         e)
             # Determine what distro needs to be used.
             BACKEND="$OPTARG"
-            unset FSLDISTRO
             if [ "$BACKEND" = "fb" ]; then
                 if [ -z "$DISTRO" ]; then
                     FSLDISTRO='fsl-imx-release-fb'
@@ -91,9 +91,9 @@ do
 
             elif [ "$BACKEND" = "x11" ]; then
                 if [ -z "$DISTRO" ]; then
-                    FSLDISTRO='fsl-imx-release'
+                    FSLDISTRO='fsl-imx-release-x11'
                     echo -e  "\n Using X11 backend with poky DIST_FEATURES"
-                elif [ ! "$DISTRO" = "fsl-imx-release" ]; then
+                elif [ ! "$DISTRO" = "fsl-imx-release-x11" ]; then
                     echo -e "\n DISTRO specified conflicts with -e. Please use just one or the other."
                     fsl_setup_error='true'
                 fi
@@ -113,7 +113,7 @@ done
 
 if [ -z "$DISTRO" ]; then
     if [ -z "$FSLDISTRO" ]; then
-        FSLDISTRO='fsl-imx-release'
+        FSLDISTRO='fsl-imx-release-x11'
     fi
 else
     FSLDISTRO="$DISTRO"
@@ -139,7 +139,9 @@ fi
 cp -r sources/meta-fsl-bsp-release/imx/meta-bsp/conf/machine/* sources/meta-fsl-arm/conf/machine
 
 # copy new EULA into community so setup uses latest i.MX EULA
-cp sources/meta-fsl-bsp-release/EULA.txt sources/meta-fsl-arm/EULA
+cp sources/meta-fsl-bsp-release/imx/EULA.txt sources/meta-fsl-arm/EULA
+# copy unpack class with md5sum that matches new EULA
+cp sources/meta-fsl-bsp-release/imx/classes/fsl-eula-unpack.bbclass sources/meta-fsl-arm/classes
 
 # Set up the basic yocto environment
 if [ -z "$DISTRO" ]; then
@@ -190,3 +192,4 @@ echo "BBLAYERS += \" \${BSPDIR}/sources/meta-variscite-mx6 \"" >> $BUILD_DIR/con
 
 cd  $BUILD_DIR
 clean_up
+unset FSLDISTRO
