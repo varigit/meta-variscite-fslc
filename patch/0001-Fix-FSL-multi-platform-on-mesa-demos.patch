@@ -1,0 +1,47 @@
+From 2eb85f2527e66348aacb1425da795b871e2bbc3b Mon Sep 17 00:00:00 2001
+From: rdonio <ron.d@variscite.com>
+Date: Mon, 12 Oct 2015 13:56:01 +0300
+Subject: [PATCH] Fix FSL multi platform on mesa-demos
+
+---
+ .../recipes-graphics/mesa/mesa-demos_%.bbappend        | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
+
+diff --git a/imx/meta-bsp/recipes-graphics/mesa/mesa-demos_%.bbappend b/imx/meta-bsp/recipes-graphics/mesa/mesa-demos_%.bbappend
+index e317420..5b418dd 100644
+--- a/imx/meta-bsp/recipes-graphics/mesa/mesa-demos_%.bbappend
++++ b/imx/meta-bsp/recipes-graphics/mesa/mesa-demos_%.bbappend
+@@ -3,20 +3,22 @@ FILESEXTRAPATHS_prepend_mx6 := "${THISDIR}/${PN}:"
+ MESA-DEMO-PATCH = "file://0001-Additional-eglSwapBuffer-calling-makes-wrong-throttl.patch \
+                    file://0001-Add-OpenVG-demos-to-support-wayland.patch"
+ 
+-SRC_URI_append_mx6q  = " ${MESA-DEMO-PATCH}"
+-SRC_URI_append_mx6dl = " ${MESA-DEMO-PATCH}"
+-SRC_URI_append_mx6sx = " ${MESA-DEMO-PATCH}"
+-SRC_URI_append_mx6sl = " ${MESA-DEMO-PATCH}"
++SRC_URI_append_mx6  = " ${MESA-DEMO-PATCH}"
++#SRC_URI_append_mx6q  = " ${MESA-DEMO-PATCH}"
++#SRC_URI_append_mx6dl = " ${MESA-DEMO-PATCH}"
++#SRC_URI_append_mx6sx = " ${MESA-DEMO-PATCH}"
++#SRC_URI_append_mx6sl = " ${MESA-DEMO-PATCH}"
+ 
+ DEPENDS = "mesa"
+ 
+ REMOVE_GLU = "${@base_contains('DISTRO_FEATURES', 'wayland', \
+                        base_contains('DISTRO_FEATURES', 'x11','glu x11', 'glu x11', d), '', d)}"
+ 
+-PACKAGECONFIG_remove_mx6q = "${REMOVE_GLU}"
+-PACKAGECONFIG_remove_mx6dl = "${REMOVE_GLU}"
+-PACKAGECONFIG_remove_mx6sx = "${REMOVE_GLU}"
+-PACKAGECONFIG_remove_mx6sl = "${REMOVE_GLU}"
++PACKAGECONFIG_remove_mx6 = "${REMOVE_GLU}"
++#PACKAGECONFIG_remove_mx6q = "${REMOVE_GLU}"
++#PACKAGECONFIG_remove_mx6dl = "${REMOVE_GLU}"
++#PACKAGECONFIG_remove_mx6sx = "${REMOVE_GLU}"
++#PACKAGECONFIG_remove_mx6sl = "${REMOVE_GLU}"
+ 
+ PACKAGECONFIG[vg] = "--enable-vg,--disable-vg,virtual/libopenvg"
+ 
+-- 
+1.9.1
+
