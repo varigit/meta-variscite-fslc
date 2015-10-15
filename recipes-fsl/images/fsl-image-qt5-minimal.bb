@@ -1,7 +1,7 @@
 DESCRIPTION = "Freescale Image - Adds Qt5"
 LICENSE = "MIT"
 
-require recipes-fsl/images/fsl-image-gui.bb
+require recipes-fsl/images/fsl-image-gui-minimal.bb
 
 inherit distro_features_check
 
