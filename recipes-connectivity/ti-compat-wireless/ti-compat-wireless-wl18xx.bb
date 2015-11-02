@@ -9,16 +9,16 @@ LIC_FILES_CHKSUM = "file://../backports/COPYING;md5=d7810fab7487fb0aad327b76f1be
 
 RDEPENDS_${PN} = "wireless-tools"
 
-PV = "R8.5"
+PV = "R8.6"
 inherit module
 
 PR = "R1"
 
-# Tags: R8.5
-SRCREV_wl18xx = "cb51164c672b1ecadef339b9f9b39e29ab706723"
-BRANCH_wl18xx = "ap_p2p"
-SRCREV_backports = "0d46f43a2f3ccdd53de19eee5b9c674bf8ef09a2"
-BRANCH_backports = "ap_dfs_mbss_all"
+# Tags: R8.6
+SRCREV_wl18xx = "3f5b34f607645d94c7ff5c5a01f93b8ba59e5574"
+BRANCH_wl18xx = "upstream_41"
+SRCREV_backports = "4677dc3f5d23242060a8ddc33e38838b2430ff61"
+BRANCH_backports = "upstream_41"
 
 SRCREV_FORMAT = "wl18xx"
 
@@ -43,8 +43,8 @@ do_configure() {
 #    sourceipk_do_create_srcipk
 
     make defconfig-wl18xx
-    sed -i 's/__TIMESTAMP__/"June_26_2015"/g' ${S}/drivers/net/wireless/ti/wlcore/Makefile
-    sed -i 's/__TIMESTAMP__/"June_26_2015"/g' ${S}/drivers/net/wireless/ti/wlcore/release_version.h
+    sed -i 's/__TIMESTAMP__/"June_22_2015"/g' ${S}/drivers/net/wireless/ti/wlcore/Makefile
+    sed -i 's/__TIMESTAMP__/"June_22_2015"/g' ${S}/drivers/net/wireless/ti/wlcore/release_version.h
 
 }
 

@@ -4,19 +4,19 @@
 require hostap.inc
 
 LICENSE = "GPLv2"
-LIC_FILES_CHKSUM = "file://../COPYING;md5=ab87f20cd7e8c0d0a6539b34d3791d0e"
+LIC_FILES_CHKSUM = "file://../COPYING;md5=36b27801447e0662ee0138d17fe93880"
 
-PR_append = "c"
+PR_append = "d"
 
-FILESEXTRAPATHS_append := "${THISDIR}/hostap-daemon:"
+FILESEXTRAPATHS_append := ":${THISDIR}/hostap-daemon"
 
 # Add TI to the end to make it clear that this is a TI customized version
 # of hostap
-PV = "R8.5-devel-ti+git${SRCPV}"
+PV = "R8.6-devel-ti+git${SRCPV}"
 
-# Tag: R8.5
-SRCREV = "2710d0ae31fa2dc31f653f346a985268d8d7795c"
-BRANCH = "ap_p2p"
+# Tag: R8.6
+SRCREV = "f80fe345acf103ba6882ac8396f19584ac184904"
+BRANCH = "upstream_24"
 
 PROVIDES += "hostap-daemon"
 RPROVIDES_${PN} += "hostap-daemon"

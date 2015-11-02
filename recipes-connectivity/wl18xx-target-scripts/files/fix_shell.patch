@@ -1,0 +1,10 @@
+diff --git a/testing/print_stat.sh b/testing/print_stat.sh
+index 681a063..0a519f6 100755
+--- a/testing/print_stat.sh
++++ b/testing/print_stat.sh
+@@ -1,4 +1,4 @@
+-#!/system/bin/sh
++#!/bin/sh
+ 
+ PHY=`ls /sys/class/ieee80211/`
+ mkdir -p /debug
