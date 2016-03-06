@@ -10,8 +10,8 @@ You can switch to fsl-image-qt5 it will be without ubifs.
 
 
 cd ~/var-som-mx6-fido/build_x11
-sudo ../sources/meta-variscite/scripts/var_mk_yocto_sdcard/var-create-yocto-sdcard.sh /dev/sdxxx
-change /dev/sdxxx to your device name
+sudo ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/var-create-yocto-sdcard.sh /dev/sdX
+change /dev/sdX to your device name
 
 Boot and use the icons.
 
@@ -23,5 +23,5 @@ yocto_dart
 
 Enjoy.
 
-Send any comments to ron.d@variscite.com or support@variscite.com
+Send any comments to ron.d@variscite.com, eran.m@variscite.com or support@variscite.com
 

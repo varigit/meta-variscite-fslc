@@ -1,10 +1,10 @@
 [Desktop Entry]
 Type=Application
-Name=Yocto-nand
-Comment=Yocto Fido (V10).
-Exec=terminalyn
+Name=Yocto-eMMC
+Comment=Yocto Fido (V10.1).
+Exec=terminalye
 Icon=media-flash
 Terminal=false
 Categories=GTK;Utility;
 StartupNotify=true
-Name[en_US]=yocto_nand.desktop
+Name[en_US]=yocto_emmc.desktop

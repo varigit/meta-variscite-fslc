@@ -117,8 +117,8 @@ function flash_yocto
     ls -l ./var_tmp/BOT-VAR-SOM
     ls -l ./var_tmp/rootfs
 
-    echo "flashing U-BOOT ..."    
-    sudo dd if=tmp/deploy/images/var-som-mx6/u-boot-sd-2014.04-r0.img of=${node} bs=1K seek=69; sync
+    echo "flashing U-Boot ..."    
+    sudo dd if=tmp/deploy/images/var-som-mx6/u-boot-sd-2015.10-r0.img of=${node} bs=1K seek=69; sync
     sudo dd if=tmp/deploy/images/var-som-mx6/SPL-sd of=${node} bs=1K seek=1; sync
 
     echo "flashing Yocto BOOT partition ..."    
@@ -135,7 +135,7 @@ function flash_yocto
     echo "flashing Yocto Root file System ..."    
     sync
     mount ${node}${part}2  ./var_tmp/rootfs
-    tar xf tmp/deploy/images/var-som-mx6/fsl-image-qt5-minimal-var-som-mx6.tar.bz2 -C ./var_tmp/rootfs/ 
+    tar xf tmp/deploy/images/var-som-mx6/fsl-image-qt5-var-som-mx6.tar.bz2 -C ./var_tmp/rootfs/ 
 
 }
 
@@ -147,10 +147,10 @@ sudo mkdir -p ./var_tmp/rootfs/opt/images/Yocto
 sudo mkdir -p ./var_tmp/rootfs/opt/images/Android
 sudo mkdir -p ./var_tmp/rootfs/opt/images/Android/Emmc
 #
-echo "Copying Fido V10 /opt/images/Yocto..."
+echo "Copying Fido V10.1 /opt/images/Yocto..."
 sudo cp tmp/deploy/images/var-som-mx6/uImage 					./var_tmp/rootfs/opt/images/Yocto
-sudo cp tmp/deploy/images/var-som-mx6/fsl-image-qt5-minimal-var-som-mx6.tar.bz2 	./var_tmp/rootfs/opt/images/Yocto/rootfs.tar.bz2
-sudo cp tmp/deploy/images/var-som-mx6/fsl-image-qt5-minimal-var-som-mx6.ubi 		./var_tmp/rootfs/opt/images/Yocto/rootfs.ubi.img
+sudo cp tmp/deploy/images/var-som-mx6/fsl-image-qt5-var-som-mx6.tar.bz2 	./var_tmp/rootfs/opt/images/Yocto/rootfs.tar.bz2
+sudo cp tmp/deploy/images/var-som-mx6/fsl-image-qt5-minimal-var-som-mx6.ubi 	./var_tmp/rootfs/opt/images/Yocto/rootfs.ubi.img
 #
 sudo cp tmp/deploy/images/var-som-mx6/uImage-imx6dl-var-som-solo.dtb 		./var_tmp/rootfs/opt/images/Yocto/
 sudo cp tmp/deploy/images/var-som-mx6/uImage-imx6dl-var-som-solo-vsc.dtb 	./var_tmp/rootfs/opt/images/Yocto/
@@ -160,10 +160,10 @@ sudo cp tmp/deploy/images/var-som-mx6/uImage-imx6q-var-som-vsc.dtb 		./var_tmp/r
 sudo cp tmp/deploy/images/var-som-mx6/uImage-imx6q-var-dart.dtb 		./var_tmp/rootfs/opt/images/Yocto/
 echo "nand u-boot..."
 sudo cp tmp/deploy/images/var-som-mx6/SPL-nand					./var_tmp/rootfs/opt/images/Yocto/SPL
-sudo cp tmp/deploy/images/var-som-mx6/u-boot-nand-2014.04-r0.img		./var_tmp/rootfs/opt/images/Yocto/u-boot.img
+sudo cp tmp/deploy/images/var-som-mx6/u-boot-nand-2015.10-r0.img		./var_tmp/rootfs/opt/images/Yocto/u-boot.img
 echo "sd u-boot..."
 sudo cp tmp/deploy/images/var-som-mx6/SPL-sd					./var_tmp/rootfs/opt/images/Yocto/SPL.mmc
-sudo cp tmp/deploy/images/var-som-mx6/u-boot-sd-2014.04-r0.img			./var_tmp/rootfs/opt/images/Yocto/u-boot.img.mmc
+sudo cp tmp/deploy/images/var-som-mx6/u-boot-sd-2015.10-r0.img			./var_tmp/rootfs/opt/images/Yocto/u-boot.img.mmc
 }
 
 function copy_scripts
@@ -174,13 +174,11 @@ sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scr
 #sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/android-emmc.sh  	./var_tmp/rootfs/sbin/
 sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/yocto-nand.sh    	./var_tmp/rootfs/sbin/
 sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/yocto-emmc.sh    	./var_tmp/rootfs/sbin/
-sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/yocto-dart.sh		./var_tmp/rootfs/sbin/
+sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/yocto-dart.sh	./var_tmp/rootfs/sbin/
 #
-#sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/mkmmc_android.sh    	./var_tmp/rootfs/sbin/
-sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/mkmmc_yocto.sh      	./var_tmp/rootfs/sbin/
-sudo cp  tmp/work/cortexa9hf-vfp-neon-poky-linux-gnueabi/e2fsprogs/1.42.9-r0/image/sbin/e2label 	./var_tmp/rootfs/sbin
-sudo cp  tmp/work/cortexa9hf-vfp-neon-poky-linux-gnueabi/util-linux/2.25.2-r1/build/sfdisk 		./var_tmp/rootfs/sbin/
-#
+#sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/mkmmc_android.sh 	./var_tmp/rootfs/sbin/
+sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/mkmmc_yocto.sh    	./var_tmp/rootfs/sbin/
+
 echo "desktop icons..."
 sudo cp ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/*.desktop      	./var_tmp/rootfs/usr/share/applications/ 
 sudo cp ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/terminal*      	./var_tmp/rootfs/usr/bin

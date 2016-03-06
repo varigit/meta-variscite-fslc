@@ -15,7 +15,7 @@ DEPENDS += "lzop-native bc-native"
 
 SRCBRANCH = "imx_3.14.38_6qp_ga_var01"
 LOCALVERSION = "-6QP"
-SRCREV = "5b280915311efd196a81a8792e7f952172f6373c"
+SRCREV = "4433109204fc8832c3c67ead4dcf2d301f86d281"
 KERNEL_SRC ?= "git://github.com/varigit/linux-2.6-imx.git;protocol=git"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
 #LOCALVERSION = "-1.1.0"

@@ -165,9 +165,3 @@ umount ${mmm}6 2>/dev/null
 umount ${mmm}7 2>/dev/null
 umount ${mmm}8 2>/dev/null
 umount ${mmm}9 2>/dev/null
-
-echo "========================================"
-echo "Please stop at u-boot and set enviroment"
-echo "setenv bootargs console=ttymxc0,115200 video=mxcfb1:off root=/dev/mmcblk1p1 rootwait rw"
-echo "saveenv"
-echo "========================================"

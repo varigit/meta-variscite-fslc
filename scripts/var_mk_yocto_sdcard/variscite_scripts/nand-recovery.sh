@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Nand recovery version 42. Support Yocto V9 and above and Android Lollipop V3
+# Nand recovery. Supports Yocto V9 and above and Android Lollipop V3
 
 MEDIA=/opt/images
 
@@ -171,7 +171,7 @@ if [ `dmesg |grep VAR-DART | wc -l` = 1 ] ; then
 
 fi
 
-echo "*** VAR-MX6 eMMC/nand RECOVERY Version 42 ***"
+echo "*** VAR-MX6 eMMC/nand RECOVERY ***"
 echo "Installing $OS on $FLASH ..."
 
 VSC=$(i2cdump  -y -r 0-0  1 0x51 b | tail -n 1)
@@ -259,6 +259,10 @@ else
 		install_bootloader
 		install_kernel
 		. /sbin/mkmmc_yocto.sh /dev/mmcblk1
+		echo "Setting rootfs location to emmc in u-boot enviroment (a bad crc warning is normal here)"
+		fw_setenv chosen_rootfs emmc
+		echo "Done"
+
 	else
 	   echo "=========================================="
 	   echo " Please use android-emmc.sh to flash eMMC "
