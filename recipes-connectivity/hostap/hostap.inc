@@ -11,8 +11,6 @@ DEPENDS = "libnl openssl"
 # default
 DEFAULT_PREFERENCE = "-1"
 
-PR = "r6"
-
 inherit update-rc.d
 INITSCRIPT_NAME="hostapd"
 

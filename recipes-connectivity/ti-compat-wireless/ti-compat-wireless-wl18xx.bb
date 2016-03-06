@@ -9,13 +9,11 @@ LIC_FILES_CHKSUM = "file://../backports/COPYING;md5=d7810fab7487fb0aad327b76f1be
 
 RDEPENDS_${PN} = "wireless-tools"
 
-PV = "R8.6"
+PV = "R8.6_SP1"
 inherit module
 
-PR = "R1"
-
-# Tags: R8.6
-SRCREV_wl18xx = "3f5b34f607645d94c7ff5c5a01f93b8ba59e5574"
+# Tags: R8.6_SP1
+SRCREV_wl18xx = "4d167bf2478da4e995f789e982a33b5c36a9bb49"
 BRANCH_wl18xx = "upstream_41"
 SRCREV_backports = "4677dc3f5d23242060a8ddc33e38838b2430ff61"
 BRANCH_backports = "upstream_41"
@@ -43,9 +41,6 @@ do_configure() {
 #    sourceipk_do_create_srcipk
 
     make defconfig-wl18xx
-    sed -i 's/__TIMESTAMP__/"June_22_2015"/g' ${S}/drivers/net/wireless/ti/wlcore/Makefile
-    sed -i 's/__TIMESTAMP__/"June_22_2015"/g' ${S}/drivers/net/wireless/ti/wlcore/release_version.h
-
 }
 
 do_install() {

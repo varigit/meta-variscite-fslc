@@ -1,0 +1,15 @@
+diff --git a/configure-device.sh b/configure-device.sh
+index a52b308..a9e29f1 100755
+--- a/configure-device.sh
++++ b/configure-device.sh
+@@ -6,8 +6,8 @@ VERSION=1.1
+ 
+ # defaults
+ binary_name="/lib/firmware/ti-connectivity/wl18xx-conf.bin"
+-wlconf_path="/usr/sbin/wlconf/"
+-ini_path="/usr/sbin/wlconf/official_inis"
++wlconf_path="/usr/bin/wlconf/"
++ini_path="/usr/bin/wlconf/official_inis"
+ 
+ # function for printing help
+ print_help()
