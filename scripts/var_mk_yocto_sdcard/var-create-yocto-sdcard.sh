@@ -118,7 +118,7 @@ function flash_yocto
     ls -l ./var_tmp/rootfs
 
     echo "flashing U-Boot ..."    
-    sudo dd if=tmp/deploy/images/var-som-mx6/u-boot-sd-2015.10-r0.img of=${node} bs=1K seek=69; sync
+    sudo dd if=tmp/deploy/images/var-som-mx6/u-boot-sd-2015.04-r0.img of=${node} bs=1K seek=69; sync
     sudo dd if=tmp/deploy/images/var-som-mx6/SPL-sd of=${node} bs=1K seek=1; sync
 
     echo "flashing Yocto BOOT partition ..."    
@@ -160,10 +160,10 @@ sudo cp tmp/deploy/images/var-som-mx6/uImage-imx6q-var-som-vsc.dtb 		./var_tmp/r
 sudo cp tmp/deploy/images/var-som-mx6/uImage-imx6q-var-dart.dtb 		./var_tmp/rootfs/opt/images/Yocto/
 echo "nand u-boot..."
 sudo cp tmp/deploy/images/var-som-mx6/SPL-nand					./var_tmp/rootfs/opt/images/Yocto/SPL
-sudo cp tmp/deploy/images/var-som-mx6/u-boot-nand-2015.10-r0.img		./var_tmp/rootfs/opt/images/Yocto/u-boot.img
+sudo cp tmp/deploy/images/var-som-mx6/u-boot-nand-2015.04-r0.img		./var_tmp/rootfs/opt/images/Yocto/u-boot.img
 echo "sd u-boot..."
 sudo cp tmp/deploy/images/var-som-mx6/SPL-sd					./var_tmp/rootfs/opt/images/Yocto/SPL.mmc
-sudo cp tmp/deploy/images/var-som-mx6/u-boot-sd-2015.10-r0.img			./var_tmp/rootfs/opt/images/Yocto/u-boot.img.mmc
+sudo cp tmp/deploy/images/var-som-mx6/u-boot-sd-2015.04-r0.img			./var_tmp/rootfs/opt/images/Yocto/u-boot.img.mmc
 }
 
 function copy_scripts

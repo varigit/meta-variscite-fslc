@@ -7,10 +7,10 @@ LIC_FILES_CHKSUM = "file://Licenses/gpl-2.0.txt;md5=b234ee4d69f5fce4486a80fdaf4a
 PROVIDES = "u-boot"
 
 
-SRCREV = "b589799f0783e96f75bcf35e976bba78f9abf2c2"
-SRCBRANCH = "imx_v2015.10_var1"
+SRCREV = "acb2a393d0c5ee6f1f173d3bf4d0a5a3541554b9"
+SRCBRANCH = "imx_v2015.04_3.14.52_1.1.0_ga_var1"
 SRC_URI = "git://github.com/varigit/uboot-imx.git;protocol=git;branch=${SRCBRANCH}"
-LIC_FILES_CHKSUM = "file://README;md5=4632b6ff76b1cae80317e453f6de46d0"
+LIC_FILES_CHKSUM = "file://README;md5=d3893ecbe5dadb7446983acba5cd607d"
 
 S = "${WORKDIR}/git"
 

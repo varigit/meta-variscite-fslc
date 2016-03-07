@@ -259,7 +259,7 @@ else
 		install_bootloader
 		install_kernel
 		. /sbin/mkmmc_yocto.sh /dev/mmcblk1
-		echo "Setting rootfs location to emmc in u-boot enviroment (a bad crc warning is normal here)"
+		echo "Setting rootfs location to emmc in u-boot enviroment"
 		fw_setenv chosen_rootfs emmc
 		echo "Done"
 
