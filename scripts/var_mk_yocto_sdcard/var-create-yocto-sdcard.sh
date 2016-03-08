@@ -5,23 +5,8 @@ BOOTLOAD_RESERVE=8
 BOOT_ROM_SIZE=20
 SPARE_SIZE=400
 
-
 echo "Variscite Make Yocto Fido SDCARD utility version 02"
 echo "==================================================="
-
-#if [ ! -f uboot-imx/SPL ]
-#then
-#	echo "uboot-imx/SPL does not exist! exit."
-#	exit 1
-#fi	
-#if [ ! -f uboot-imx/u-boot.img ]
-#then
-#	echo "uboot-imx/u-boot.img does not exist! exit."
-#	exit 1
-#fi	
-
-
-
 
 help() {
 
@@ -124,13 +109,13 @@ function flash_yocto
     echo "flashing Yocto BOOT partition ..."    
     sync
     mount ${node}${part}1  ./var_tmp/BOT-VAR-SOM
-    cp tmp/deploy/images/var-som-mx6/uImage-imx6q-var-som.dtb		 	./var_tmp/BOT-VAR-SOM/imx6q-var-som.dtb
-    cp tmp/deploy/images/var-som-mx6/uImage-imx6dl-var-som.dtb			./var_tmp/BOT-VAR-SOM/imx6dl-var-som.dtb
-    cp tmp/deploy/images/var-som-mx6/uImage-imx6q-var-som-vsc.dtb		./var_tmp/BOT-VAR-SOM/imx6q-var-som-vsc.dtb
-    cp tmp/deploy/images/var-som-mx6/uImage-imx6dl-var-som-solo.dtb		./var_tmp/BOT-VAR-SOM/imx6dl-var-som-solo.dtb
-    cp tmp/deploy/images/var-som-mx6/uImage-imx6dl-var-som-solo-vsc.dtb		./var_tmp/BOT-VAR-SOM/imx6dl-var-som-solo-vsc.dtb
-    cp tmp/deploy/images/var-som-mx6/uImage-imx6q-var-dart.dtb		 	./var_tmp/BOT-VAR-SOM/imx6q-var-dart.dtb
-    cp tmp/deploy/images/var-som-mx6/uImage					./var_tmp/BOT-VAR-SOM/uImage
+    cp tmp/deploy/images/var-som-mx6/uImage-imx6q-var-som.dtb 			./var_tmp/BOT-VAR-SOM/imx6q-var-som.dtb
+    cp tmp/deploy/images/var-som-mx6/uImage-imx6dl-var-som.dtb 			./var_tmp/BOT-VAR-SOM/imx6dl-var-som.dtb
+    cp tmp/deploy/images/var-som-mx6/uImage-imx6q-var-som-vsc.dtb 		./var_tmp/BOT-VAR-SOM/imx6q-var-som-vsc.dtb
+    cp tmp/deploy/images/var-som-mx6/uImage-imx6dl-var-som-solo.dtb 		./var_tmp/BOT-VAR-SOM/imx6dl-var-som-solo.dtb
+    cp tmp/deploy/images/var-som-mx6/uImage-imx6dl-var-som-solo-vsc.dtb 	./var_tmp/BOT-VAR-SOM/imx6dl-var-som-solo-vsc.dtb
+    cp tmp/deploy/images/var-som-mx6/uImage-imx6q-var-dart.dtb 			./var_tmp/BOT-VAR-SOM/imx6q-var-dart.dtb
+    cp tmp/deploy/images/var-som-mx6/uImage 					./var_tmp/BOT-VAR-SOM/uImage
 
     echo "flashing Yocto Root file System ..."    
     sync
@@ -170,18 +155,18 @@ function copy_scripts
 {
 echo "scripts..."
 sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/nand-recovery.sh 	./var_tmp/rootfs/sbin/
-#sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/android-nand.sh  	./var_tmp/rootfs/sbin/
-#sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/android-emmc.sh  	./var_tmp/rootfs/sbin/
-sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/yocto-nand.sh    	./var_tmp/rootfs/sbin/
-sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/yocto-emmc.sh    	./var_tmp/rootfs/sbin/
-sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/yocto-dart.sh	./var_tmp/rootfs/sbin/
+#sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/android-nand.sh 	./var_tmp/rootfs/sbin/
+#sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/android-emmc.sh 	./var_tmp/rootfs/sbin/
+sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/yocto-nand.sh 	./var_tmp/rootfs/sbin/
+sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/yocto-emmc.sh 	./var_tmp/rootfs/sbin/
+sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/yocto-dart.sh 	./var_tmp/rootfs/sbin/
 #
 #sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/mkmmc_android.sh 	./var_tmp/rootfs/sbin/
-sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/mkmmc_yocto.sh    	./var_tmp/rootfs/sbin/
+sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/mkmmc_yocto.sh 	./var_tmp/rootfs/sbin/
 
 echo "desktop icons..."
-sudo cp ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/*.desktop      	./var_tmp/rootfs/usr/share/applications/ 
-sudo cp ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/terminal*      	./var_tmp/rootfs/usr/bin
+sudo cp ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/*.desktop 		./var_tmp/rootfs/usr/share/applications/ 
+sudo cp ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/terminal* 		./var_tmp/rootfs/usr/bin/
 }
 
 # destroy the partition table

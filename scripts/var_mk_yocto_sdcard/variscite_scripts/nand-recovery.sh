@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Nand recovery. Supports Yocto V9 and above and Android Lollipop V3
+# NAND recovery version 50. Support Yocto V10.1 Fido and above and Android Lollipop V3
 
 MEDIA=/opt/images
 
@@ -171,7 +171,7 @@ if [ `dmesg |grep VAR-DART | wc -l` = 1 ] ; then
 
 fi
 
-echo "*** VAR-MX6 eMMC/nand RECOVERY ***"
+echo "*** VAR-MX6 eMMC/NAND RECOVERY Version 50 ***"
 echo "Installing $OS on $FLASH ..."
 
 VSC=$(i2cdump  -y -r 0-0  1 0x51 b | tail -n 1)
