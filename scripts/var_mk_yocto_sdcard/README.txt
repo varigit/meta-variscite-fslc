@@ -23,5 +23,5 @@ yocto_dart
 
 Enjoy.
 
-Send any comments to ron.d@variscite.com, eran.m@variscite.com or support@variscite.com
+Send any comments to support@variscite.com
 
