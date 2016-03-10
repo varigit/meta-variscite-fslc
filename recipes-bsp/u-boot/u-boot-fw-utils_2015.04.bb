@@ -4,7 +4,7 @@ LIC_FILES_CHKSUM = "file://Licenses/gpl-2.0.txt;md5=b234ee4d69f5fce4486a80fdaf4a
 SECTION = "bootloader"
 DEPENDS = "mtd-utils"
 
-SRCREV = "9ff42226bcc4d282ada744f384a6d66db62a1939"
+SRCREV = "9568ff6ef5b50d433d12c4fff85a53a3e57e42fd"
 SRCBRANCH = "imx_v2015.04_3.14.52_1.1.0_ga_var1"
 
 SRC_URI = "git://github.com/varigit/uboot-imx.git;protocol=git;branch=${SRCBRANCH}"
