@@ -162,13 +162,9 @@ then
 fi
 
 
-if [ `dmesg |grep VAR-DART | wc -l` = 1 ] ; then
-	echo "================================================"
-	echo " nand-recovery is not compatible with DART-MX6. "
-	echo " Please use yocto-dart.sh.                      "
-	echo "================================================"
-	read -p "Press any key to continue... " -n1 -s
-
+if [ `dmesg | grep VAR-DART | wc -l` = 1 ] ; then
+	/sbin/yocto-dart.sh
+	exit $?
 fi
 
 echo "*** VAR-MX6 eMMC/NAND RECOVERY Version 50 ***"

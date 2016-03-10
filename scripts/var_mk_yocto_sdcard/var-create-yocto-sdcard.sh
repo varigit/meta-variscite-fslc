@@ -1,35 +1,47 @@
 #!/bin/bash
+set -e
 
-# partition size in MB
-BOOTLOAD_RESERVE=8
-BOOT_ROM_SIZE=20
-SPARE_SIZE=400
+# Sizes are in MiB
+BOOTLOAD_RESERVE_SIZE=4
+BOOT_ROM_SIZE=8
+DEFAULT_ROOTFS_SIZE=3700
 
-echo "Variscite Make Yocto Fido SDCARD utility version 02"
-echo "==================================================="
+AUTO_FILL_SD=0
+SPARE_SIZE=4
+
+YOCTO_IMGS_PATH=tmp/deploy/images/var-som-mx6
+YOCTO_SCRIPTS_PATH=../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts
+
+TEMP_DIR=./var_tmp
+P1_MOUNT_DIR=${TEMP_DIR}/BOOT-VAR-SOM
+P2_MOUNT_DIR=${TEMP_DIR}/rootfs
+
+echo "================================================"
+echo "= Variscite build recovery SD-card V50 utility ="
+echo "================================================"
 
 help() {
 
 bn=`basename $0`
 cat << EOF
-usage $bn <option> device_node
+Usage: $bn <options> device_node
 
 options:
-  -h				displays this help message
-  -s				only get partition size
+  -h		Display this help message
+  -s		Only show partition sizes to be written, without actually write them
+  -a		Automatically set the rootfs partition size to fill the SD-card (leaving spare ${SPARE_SIZE}MiB)
+
 EOF
 
 }
 
-# check the if root?
-userid=`id -u`
-if [ $userid -ne "0" ]; then
-	echo "you're not root?"
-	exit
+if [[ $EUID -ne 0 ]]; then
+	echo "This script must be run with super-user privileges" 
+	exit 1
 fi
 
 
-# parse command line
+# Parse command line
 moreoptions=1
 node="na"
 cal_only=0
@@ -37,169 +49,171 @@ cal_only=0
 
 while [ "$moreoptions" = 1 -a $# -gt 0 ]; do
 	case $1 in
-	    -h) help; exit ;;
+	    -h) help; exit 3 ;;
 	    -s) cal_only=1 ;;
+	    -a) AUTO_FILL_SD=1 ;;
 	    *)  moreoptions=0; node=$1 ;;
 	esac
-	[ "$moreoptions" = 0 ] && [ $# -gt 1 ] && help && exit
+	[ "$moreoptions" = 0 ] && [ $# -gt 1 ] && help && exit 1
 	[ "$moreoptions" = 1 ] && shift
 done
 
 if [ ! -e ${node} ]; then
 	help
-	exit
+	exit 1
 fi
 
 part=""
-echo ${node} | grep mmcblk > /dev/null
-if [ "$?" -eq "0" ]; then
+if [ `echo ${node} | grep -c mmcblk` -ne 0 ]; then
 	part="p"
 fi
 
-fdisk ${node} >/dev/null >>/dev/null <<EOF 
-d
-1
-d
-2
-d
-3
-d
-w
-EOF
+echo "Device:  ${node}"
+echo "================================================"
+read -p "Press Enter to continue"
 
-# call sfdisk to create partition table
-# get total card size
-seprate=40
-total_size=`sfdisk -s ${node}`
-total_size=`expr ${total_size} / 1024`
-boot_rom_sizeb=`expr ${BOOT_ROM_SIZE} + ${BOOTLOAD_RESERVE}`
-rootfs_size=`expr ${total_size} - ${boot_rom_sizeb} - ${SPARE_SIZE} + ${seprate}`
+for ((i=0; i<10; i++))
+do
+	if [ `mount | grep -c ${node}${part}$i` -ne 0 ]; then
+		umount ${node}${part}$i
+	fi
+done
 
-# create partitions
+# Call sfdisk to get total card size
+if [ "${AUTO_FILL_SD}" -eq "1" ]; then
+	SEPRATE=40
+	TOTAL_SIZE=`sfdisk -s ${node}`
+	TOTAL_SIZE=`expr ${TOTAL_SIZE} / 1024`
+	ROOTFS_SIZE=`expr ${TOTAL_SIZE} - ${BOOTLOAD_RESERVE_SIZE} - ${BOOT_ROM_SIZE} - ${SPARE_SIZE} + ${SEPRATE}`
+else
+	ROOTFS_SIZE=${DEFAULT_ROOTFS_SIZE}
+fi
+
 if [ "${cal_only}" -eq "1" ]; then
 cat << EOF
-BOOT   : ${boot_rom_sizeb}MB
-ROOT   : ${rootfs_size}MB
+BOOTLOADER (No Partition) : ${BOOTLOAD_RESERVE_SIZE}MiB 
+BOOT                      : ${BOOT_ROM_SIZE}MiB
+ROOT-FS                   : ${ROOTFS_SIZE}MiB
 EOF
-exit
+exit 3
 fi
 
 function format_yocto
 {
-    echo "formating yocto partitions"
-    echo "=========================="
-    mkfs.vfat ${node}${part}1 -nBOT-VAR-SOM
-    mkfs.ext4 ${node}${part}2 -Lrootfs
+	echo "Formating Yocto partitions"
+	mkfs.vfat ${node}${part}1 -n BOOT-VARSOM
+	mkfs.ext4 ${node}${part}2 -L rootfs
+}
+
+function flash_u-boot
+{
+	echo "Flashing U-Boot"    
+	dd if=${YOCTO_IMGS_PATH}/SPL-sd of=${node} bs=1K seek=1; sync
+	dd if=${YOCTO_IMGS_PATH}/u-boot-sd-2015.04-r0.img of=${node} bs=1K seek=69; sync
 }
 
 function flash_yocto
 {
-    echo "flashing yocto "
-    echo "==============="
-    mkdir -p ./var_tmp/BOT-VAR-SOM
-    mkdir -p ./var_tmp/rootfs
-    sync
-    ls -l ./var_tmp/BOT-VAR-SOM
-    ls -l ./var_tmp/rootfs
+	echo "Flashing Yocto Boot partition"    
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6q-var-som.dtb 			${P1_MOUNT_DIR}/imx6q-var-som.dtb
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som.dtb 		${P1_MOUNT_DIR}/imx6dl-var-som.dtb
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6q-var-som-vsc.dtb 		${P1_MOUNT_DIR}/imx6q-var-som-vsc.dtb
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-solo.dtb 		${P1_MOUNT_DIR}/imx6dl-var-som-solo.dtb
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-solo-vsc.dtb 	${P1_MOUNT_DIR}/imx6dl-var-som-solo-vsc.dtb
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6q-var-dart.dtb 		${P1_MOUNT_DIR}/imx6q-var-dart.dtb
+	cp ${YOCTO_IMGS_PATH}/uImage 					${P1_MOUNT_DIR}/uImage
+	sync
 
-    echo "flashing U-Boot ..."    
-    sudo dd if=tmp/deploy/images/var-som-mx6/u-boot-sd-2015.04-r0.img of=${node} bs=1K seek=69; sync
-    sudo dd if=tmp/deploy/images/var-som-mx6/SPL-sd of=${node} bs=1K seek=1; sync
-
-    echo "flashing Yocto BOOT partition ..."    
-    sync
-    mount ${node}${part}1  ./var_tmp/BOT-VAR-SOM
-    cp tmp/deploy/images/var-som-mx6/uImage-imx6q-var-som.dtb 			./var_tmp/BOT-VAR-SOM/imx6q-var-som.dtb
-    cp tmp/deploy/images/var-som-mx6/uImage-imx6dl-var-som.dtb 			./var_tmp/BOT-VAR-SOM/imx6dl-var-som.dtb
-    cp tmp/deploy/images/var-som-mx6/uImage-imx6q-var-som-vsc.dtb 		./var_tmp/BOT-VAR-SOM/imx6q-var-som-vsc.dtb
-    cp tmp/deploy/images/var-som-mx6/uImage-imx6dl-var-som-solo.dtb 		./var_tmp/BOT-VAR-SOM/imx6dl-var-som-solo.dtb
-    cp tmp/deploy/images/var-som-mx6/uImage-imx6dl-var-som-solo-vsc.dtb 	./var_tmp/BOT-VAR-SOM/imx6dl-var-som-solo-vsc.dtb
-    cp tmp/deploy/images/var-som-mx6/uImage-imx6q-var-dart.dtb 			./var_tmp/BOT-VAR-SOM/imx6q-var-dart.dtb
-    cp tmp/deploy/images/var-som-mx6/uImage 					./var_tmp/BOT-VAR-SOM/uImage
-
-    echo "flashing Yocto Root file System ..."    
-    sync
-    mount ${node}${part}2  ./var_tmp/rootfs
-    tar xf tmp/deploy/images/var-som-mx6/fsl-image-qt5-var-som-mx6.tar.bz2 -C ./var_tmp/rootfs/ 
-
+	echo "Flashing Yocto Root File System"    
+	pv ${YOCTO_IMGS_PATH}/fsl-image-qt5-var-som-mx6.tar.bz2 | tar -xj -C ${P2_MOUNT_DIR}/
 }
 
 function copy_yocto
 {
-sudo mkdir -p ./var_tmp/rootfs/opt
-sudo mkdir -p ./var_tmp/rootfs/opt/images
-sudo mkdir -p ./var_tmp/rootfs/opt/images/Yocto
-sudo mkdir -p ./var_tmp/rootfs/opt/images/Android
-sudo mkdir -p ./var_tmp/rootfs/opt/images/Android/Emmc
-#
-echo "Copying Fido V10.1 /opt/images/Yocto..."
-sudo cp tmp/deploy/images/var-som-mx6/uImage 					./var_tmp/rootfs/opt/images/Yocto
-sudo cp tmp/deploy/images/var-som-mx6/fsl-image-qt5-var-som-mx6.tar.bz2 	./var_tmp/rootfs/opt/images/Yocto/rootfs.tar.bz2
-sudo cp tmp/deploy/images/var-som-mx6/fsl-image-qt5-minimal-var-som-mx6.ubi 	./var_tmp/rootfs/opt/images/Yocto/rootfs.ubi.img
-#
-sudo cp tmp/deploy/images/var-som-mx6/uImage-imx6dl-var-som-solo.dtb 		./var_tmp/rootfs/opt/images/Yocto/
-sudo cp tmp/deploy/images/var-som-mx6/uImage-imx6dl-var-som-solo-vsc.dtb 	./var_tmp/rootfs/opt/images/Yocto/
-sudo cp tmp/deploy/images/var-som-mx6/uImage-imx6dl-var-som.dtb 		./var_tmp/rootfs/opt/images/Yocto/
-sudo cp tmp/deploy/images/var-som-mx6/uImage-imx6q-var-som.dtb 			./var_tmp/rootfs/opt/images/Yocto/
-sudo cp tmp/deploy/images/var-som-mx6/uImage-imx6q-var-som-vsc.dtb 		./var_tmp/rootfs/opt/images/Yocto/
-sudo cp tmp/deploy/images/var-som-mx6/uImage-imx6q-var-dart.dtb 		./var_tmp/rootfs/opt/images/Yocto/
-echo "nand u-boot..."
-sudo cp tmp/deploy/images/var-som-mx6/SPL-nand					./var_tmp/rootfs/opt/images/Yocto/SPL
-sudo cp tmp/deploy/images/var-som-mx6/u-boot-nand-2015.04-r0.img		./var_tmp/rootfs/opt/images/Yocto/u-boot.img
-echo "sd u-boot..."
-sudo cp tmp/deploy/images/var-som-mx6/SPL-sd					./var_tmp/rootfs/opt/images/Yocto/SPL.mmc
-sudo cp tmp/deploy/images/var-som-mx6/u-boot-sd-2015.04-r0.img			./var_tmp/rootfs/opt/images/Yocto/u-boot.img.mmc
+	mkdir -p ${P2_MOUNT_DIR}/opt/images/Yocto
+
+	echo "Copying Yocto Fido V10.1 to /opt/images/"
+	cp ${YOCTO_IMGS_PATH}/uImage 					${P2_MOUNT_DIR}/opt/images/Yocto
+	pv ${YOCTO_IMGS_PATH}/fsl-image-qt5-var-som-mx6.tar.bz2 >	${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.tar.bz2
+	pv ${YOCTO_IMGS_PATH}/fsl-image-qt5-minimal-var-som-mx6.ubi >	${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.ubi.img
+
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-solo.dtb 		${P2_MOUNT_DIR}/opt/images/Yocto/
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-solo-vsc.dtb 	${P2_MOUNT_DIR}/opt/images/Yocto/
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som.dtb 		${P2_MOUNT_DIR}/opt/images/Yocto/
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6q-var-som.dtb 			${P2_MOUNT_DIR}/opt/images/Yocto/
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6q-var-som-vsc.dtb 		${P2_MOUNT_DIR}/opt/images/Yocto/
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6q-var-dart.dtb 		${P2_MOUNT_DIR}/opt/images/Yocto/
+	echo "Copying NAND U-Boot to /opt/images/Yocto"
+	cp ${YOCTO_IMGS_PATH}/SPL-nand					${P2_MOUNT_DIR}/opt/images/Yocto/SPL
+	cp ${YOCTO_IMGS_PATH}/u-boot-nand-2015.04-r0.img		${P2_MOUNT_DIR}/opt/images/Yocto/u-boot.img
+	echo "Copying MMC U-Boot to /opt/images/Yocto"
+	cp ${YOCTO_IMGS_PATH}/SPL-sd					${P2_MOUNT_DIR}/opt/images/Yocto/SPL.mmc
+	cp ${YOCTO_IMGS_PATH}/u-boot-sd-2015.04-r0.img			${P2_MOUNT_DIR}/opt/images/Yocto/u-boot.img.mmc
 }
 
 function copy_scripts
 {
-echo "scripts..."
-sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/nand-recovery.sh 	./var_tmp/rootfs/sbin/
-#sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/android-nand.sh 	./var_tmp/rootfs/sbin/
-#sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/android-emmc.sh 	./var_tmp/rootfs/sbin/
-sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/yocto-nand.sh 	./var_tmp/rootfs/sbin/
-sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/yocto-emmc.sh 	./var_tmp/rootfs/sbin/
-sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/yocto-dart.sh 	./var_tmp/rootfs/sbin/
-#
-#sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/mkmmc_android.sh 	./var_tmp/rootfs/sbin/
-sudo cp  ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/mkmmc_yocto.sh 	./var_tmp/rootfs/sbin/
+	echo "Copying scripts"
+	cp ${YOCTO_SCRIPTS_PATH}/nand-recovery.sh 	${P2_MOUNT_DIR}/sbin/
+	cp ${YOCTO_SCRIPTS_PATH}/yocto-nand.sh 		${P2_MOUNT_DIR}/sbin/
+	cp ${YOCTO_SCRIPTS_PATH}/yocto-emmc.sh 		${P2_MOUNT_DIR}/sbin/
+	cp ${YOCTO_SCRIPTS_PATH}/yocto-dart.sh 		${P2_MOUNT_DIR}/sbin/
 
-echo "desktop icons..."
-sudo cp ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/*.desktop 		./var_tmp/rootfs/usr/share/applications/ 
-sudo cp ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts/terminal* 		./var_tmp/rootfs/usr/bin/
+	cp  ${YOCTO_SCRIPTS_PATH}/mkmmc_yocto.sh 	${P2_MOUNT_DIR}/sbin/
+
+	echo "Copying desktop icons"
+	cp ${YOCTO_SCRIPTS_PATH}/*.desktop 		${P2_MOUNT_DIR}/usr/share/applications/ 
+	cp ${YOCTO_SCRIPTS_PATH}/terminal* 		${P2_MOUNT_DIR}/usr/bin/
 }
 
-# destroy the partition table
-dd if=/dev/zero of=${node} bs=1024 count=1
+function ceildiv
+{
+    local num=$1
+    local div=$2
+    echo $(( (num + div - 1) / div ))
+}
 
-sfdisk --force -uM ${node} << EOF
-,${boot_rom_sizeb},b
-,${rootfs_size},83
+# Destroy the partition table
+dd if=/dev/zero of=${node} bs=512 count=1
+sync
+
+# Create partitions
+SECT_SIZE_BYTES=`fdisk -l ${node} 2>> /dev/null | grep 'Sector size' | cut -d " " -f 7`
+
+BOOTLOAD_RESERVE_SIZE_BYTES=$((BOOTLOAD_RESERVE_SIZE * 1024 * 1024))
+BOOT_ROM_SIZE_BYTES=$((BOOT_ROM_SIZE * 1024 * 1024))
+ROOTFS_SIZE_BYTES=$((ROOTFS_SIZE * 1024 * 1024))
+
+PART1_START=`ceildiv ${BOOTLOAD_RESERVE_SIZE_BYTES} ${SECT_SIZE_BYTES}`
+PART1_SIZE=`ceildiv ${BOOT_ROM_SIZE_BYTES} ${SECT_SIZE_BYTES}`
+PART2_START=$((PART1_START + PART1_SIZE))
+PART2_SIZE=$((ROOTFS_SIZE_BYTES / SECT_SIZE_BYTES)) 
+
+sfdisk --force -uS ${node} << EOF
+${PART1_START},${PART1_SIZE},c
+${PART2_START},${PART2_SIZE},83
 EOF
 
-# adjust the partition reserve for bootloader.
-# if you don't put the uboot on same device, you can remove the BOOTLOADER_ERSERVE
-# to have 8M space.
-# the minimal sylinder for some card is 4M, maybe some was 8M
-# just 8M for some big eMMC 's sylinder
-sfdisk --force -uM ${node} -N1 << EOF
-${BOOTLOAD_RESERVE},${BOOT_ROM_SIZE},83
-EOF
-
-# format the SDCARD/DATA/CACHE partition
-part=""
-echo ${node} | grep mmcblk > /dev/null
-if [ "$?" -eq "0" ]; then
-	part="p"
-fi
-
+# Format the partitions
 format_yocto
+
+flash_u-boot
+
+# Mount the partitions
+mkdir -p ${P1_MOUNT_DIR}
+mkdir -p ${P2_MOUNT_DIR}
+sync
+mount ${node}${part}1  ${P1_MOUNT_DIR}
+mount ${node}${part}2  ${P2_MOUNT_DIR}
+
 flash_yocto
 copy_yocto
 copy_scripts
 
-echo "umount ..."
-sync
-sudo umount ./var_tmp/BOT-VAR-SOM
-sudo umount ./var_tmp/rootfs
-
+echo "Syncing"
+sync | pv -t
+umount ${P1_MOUNT_DIR}
+umount ${P2_MOUNT_DIR}
+rm -rf ${TEMP_DIR}
+echo "Done"
+exit 0

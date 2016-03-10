@@ -9,7 +9,7 @@ BOOT_ROM_SIZE=8
 SPARE_SIZE=40
 
 
-if [ `dmesg |grep VAR-DART | wc -l` = 1 ] ; then
+if [ `dmesg | grep VAR-DART | wc -l` = 1 ] ; then
 	echo "Variscite Flash DART-MX6 eMMC utility version 01"
 	echo "================================================"
 else
@@ -19,6 +19,7 @@ else
 	echo " android_emmc.sh, yocto_emmc.sh, yocto_nand.sh   "
 	echo "================================================="
 	read -p "Press any key to continue... " -n1 -s
+	exit 1
 fi
 
 cd /opt/images/Yocto
@@ -67,7 +68,7 @@ fi
 
 function format_yocto
 {
-    echo "formating yocto partitions"
+    echo "Formating Yocto partitions"
     echo "=========================="
     umount /run/media/mmcblk2p1 2>/dev/null
     umount /run/media/mmcblk2p2 2>/dev/null
@@ -78,15 +79,15 @@ function format_yocto
 
 function flash_yocto
 {
-    echo "flashing yocto "
+    echo "Flashing Yocto "
     echo "==============="
 
-    echo "flashing U-BOOT ..."
+    echo "Flashing U-Boot ..."
     mount | grep mmcblk2   
     sudo dd if=u-boot.img.mmc of=/dev/mmcblk2 bs=1K seek=69; sync
     sudo dd if=SPL.mmc of=/dev/mmcblk2 bs=1K seek=1; sync
 
-    echo "flashing Yocto BOOT partition ..."    
+    echo "Flashing Yocto BOOT partition ..."    
     mkdir -p /tmp/media/mmcblk2p1
     mkdir -p /tmp/media/mmcblk2p2
     mount -t vfat /dev/mmcblk2p1  /tmp/media/mmcblk2p1
@@ -94,7 +95,7 @@ function flash_yocto
     cp uImage-imx6q-var-dart.dtb /tmp/media/mmcblk2p1/imx6q-var-dart.dtb
     cp uImage /tmp/media/mmcblk2p1/uImage
 
-    echo "flashing Yocto Root file System ..."    
+    echo "Flashing Yocto Root file System ..."    
     rm -rf /tmp/media/mmcblk2p2/*
     tar xvpf rootfs.tar.bz2 -C /tmp/media/mmcblk2p2/ 2>&1 |
     while read line; do
@@ -104,30 +105,16 @@ function flash_yocto
 }
 
 
-#
 umount /run/media/mmcblk2p1 2>/dev/null
 umount /run/media/mmcblk2p2 2>/dev/null
 umount /run/media/mmcblk2p1 2>/dev/null
 umount /run/media/mmcblk2p2 2>/dev/null
 umount /run/media/mmcblk2p* 2>/dev/null
-#
 
-# Delete any partition.
-fdisk /dev/mmcblk2 1>/dev/null 2>/dev/null <<EOF 
-d
-1
-d
-2
-d
-3
-d
-w
-EOF
-
-# destroy the partition table
+# Destroy the partition table
 dd if=/dev/zero of=/dev/mmcblk2 bs=1024 count=4096
 
-# Create new partition table
+# Create a new partition table
 fdisk /dev/mmcblk2 <<EOF 
 n
 p

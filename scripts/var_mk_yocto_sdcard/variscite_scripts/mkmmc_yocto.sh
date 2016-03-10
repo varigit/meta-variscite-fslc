@@ -1,9 +1,9 @@
 #!/bin/bash
+
 if [ $# -lt 1 ]; then
 	echo "Usage: $0 /dev/mmcblk1"
 	exit -1 ;
 fi
-force='';
 
 product=mx6;
 
@@ -35,18 +35,16 @@ cat << EOF
 usage $bn <option> device_node
 
 options:
-  -h				displays this help message
-  -c				only get partition size
-  -solo				install IMX6 Solo U-Boot
+  -h			displays this help message
+  -c			only get partition size
+  -solo			install IMX6 Solo U-Boot
 EOF
 
 }
 
-# check the if root?
-userid=`id -u`
-if [ $userid -ne "0" ]; then
-	echo "you're not root?"
-	exit
+if [[ $EUID -ne 0 ]]; then
+	echo "This script must be run with super-user privileges" 
+	exit 1
 fi
 
 
@@ -55,7 +53,7 @@ moreoptions=1
 node="na"
 node=$1
 
-if [ `dmesg |grep VAR-DART | wc -l` = 1 ] ; then
+if [ `dmesg | grep VAR-DART | wc -l` = 1 ] ; then
 	node=/dev/mmcblk2
 	mmm=/run/media/mmcblk2p
 else
@@ -79,58 +77,38 @@ umount ${mmm}7 2>/dev/null
 umount ${mmm}8 2>/dev/null
 umount ${mmm}9 2>/dev/null
 
-#
-# Delete all partitions
-#
-fdisk ${node} <<EOF
-d
-1
-d
-2
-d
-3
-d
-w
-EOF
-
-sync                       
-#
-#Delete MBR
-#
-dd if=/dev/zero of=${node} bs=512 count=1000
-sync
-
-
-# call sfdisk to create partition table
-# get total card size
-seprate=40
-total_size=`sfdisk -s ${node}`
-total_size=`expr ${total_size} / 1024`
-
 
 function format_linux
 {
-    echo "formating linux partition on eMMC"
-    mkfs.ext4 ${node}${prefix}1 -Lrootfs
+	echo "Formating rootfs partition on eMMC"
+	mkfs.ext4 ${node}${prefix}1 -L rootfs
 }
 
 function flash_linux
 {
-    echo "Installing rootfs on eMMC (this will take time)..."
-    mkdir ${mmm}1
-    mount ${node}${prefix}1  ${mmm}1
-    tar xvpf ${MEDIA}/rootfs.tar.bz2 -C ${mmm}1/ 2>&1 |
-    while read line; do
-        x=$((x+1))
-        echo -en "$x extracted\r"
-    done
+	echo "Installing rootfs on eMMC (this takes some time)"
+	mkdir ${mmm}1
+	mount ${node}${prefix}1  ${mmm}1
+	tar xvpf ${MEDIA}/rootfs.tar.bz2 -C ${mmm}1/ 2>&1 |
+	while read line; do
+		x=$((x+1))
+		echo -en "$x extracted\r"
+	done
 }
 
-# destroy the partition table
-#dd if=/dev/zero of=${node} bs=1024 count=1 conv=notrunc
+# Destroy the partition table
+dd if=/dev/zero of=${node} bs=512 count=1
+sync
 
-sfdisk --force -uM ${node} << EOF
-,${total_size},83
+# Get total card size
+TOTAL_SIZE_KiB=`sfdisk -s ${node}`
+TOTAL_SIZE_BYTES=$((TOTAL_SIZE * 1024))
+SECT_SIZE_BYTES=`fdisk -l ${node} 2>> /dev/null | grep 'Sector size' | cut -d " " -f 7`
+PART_SIZE=$((TOTAL_SIZE_BYTES / SECT_SIZE_BYTES))
+
+# Create the partition table
+sfdisk --force -uS ${node} << EOF
+,${PART_SIZE},83
 EOF
 if [ "$?" = "0" ]; then
 	sync
@@ -143,25 +121,12 @@ else
 	exit 1
 fi
 
-# format the SDCARD/DATA/CACHE partition
-part=""
-echo ${node} | grep mmcblk > /dev/null
-if [ "$?" -eq "0" ]; then
-	part="p"
-fi
-
-sync
-
 format_linux
 sync
 flash_linux
+
+echo "Syncing"
 sync
-umount ${mmm}1 2>/dev/null
-umount ${mmm}2 2>/dev/null
-umount ${mmm}3 2>/dev/null
-umount ${mmm}4 2>/dev/null
-umount ${mmm}5 2>/dev/null
-umount ${mmm}6 2>/dev/null
-umount ${mmm}7 2>/dev/null
-umount ${mmm}8 2>/dev/null
-umount ${mmm}9 2>/dev/null
+umount ${mmm}1
+echo "Done"
+exit 0
