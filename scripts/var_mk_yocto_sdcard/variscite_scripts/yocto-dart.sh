@@ -3,10 +3,10 @@
 # Flash Yocto into eMMC for DART-MX6
 #
 
-# partition size in MB
+# Partitions sizes in MiB
 BOOTLOAD_RESERVE=4
 BOOT_ROM_SIZE=8
-SPARE_SIZE=40
+SPARE_SIZE=0
 
 
 if [ `dmesg | grep VAR-DART | wc -l` = 1 ] ; then
@@ -42,21 +42,18 @@ cat << EOF
 usage $bn <option> device_node
 
 options:
-  -h				displays this help message
-  -s				only get partition size
+  -h			displays this help message
+  -s			only get partition size
 EOF
 
 }
 
-# check the if root?
-userid=`id -u`
-if [ $userid -ne "0" ]; then
-	echo "you're not root?"
-	exit
+if [[ $EUID -ne 0 ]]; then
+	echo "This script must be run with super-user privileges" 
+	exit 1
 fi
 
-
-# parse command line
+# Parse command line
 moreoptions=1
 node="/dev/mmcblk2"
 cal_only=0
@@ -72,7 +69,7 @@ function format_yocto
     echo "=========================="
     umount /run/media/mmcblk2p1 2>/dev/null
     umount /run/media/mmcblk2p2 2>/dev/null
-    mkfs.vfat /dev/mmcblk2p1 -nBOT_varsomi
+    mkfs.vfat /dev/mmcblk2p1 -nBOOT-VARSOM
     mkfs.ext4 /dev/mmcblk2p2 -Lrootfs
     sync
 }
@@ -132,21 +129,19 @@ p
 w
 EOF
 
-# call sfdisk to create partition table
-# get total card size
-seprate=40
+# Get total card size
 total_size=`sfdisk -s ${node}`
 total_size=`expr ${total_size} / 1024`
 boot_rom_sizeb=`expr ${BOOT_ROM_SIZE} + ${BOOTLOAD_RESERVE}`
-rootfs_size=`expr ${total_size} - ${boot_rom_sizeb} - ${SPARE_SIZE} + ${seprate}`
+rootfs_size=`expr ${total_size} - ${boot_rom_sizeb} - ${SPARE_SIZE}`
 
 echo "ROOT SIZE=${rootfs_size} TOTAl SIZE=${total_size} BOOTROM SIZE=${boot_rom_sizeb}"
 echo "======================================================"
 # create partitions 
 #if [ "${cal_only}" -eq "1" ]; then
 #cat << EOF
-#BOOT   : ${boot_rom_sizeb}MB
-#ROOT   : ${rootfs_size}MB
+#BOOT   : ${boot_rom_sizeb}MiB
+#ROOT   : ${rootfs_size}MiB
 #EOF
 #exit
 #fi
@@ -166,15 +161,7 @@ echo "======================================================"
 #EOF
 
 sync
-sleep 5
-
-# format the SDCARD/DATA/CACHE partition
-part=""
-echo ${node} | grep mmcblk > /dev/null
-if [ "$?" -eq "0" ]; then
-	part="p"
-fi
-
+sleep 2
 
 format_yocto
 flash_yocto
@@ -186,5 +173,4 @@ umount /tmp/media/mmcblk2p2
 mount | grep mmcblk2   
 
 read -p "Yocto Flashed. Press any key to continue... " -n1 -s
-
 

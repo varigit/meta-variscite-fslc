@@ -1,57 +1,14 @@
 #!/bin/bash
 
-if [ $# -lt 1 ]; then
-	echo "Usage: $0 /dev/mmcblk1"
-	exit -1 ;
+if [[ $EUID -ne 0 ]]; then
+	echo "This script must be run with super-user privileges" 
+	exit 1
 fi
 
 product=mx6;
 
 echo $product
 full_product=var_som_${product}
-diskname=$1
-
-if [[ "$diskname" =~ "mmcblk" ]]; then
-   prefix=p
-fi
-
-echo "Creating Android SD-card on ${diskname} for product ${full_product}"
-
-# partition size in MB
-BOOTLOAD_RESERVE=8
-BOOT_ROM_SIZE=8
-SYSTEM_ROM_SIZE=512
-CACHE_SIZE=512
-RECOVERY_ROM_SIZE=8
-VENDER_SIZE=8
-MISC_SIZE=8
-MEDIA=/opt/images/Yocto
-
-
-help() {
-
-bn=`basename $0`
-cat << EOF
-usage $bn <option> device_node
-
-options:
-  -h			displays this help message
-  -c			only get partition size
-  -solo			install IMX6 Solo U-Boot
-EOF
-
-}
-
-if [[ $EUID -ne 0 ]]; then
-	echo "This script must be run with super-user privileges" 
-	exit 1
-fi
-
-
-# parse command line
-moreoptions=1
-node="na"
-node=$1
 
 if [ `dmesg | grep VAR-DART | wc -l` = 1 ] ; then
 	node=/dev/mmcblk2
@@ -60,12 +17,24 @@ else
 	node=/dev/mmcblk1
 	mmm=/run/media/mmcblk1p
 fi
+prefix=p
 
 if [ ! -b ${node} ]; then
 	echo "ERROR: \"${node}\" is not block device"
 	exit
 fi
 
+echo "Creating Android SD-card on ${node} for product ${full_product}"
+
+# Partition sizes in MiB
+BOOTLOAD_RESERVE=8
+BOOT_ROM_SIZE=8
+SYSTEM_ROM_SIZE=512
+CACHE_SIZE=512
+RECOVERY_ROM_SIZE=8
+VENDER_SIZE=8
+MISC_SIZE=8
+MEDIA=/opt/images/Yocto
 
 umount ${mmm}1 2>/dev/null
 umount ${mmm}2 2>/dev/null

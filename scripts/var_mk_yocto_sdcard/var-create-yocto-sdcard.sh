@@ -46,7 +46,6 @@ moreoptions=1
 node="na"
 cal_only=0
 
-
 while [ "$moreoptions" = 1 -a $# -gt 0 ]; do
 	case $1 in
 	    -h) help; exit 3 ;;
@@ -81,10 +80,9 @@ done
 
 # Call sfdisk to get total card size
 if [ "${AUTO_FILL_SD}" -eq "1" ]; then
-	SEPRATE=40
 	TOTAL_SIZE=`sfdisk -s ${node}`
 	TOTAL_SIZE=`expr ${TOTAL_SIZE} / 1024`
-	ROOTFS_SIZE=`expr ${TOTAL_SIZE} - ${BOOTLOAD_RESERVE_SIZE} - ${BOOT_ROM_SIZE} - ${SPARE_SIZE} + ${SEPRATE}`
+	ROOTFS_SIZE=`expr ${TOTAL_SIZE} - ${BOOTLOAD_RESERVE_SIZE} - ${BOOT_ROM_SIZE} - ${SPARE_SIZE}`
 else
 	ROOTFS_SIZE=${DEFAULT_ROOTFS_SIZE}
 fi
@@ -107,7 +105,7 @@ function format_yocto
 
 function flash_u-boot
 {
-	echo "Flashing U-Boot"    
+	echo "Flashing U-Boot"
 	dd if=${YOCTO_IMGS_PATH}/SPL-sd of=${node} bs=1K seek=1; sync
 	dd if=${YOCTO_IMGS_PATH}/u-boot-sd-2015.04-r0.img of=${node} bs=1K seek=69; sync
 }

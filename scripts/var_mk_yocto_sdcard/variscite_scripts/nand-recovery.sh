@@ -68,7 +68,7 @@ install_rootfs()
 	ubiformat /dev/mtd3 -f $MEDIA/$OS/$ROOTFS_IMAGE -s $UBI_SUB_PAGE_SIZE -O $UBI_VID_HDR_OFFSET
 }
 
-#Partition Table
+# Partition Table
 # 0 0x000000000000-0x000000200000 : "spl"
 # 1 0x000000200000-0x000000400000 : "bootloader"
 # 2 0x000000400000-0x000000a00000 : "kernel"
@@ -239,7 +239,7 @@ fi
 
 
 if [ "$FLASH" != "Emmc" ] ; then
-#Flash to NAND	
+# Flash to NAND	
 	install_bootloader
 	if [ "$OS" != "Android" ] ; then
 		install_kernel
@@ -250,11 +250,11 @@ if [ "$FLASH" != "Emmc" ] ; then
 	   echo "=========================================="
 	fi
 else
-#Flash to eMMC
+# Flash to eMMC
 	if [ "$OS" != "Android/Emmc" ] ; then
 		install_bootloader
 		install_kernel
-		. /sbin/mkmmc_yocto.sh /dev/mmcblk1
+		. /sbin/mkmmc_yocto.sh
 		echo "Setting rootfs location to emmc in u-boot enviroment"
 		fw_setenv chosen_rootfs emmc
 		echo "Done"
