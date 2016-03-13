@@ -144,19 +144,15 @@ function flash_android
 
 	cd /opt/images/Android/Emmc
 	echo "flashing Android boot image: ${bootimage_file}"
-	sync
 	dd if=${bootimage_file} of=${node}${part}1
+	sync
 
 	echo "flashing Android recovery image: ${recoveryimage_file}"
-	sync
 	dd if=${recoveryimage_file} of=${node}${part}2
+	sync
 
 	echo "flashing Android system image: ${systemimage_file}"
-	sync
 	dd if=${systemimage_file} of=${node}${part}5
-
-	sync
-	e2label ${node}${part}5 system
 	sync
 }
 
