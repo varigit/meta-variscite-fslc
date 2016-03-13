@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Android-eMMC
+Comment=LL5.0.0R100V3.
+Exec=terminalae
+Icon=media-flash
+Terminal=false
+Categories=GTK;Utility;
+StartupNotify=true
+Name[en_US]=android_emmc.desktop
