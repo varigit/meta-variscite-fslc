@@ -1,20 +1,17 @@
 #!/bin/sh
-#
 # NAND recovery version 50. Support Yocto V10.1 Fido and above and Android Lollipop V3
 
 MEDIA=/opt/images
-
 OS=Yocto
-
 FLASH=Nand
 
 UBOOT_IMAGE=u-boot.img
 SPL_IMAGE=SPL
-#
+
 KERNEL_IMAGE=uImage
 ROOTFS_IMAGE=rootfs.ubi.img
 KERNEL_DTB=imx6q-var-som.dtb
-#
+
 ANDROID_BOOT=boot.img
 ANDROID_RECOVERY=recovery.img
 ANDROID_SYSTEM=android_root.img

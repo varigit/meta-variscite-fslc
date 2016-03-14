@@ -27,7 +27,7 @@ EOF
 
 }
 
-# parse command line
+# Parse command line
 moreoptions=1
 node="na"
 soc_name=""
@@ -129,7 +129,7 @@ function install_bootloader
 
 function format_android
 {
-	echo "formating android partition"
+	echo "Formating Android partitions"
 	mkfs.ext4 ${node}${part}4 -Ldata
 	mkfs.ext4 ${node}${part}5 -Lsystem
 	mkfs.ext4 ${node}${part}6 -Lcache
@@ -143,21 +143,20 @@ function flash_android
 	recoveryimage_file="recovery-${soc_name}.img"
 
 	cd /opt/images/Android/Emmc
-	echo "flashing Android boot image: ${bootimage_file}"
+	echo "Flashing Android boot image: ${bootimage_file}"
 	dd if=${bootimage_file} of=${node}${part}1
 	sync
 
-	echo "flashing Android recovery image: ${recoveryimage_file}"
+	echo "Flashing Android recovery image: ${recoveryimage_file}"
 	dd if=${recoveryimage_file} of=${node}${part}2
 	sync
 
-	echo "flashing Android system image: ${systemimage_file}"
+	echo "Flashing Android system image: ${systemimage_file}"
 	dd if=${systemimage_file} of=${node}${part}5
 	sync
 }
 
-echo "Create Android partition table"
-
+echo "Creating Android partitions"
 sfdisk --force -uM ${node} << EOF
 ,${boot_rom_sizeb},83
 ,${RECOVERY_ROM_SIZE},83
@@ -171,7 +170,7 @@ sfdisk --force -uM ${node} << EOF
 EOF
 if [ "$?" = "0" ]; then
 	sync
-	sleep 4
+	sleep 3
 else
 	echo -e "\e[31msfdisk error #1! Partition is locked\e[0m"
 	echo -e "\e[31mplease reboot to unlock and try again\e[0m"
