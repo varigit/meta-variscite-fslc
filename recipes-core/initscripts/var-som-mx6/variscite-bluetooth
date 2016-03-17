@@ -11,9 +11,8 @@
 #
 # This script activate the Bluetooth for Variscite SOM MX6
 # I/O
-#
+
 #Check if device exist
-#
 (dmesg | grep "tuple 0x91") # Check if BT/WIFI is up
 if [ $? -eq 0 ]      # check exit code; if 0 No BT else BT
 then
@@ -22,19 +21,17 @@ then
     echo "No BT found"
     exit 0
 fi
-#
+
 echo 178 >/sys/class/gpio/export
 echo "out" > /sys/class/gpio/gpio178/direction
 echo 0 > /sys/class/gpio/gpio178/value
 sleep 1
 echo 1 > /sys/class/gpio/gpio178/value
-sleep 1
-#
-hciattach -t 10 -s 115200 /dev/ttymxc1 texas 3000000  2> /dev/null
-#
-#bluetoothd
+
+hciattach -t 10 -s 115200 /dev/ttymxc1 texas 3000000
+
 /usr/lib/bluez5/bluetooth/bluetoothd &
-#
+
 hciconfig hci0 up
-#
+
 exit 0
