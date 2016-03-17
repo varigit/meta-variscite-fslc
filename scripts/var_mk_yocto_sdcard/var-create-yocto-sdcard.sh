@@ -171,8 +171,19 @@ function ceildiv
     echo $(( (num + div - 1) / div ))
 }
 
-# Destroy the partition table
-dd if=/dev/zero of=${node} bs=512 count=1
+# Delete the partitions
+for ((i=0; i<10; i++))
+do
+	if [ `ls ${node}${part}$i 2> /dev/null | grep -c ${node}${part}$i` -ne 0 ]; then
+		dd if=/dev/zero of=${node}${part}$i bs=512 count=1024
+	fi
+done
+sync
+
+((echo d; echo 1; echo d; echo 2; echo d; echo 3; echo d; echo w) | fdisk ${node} > /dev/null) || true
+sync
+
+dd if=/dev/zero of=${node} bs=512 count=1024
 sync
 
 # Create partitions

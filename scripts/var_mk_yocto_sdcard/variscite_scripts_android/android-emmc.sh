@@ -69,5 +69,5 @@ else
 	/bin/sh /sbin/mkmmc_android.sh -f $BOOTI /dev/mmcblk1
 fi
 
-read -p "Android Flashed. Press any key to continue... " -n1 -s
+read -p "Android Flashed - press any key to continue" -n1
 exit 0

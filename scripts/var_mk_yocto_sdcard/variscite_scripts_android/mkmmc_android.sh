@@ -3,9 +3,9 @@
 # Partition sizes in MiB
 BOOTLOAD_RESERVE=8
 BOOT_ROM_SIZE=16
+RECOVERY_ROM_SIZE=16
 SYSTEM_ROM_SIZE=512
 CACHE_SIZE=512
-RECOVERY_ROM_SIZE=16
 DEVICE_SIZE=8
 MISC_SIZE=6
 DATAFOOTER_SIZE=2
@@ -51,7 +51,7 @@ while [ "$moreoptions" = 1 -a $# -gt 0 ]; do
 	[ "$moreoptions" = 1 ] && shift
 done
 
-if [ `dmesg |grep VAR-DART | wc -l` = 1 ] ; then
+if [ `dmesg | grep VAR-DART | wc -l` = 1 ] ; then
 	node=/dev/mmcblk2
 	mmm=/run/media/mmcblk2p
 else
@@ -65,18 +65,21 @@ if [ "$?" -eq "0" ]; then
 	part="p"
 fi
 
-umount ${mmm}1 2>/dev/null
-umount ${mmm}2 2>/dev/null
-umount ${mmm}3 2>/dev/null
-umount ${mmm}4 2>/dev/null
-umount ${mmm}5 2>/dev/null
-umount ${mmm}6 2>/dev/null
-umount ${mmm}7 2>/dev/null
-umount ${mmm}8 2>/dev/null
-umount ${mmm}9 2>/dev/null
+umount ${mmm}* 2>/dev/null
 
-# Destroy the partition table
-dd if=/dev/zero of=${node} bs=512 count=1
+
+for ((i=0; i<=10; i++))
+do
+	if [ `ls ${node}${part}$i 2> /dev/null | grep -c ${node}${part}$i` -ne 0 ]; then
+		dd if=/dev/zero of=${node}${part}$i bs=512 count=1024
+	fi
+done
+sync
+
+((echo d; echo 1; echo d; echo 2; echo d; echo 3; echo d; echo w) | fdisk ${node} > /dev/null) || true
+sync
+
+dd if=/dev/zero of=${node} bs=512 count=1024
 sync
 
 # Call sfdisk to create partition table
@@ -143,14 +146,17 @@ function flash_android
 	recoveryimage_file="recovery-${soc_name}.img"
 
 	cd /opt/images/Android/Emmc
+	echo
 	echo "Flashing Android boot image: ${bootimage_file}"
 	dd if=${bootimage_file} of=${node}${part}1
 	sync
 
+	echo
 	echo "Flashing Android recovery image: ${recoveryimage_file}"
 	dd if=${recoveryimage_file} of=${node}${part}2
 	sync
 
+	echo
 	echo "Flashing Android system image: ${systemimage_file}"
 	dd if=${systemimage_file} of=${node}${part}5
 	sync
@@ -170,7 +176,7 @@ sfdisk --force -uM ${node} << EOF
 EOF
 if [ "$?" = "0" ]; then
 	sync
-	sleep 3
+	sleep 4
 else
 	echo -e "\e[31msfdisk error #1! Partition is locked\e[0m"
 	echo -e "\e[31mplease reboot to unlock and try again\e[0m"
@@ -195,6 +201,7 @@ d
 1
 w
 EOF
+
 umount ${mmm}* 2>/dev/null
 
 fdisk ${node} <<EOF
@@ -206,19 +213,9 @@ w
 q
 EOF
 
-umount ${mmm}* 2>/dev/null
-
 fi
 
-umount ${mmm}1 2>/dev/null
-umount ${mmm}2 2>/dev/null
-umount ${mmm}3 2>/dev/null
-umount ${mmm}4 2>/dev/null
-umount ${mmm}5 2>/dev/null
-umount ${mmm}6 2>/dev/null
-umount ${mmm}7 2>/dev/null
-umount ${mmm}8 2>/dev/null
-umount ${mmm}9 2>/dev/null
+umount ${mmm}* 2>/dev/null
 
 # Delete information on data partition
 echo "Clear data partition ${node}${part}4"
@@ -232,14 +229,6 @@ sync;sleep 3;
 flash_android
 sync;sleep 3;
 
-umount ${mmm}1 2>/dev/null
-umount ${mmm}2 2>/dev/null
-umount ${mmm}3 2>/dev/null
-umount ${mmm}4 2>/dev/null
-umount ${mmm}5 2>/dev/null
-umount ${mmm}6 2>/dev/null
-umount ${mmm}7 2>/dev/null
-umount ${mmm}8 2>/dev/null
-umount ${mmm}9 2>/dev/null
+umount ${mmm}* 2>/dev/null
 
 exit 0

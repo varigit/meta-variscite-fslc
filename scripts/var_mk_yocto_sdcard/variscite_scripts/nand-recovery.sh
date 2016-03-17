@@ -32,9 +32,12 @@ install_bootloader()
 		exit 1
 	fi	
 
+	echo
 	echo "Installing SPL from \"$MEDIA/$OS/$SPL_IMAGE\"... "
 	flash_erase /dev/mtd0 0 0 2>/dev/null
 	kobs-ng init -x $MEDIA/$OS/$SPL_IMAGE --search_exponent=1 -v > /dev/null
+
+	echo
 	echo "Installing U-BOOT from \"$MEDIA/$OS/$UBOOT_IMAGE\"..."
 	flash_erase /dev/mtd1  0 0  2>/dev/null
 	nandwrite -p /dev/mtd1 $MEDIA/$OS/$UBOOT_IMAGE 
@@ -46,8 +49,9 @@ install_kernel()
 	then
 		echo "\"$MEDIA/$OS/$KERNEL_IMAGE\"" does not exist! exit.
 		exit 1
-	fi	
-	echo "Installing Kernel ..."
+	fi
+	echo
+	echo "Installing Kernel"
 	flash_erase /dev/mtd2 0 0 2>/dev/null
 	nandwrite -p /dev/mtd2 $MEDIA/$OS/$KERNEL_IMAGE > /dev/null
 	nandwrite -p /dev/mtd1 -s 0x1e0000 $MEDIA/$OS/$KERNEL_DTB > /dev/null
@@ -59,8 +63,9 @@ install_rootfs()
 	then
 		echo "\"$MEDIA/$OS/$ROOTFS_IMAGE\"" does not exist! exit.
 		exit 1
-	fi	
-	echo "Installing UBI rootfs ..."
+	fi
+	echo
+	echo "Installing UBI rootfs"
 	flash_erase /dev/mtd3 0 0 3>/dev/null
 	ubiformat /dev/mtd3 -f $MEDIA/$OS/$ROOTFS_IMAGE -s $UBI_SUB_PAGE_SIZE -O $UBI_VID_HDR_OFFSET
 }
@@ -81,7 +86,8 @@ install_android_boot()
 		echo "\"$MEDIA/$OS/$ANDROID_BOOT\"" does not exist! exit.
 		exit 1
 	fi
-	echo "Installing boot.img ..."
+	echo
+	echo "Installing Android boot.img"
 	flash_erase /dev/mtd4 0 0 2>/dev/null
 	nandwrite -p /dev/mtd4 $MEDIA/$OS/$ANDROID_BOOT > /dev/null
 }
@@ -93,7 +99,8 @@ install_android_recovery()
 		echo "\"$MEDIA/$OS/$ANDROID_RECOVERY\"" does not exist! exit.
 		exit 1
 	fi
-	echo "Installing recovery.img ..."
+	echo
+	echo "Installing Android recovery.img"
 	flash_erase /dev/mtd5 0 0 2>/dev/null
 	nandwrite -p /dev/mtd5 $MEDIA/$OS/$ANDROID_RECOVERY > /dev/null
 }	
@@ -105,7 +112,8 @@ install_android_system()
 		echo "\"$MEDIA/$OS/$ANDROID_SYSTEM\"" does not exist! exit.
 		exit 1
 	fi
-	echo "Installing system.img ..."
+	echo
+	echo "Installing Android system.img"
 	flash_erase /dev/mtd6 0 0 2>/dev/null
 	ubiformat /dev/mtd6 -f $MEDIA/$OS/$ANDROID_SYSTEM -s $UBI_SUB_PAGE_SIZE -O $UBI_VID_HDR_OFFSET
 }
@@ -165,7 +173,7 @@ if [ `dmesg | grep VAR-DART | wc -l` = 1 ] ; then
 fi
 
 echo "*** VAR-MX6 eMMC/NAND RECOVERY Version 50 ***"
-echo "Installing $OS on $FLASH ..."
+echo "Installing $OS on $FLASH"
 
 VSC=$(i2cdump  -y -r 0-0  1 0x51 b | tail -n 1)
 VSC=${VSC:4:2}

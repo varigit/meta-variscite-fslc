@@ -7,7 +7,7 @@ It is a good example for using the output of the Yocto build to create a bootabl
 
 
 Usage: 
-cd ~/var-som-mx6-fido/build_x11
+cd ~/var-som-mx6-yocto-fido/build_x11
 sudo ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/var-create-yocto-sdcard.sh <options> /dev/sdX
 (Change /dev/sdX to your device name)
 

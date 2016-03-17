@@ -56,6 +56,7 @@ fi
 # Parse command line
 moreoptions=1
 node="/dev/mmcblk2"
+part=p
 cal_only=0
 
 if [ ! -e ${node} ]; then
@@ -65,54 +66,65 @@ fi
 
 function format_yocto
 {
-    echo "Formating Yocto partitions"
-    echo "=========================="
-    umount /run/media/mmcblk2p1 2>/dev/null
-    umount /run/media/mmcblk2p2 2>/dev/null
-    mkfs.vfat /dev/mmcblk2p1 -nBOOT-VARSOM
-    mkfs.ext4 /dev/mmcblk2p2 -Lrootfs
-    sync
+	echo "Formating Yocto partitions"
+	echo "=========================="
+	umount /run/media/mmcblk2p1 2>/dev/null
+	umount /run/media/mmcblk2p2 2>/dev/null
+	mkfs.vfat /dev/mmcblk2p1 -nBOOT-VARSOM
+	mkfs.ext4 /dev/mmcblk2p2 -Lrootfs
+	sync
 }
 
 function flash_yocto
 {
-    echo "Flashing Yocto "
-    echo "==============="
+	echo "Flashing Yocto "
+	echo "==============="
 
-    echo "Flashing U-Boot ..."
-    mount | grep mmcblk2   
-    sudo dd if=u-boot.img.mmc of=/dev/mmcblk2 bs=1K seek=69; sync
-    sudo dd if=SPL.mmc of=/dev/mmcblk2 bs=1K seek=1; sync
+	echo "Flashing U-Boot"
+	sudo dd if=u-boot.img.mmc of=${node} bs=1K seek=69; sync
+	sudo dd if=SPL.mmc of=${node} bs=1K seek=1; sync
 
-    echo "Flashing Yocto BOOT partition ..."    
-    mkdir -p /tmp/media/mmcblk2p1
-    mkdir -p /tmp/media/mmcblk2p2
-    mount -t vfat /dev/mmcblk2p1  /tmp/media/mmcblk2p1
-    mount /dev/mmcblk2p2  /tmp/media/mmcblk2p2
-    cp uImage-imx6q-var-dart.dtb /tmp/media/mmcblk2p1/imx6q-var-dart.dtb
-    cp uImage /tmp/media/mmcblk2p1/uImage
+	echo "Flashing Yocto BOOT partition"
+	mkdir -p /tmp/media/mmcblk2p1
+	mkdir -p /tmp/media/mmcblk2p2
+	mount -t vfat /dev/mmcblk2p1  /tmp/media/mmcblk2p1
+	mount /dev/mmcblk2p2  /tmp/media/mmcblk2p2
+	cp uImage-imx6q-var-dart.dtb /tmp/media/mmcblk2p1/imx6q-var-dart.dtb
+	cp uImage /tmp/media/mmcblk2p1/uImage
 
-    echo "Flashing Yocto Root file System ..."    
-    rm -rf /tmp/media/mmcblk2p2/*
-    tar xvpf rootfs.tar.bz2 -C /tmp/media/mmcblk2p2/ 2>&1 |
-    while read line; do
-        x=$((x+1))
-        echo -en "$x extracted\r"
-    done
+	echo "Flashing Yocto Root File System"
+	rm -rf /tmp/media/mmcblk2p2/*
+	tar xvpf rootfs.tar.bz2 -C /tmp/media/mmcblk2p2/ 2>&1 |
+	while read line; do
+		x=$((x+1))
+		echo -en "$x extracted\r"
+	done
 }
 
 
-umount /run/media/mmcblk2p1 2>/dev/null
-umount /run/media/mmcblk2p2 2>/dev/null
-umount /run/media/mmcblk2p1 2>/dev/null
-umount /run/media/mmcblk2p2 2>/dev/null
 umount /run/media/mmcblk2p* 2>/dev/null
 
-# Destroy the partition table
-dd if=/dev/zero of=/dev/mmcblk2 bs=1024 count=4096
+echo
+echo "Deleting the current partitions"
 
+for ((i=0; i<10; i++))
+do
+	if [ `ls ${node}${part}$i 2> /dev/null | grep -c ${node}${part}$i` -ne 0 ]; then
+		dd if=/dev/zero of=${node}${part}$i bs=512 count=1024
+	fi
+done
+sync
+
+((echo d; echo 1; echo d; echo 2; echo d; echo 3; echo d; echo w) | fdisk ${node} > /dev/null) || true
+sync
+
+dd if=/dev/zero of=${node} bs=1024 count=4096
+sync
+
+echo
+echo "Creating new partitions"
 # Create a new partition table
-fdisk /dev/mmcblk2 <<EOF 
+fdisk ${node} <<EOF 
 n
 p
 1
@@ -166,11 +178,9 @@ sleep 2
 format_yocto
 flash_yocto
 
-echo "umount ..."
+echo "syncing"
 sync
 umount /tmp/media/mmcblk2p1
 umount /tmp/media/mmcblk2p2
-mount | grep mmcblk2   
 
-read -p "Yocto Flashed. Press any key to continue... " -n1 -s
-
+read -p "Yocto Flashed. Press any key to continue... " -n1

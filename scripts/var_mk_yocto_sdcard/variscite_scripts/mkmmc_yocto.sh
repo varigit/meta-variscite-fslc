@@ -7,7 +7,6 @@ fi
 
 product=mx6;
 
-echo $product
 full_product=var_som_${product}
 
 if [ `dmesg | grep VAR-DART | wc -l` = 1 ] ; then
@@ -24,57 +23,63 @@ if [ ! -b ${node} ]; then
 	exit
 fi
 
-echo "Creating Android SD-card on ${node} for product ${full_product}"
+echo
+echo "Flashing Yocto for ${full_product} on eMMC (${node})"
 
 # Partition sizes in MiB
-BOOTLOAD_RESERVE=8
-BOOT_ROM_SIZE=8
-SYSTEM_ROM_SIZE=512
-CACHE_SIZE=512
-RECOVERY_ROM_SIZE=8
-VENDER_SIZE=8
-MISC_SIZE=8
 MEDIA=/opt/images/Yocto
 
-umount ${mmm}1 2>/dev/null
-umount ${mmm}2 2>/dev/null
-umount ${mmm}3 2>/dev/null
-umount ${mmm}4 2>/dev/null
-umount ${mmm}5 2>/dev/null
-umount ${mmm}6 2>/dev/null
-umount ${mmm}7 2>/dev/null
-umount ${mmm}8 2>/dev/null
-umount ${mmm}9 2>/dev/null
-
+umount ${mmm}* 2>/dev/null
 
 function format_linux
 {
+	echo
 	echo "Formating rootfs partition on eMMC"
 	mkfs.ext4 ${node}${prefix}1 -L rootfs
+	sync
 }
 
 function flash_linux
 {
+	echo
 	echo "Installing rootfs on eMMC (this takes some time)"
-	mkdir ${mmm}1
-	mount ${node}${prefix}1  ${mmm}1
+	mkdir -p ${mmm}1
+	mount ${node}${prefix}1 ${mmm}1
 	tar xvpf ${MEDIA}/rootfs.tar.bz2 -C ${mmm}1/ 2>&1 |
 	while read line; do
 		x=$((x+1))
 		echo -en "$x extracted\r"
 	done
+	echo
+	echo "Syncing"
+	sync
+	umount ${node}${prefix}1
 }
 
-# Destroy the partition table
-dd if=/dev/zero of=${node} bs=512 count=1
+echo
+echo "Deleting the current partitions"
+for ((i=0; i<10; i++))
+do
+	if [ `ls ${node}${prefix}$i 2> /dev/null | grep -c ${node}${prefix}$i` -ne 0 ]; then
+		dd if=/dev/zero of=${node}${prefix}$i bs=512 count=1024
+	fi
+done
+sync
+
+((echo d; echo 1; echo d; echo 2; echo d; echo 3; echo d; echo w) | fdisk ${node} > /dev/null) || true
+sync
+
+dd if=/dev/zero of=${node} bs=512 count=1024
 sync
 
 # Get total card size
 TOTAL_SIZE_KiB=`sfdisk -s ${node}`
-TOTAL_SIZE_BYTES=$((TOTAL_SIZE * 1024))
+TOTAL_SIZE_BYTES=$((TOTAL_SIZE_KiB * 1024))
 SECT_SIZE_BYTES=`fdisk -l ${node} 2>> /dev/null | grep 'Sector size' | cut -d " " -f 7`
-PART_SIZE=$((TOTAL_SIZE_BYTES / SECT_SIZE_BYTES))
+PART_SIZE=$(( (TOTAL_SIZE_BYTES / SECT_SIZE_BYTES) - 1 ))
 
+echo
+echo "Creating partition"
 # Create the partition table
 sfdisk --force -uS ${node} << EOF
 ,${PART_SIZE},83
@@ -91,11 +96,4 @@ else
 fi
 
 format_linux
-sync
 flash_linux
-
-echo "Syncing"
-sync
-umount ${mmm}1
-echo "Done"
-exit 0
