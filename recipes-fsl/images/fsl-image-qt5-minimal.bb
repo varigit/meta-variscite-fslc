@@ -22,6 +22,7 @@ IMAGE_FSTYPES = "tar.bz2 ext3 sdcard ubi"
 
 QT5_IMAGE_INSTALL = ""
 QT5_IMAGE_INSTALL_common = " \
+    packagegroup-qt5-toolchain-target \
     ${X11_IMAGE_INSTALL} \
     ${WLD_IMAGE_INSTALL} \
     ${@base_contains('DISTRO_FEATURES', 'x11','${MACHINE_QT5_MULTIMEDIA_PLAYER}', '', d)} \
