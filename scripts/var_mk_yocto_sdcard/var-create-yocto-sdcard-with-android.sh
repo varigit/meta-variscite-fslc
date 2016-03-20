@@ -7,6 +7,7 @@ YOCTO_BUILD=build_x11
 ANDROID_500_ROOT=~/var_ll_500_100/ll_500_100_build
 ANDROID_IMGS_PATH=out/target/product/var_mx6
 ANDROID_SCRIPTS_PATH=./variscite_scripts_android
+ANDROID_UBOOT_PATH=~/u-boot_android_imgs
 
 TEMP_DIR=./var_tmp
 P1_MOUNT_DIR=${TEMP_DIR}/BOOT-VAR-SOM
@@ -45,13 +46,13 @@ function copy_android
 	mkdir -p ${P2_MOUNT_DIR}/opt/images/Android/Emmc
 
 	echo "Copying Android to /opt/images/"
-	cp ${ANDROID_500_ROOT}/${ANDROID_IMGS_PATH}/boot*.img			${P2_MOUNT_DIR}/opt/images/Android/Emmc/
-	cp ${ANDROID_500_ROOT}/${ANDROID_IMGS_PATH}/recovery*.img		${P2_MOUNT_DIR}/opt/images/Android/Emmc/
-	pv ${ANDROID_500_ROOT}/${ANDROID_IMGS_PATH}/system.img >		${P2_MOUNT_DIR}/opt/images/Android/Emmc/system.img
-	cp ${ANDROID_500_ROOT}/${ANDROID_IMGS_PATH}/u-boot-var-imx6-nand.img	${P2_MOUNT_DIR}/opt/images/Android/Emmc/
-	cp ${ANDROID_500_ROOT}/${ANDROID_IMGS_PATH}/u-boot-var-imx6-sd.img	${P2_MOUNT_DIR}/opt/images/Android/Emmc/
-	cp ${P2_MOUNT_DIR}/opt/images/Yocto/SPL					${P2_MOUNT_DIR}/opt/images/Android/Emmc/
-	cp ${P2_MOUNT_DIR}/opt/images/Yocto/SPL.mmc				${P2_MOUNT_DIR}/opt/images/Android/Emmc/
+	cp ${ANDROID_500_ROOT}/${ANDROID_IMGS_PATH}/boot*.img		${P2_MOUNT_DIR}/opt/images/Android/Emmc/
+	cp ${ANDROID_500_ROOT}/${ANDROID_IMGS_PATH}/recovery*.img	${P2_MOUNT_DIR}/opt/images/Android/Emmc/
+	pv ${ANDROID_500_ROOT}/${ANDROID_IMGS_PATH}/system.img >	${P2_MOUNT_DIR}/opt/images/Android/Emmc/system.img
+	cp ${ANDROID_UBOOT_PATH}/u-boot-var-imx6-nand.img		${P2_MOUNT_DIR}/opt/images/Android/Emmc/
+	cp ${ANDROID_UBOOT_PATH}/u-boot-var-imx6-mmc.img		${P2_MOUNT_DIR}/opt/images/Android/Emmc/
+	cp ${ANDROID_UBOOT_PATH}/SPL-nand				${P2_MOUNT_DIR}/opt/images/Android/Emmc/
+	cp ${ANDROID_UBOOT_PATH}/SPL-mmc				${P2_MOUNT_DIR}/opt/images/Android/Emmc/
 }
 
 function copy_android_scripts

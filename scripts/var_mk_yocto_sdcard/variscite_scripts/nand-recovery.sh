@@ -251,7 +251,7 @@ if [ "$FLASH" != "Emmc" ] ; then
 		install_rootfs
 	else
 	   echo "=========================================="
-	   echo " Android nand not supported               "
+	   echo " Android NAND not supported               "
 	   echo "=========================================="
 	fi
 else
@@ -261,7 +261,7 @@ else
 		install_kernel
 		. /sbin/mkmmc_yocto.sh
 		echo "Setting rootfs location to emmc in u-boot enviroment"
-		fw_setenv chosen_rootfs emmc
+		fw_setenv chosen_rootfs emmc  2> /dev/null
 		echo "Done"
 
 	else

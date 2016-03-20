@@ -10,15 +10,15 @@ SPARE_SIZE=0
 
 
 if [ `dmesg | grep VAR-DART | wc -l` = 1 ] ; then
-	echo "Variscite Flash DART-MX6 eMMC utility version 01"
-	echo "================================================"
+	echo "      Variscite Flash DART-MX6 eMMC utility      "
+	echo "================================================="
 else
 	echo "================================================="
 	echo " yocto-dart.sh is compatible with DART-MX6 only. "
 	echo " Please use nand-recovery or:                    "
 	echo " android_emmc.sh, yocto_emmc.sh, yocto_nand.sh   "
 	echo "================================================="
-	read -p "Press any key to continue... " -n1 -s
+	read -p "Press any key to continue... " -n1
 	exit 1
 fi
 
@@ -115,7 +115,7 @@ do
 done
 sync
 
-((echo d; echo 1; echo d; echo 2; echo d; echo 3; echo d; echo w) | fdisk ${node} > /dev/null) || true
+((echo d; echo 1; echo d; echo 2; echo d; echo 3; echo d; echo w) | fdisk ${node} &> /dev/null) || true
 sync
 
 dd if=/dev/zero of=${node} bs=1024 count=4096

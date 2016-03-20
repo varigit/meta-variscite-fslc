@@ -180,7 +180,7 @@ do
 done
 sync
 
-((echo d; echo 1; echo d; echo 2; echo d; echo 3; echo d; echo w) | fdisk ${node} > /dev/null) || true
+((echo d; echo 1; echo d; echo 2; echo d; echo 3; echo d; echo w) | fdisk ${node} &> /dev/null) || true
 sync
 
 dd if=/dev/zero of=${node} bs=512 count=1024
@@ -202,6 +202,8 @@ sfdisk --force -uS ${node} << EOF
 ${PART1_START},${PART1_SIZE},c
 ${PART2_START},${PART2_SIZE},83
 EOF
+
+echo
 
 # Format the partitions
 format_yocto

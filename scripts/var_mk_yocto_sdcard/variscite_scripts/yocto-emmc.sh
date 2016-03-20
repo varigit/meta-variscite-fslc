@@ -1,6 +1,6 @@
 #!/bin/sh -e
 #
-# variscite Yocto flash 
+# Variscite Yocto flash
 #
 echo "Yocto eMMC flash"
 /bin/sh /sbin/nand-recovery.sh -o Yocto -m Emmc
