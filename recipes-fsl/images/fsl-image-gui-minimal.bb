@@ -78,6 +78,9 @@ IMAGE_INSTALL += " \
     packagegroup-fsl-tools-bluetooth \
     packagegroup-fsl-tools-gpu \
     packagegroup-fsl-tools-gpu-external \
+    can-utils \
+    libsocketcan \
+    iproute2 \
     "
 export IMAGE_BASENAME = "fsl-image-gui"
 
