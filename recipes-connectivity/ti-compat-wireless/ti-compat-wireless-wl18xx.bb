@@ -26,7 +26,7 @@ SRC_URI = "git://git.ti.com/wilink8-wlan/wl18xx.git;branch=${BRANCH_wl18xx};dest
            git://git.ti.com/wilink8-wlan/backports.git;branch=${BRANCH_backports};destsuffix=backports;name=backports \
 "
 
-export KLIB_BUILD="${STAGING_KERNEL_DIR}"
+export KLIB_BUILD="${STAGING_KERNEL_BUILDDIR}"
 export KLIB="${D}"
 
 do_configure() {
