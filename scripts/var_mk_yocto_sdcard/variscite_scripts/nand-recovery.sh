@@ -66,7 +66,6 @@ install_rootfs()
 	fi
 	echo
 	echo "Installing UBI rootfs"
-	flash_erase /dev/mtd3 0 0 3>/dev/null
 	ubiformat /dev/mtd3 -f $MEDIA/$OS/$ROOTFS_IMAGE -s $UBI_SUB_PAGE_SIZE -O $UBI_VID_HDR_OFFSET
 }
 
@@ -114,7 +113,6 @@ install_android_system()
 	fi
 	echo
 	echo "Installing Android system.img"
-	flash_erase /dev/mtd6 0 0 2>/dev/null
 	ubiformat /dev/mtd6 -f $MEDIA/$OS/$ANDROID_SYSTEM -s $UBI_SUB_PAGE_SIZE -O $UBI_VID_HDR_OFFSET
 }
                                                                           
