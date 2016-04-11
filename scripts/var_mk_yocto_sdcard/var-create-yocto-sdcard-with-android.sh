@@ -2,19 +2,16 @@
 set -e
 
 YOCTO_ROOT=~/var-som-mx6-yocto-fido
-YOCTO_BUILD=build_x11
 
-ANDROID_500_ROOT=~/var_ll_511_210/ll_511_210_build
-ANDROID_IMGS_PATH=out/target/product/var_mx6
-ANDROID_SCRIPTS_PATH=./variscite_scripts_android
+ANDROID_BUILD_ROOT=~/var_ll_511_210/ll_511_210_build
+ANDROID_IMGS_PATH=${ANDROID_BUILD_ROOT}/out/target/product/var_mx6
+ANDROID_SCRIPTS_PATH=${YOCTO_ROOT}/sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts_android
 
 TEMP_DIR=./var_tmp
 P1_MOUNT_DIR=${TEMP_DIR}/BOOT-VAR-SOM
 P2_MOUNT_DIR=${TEMP_DIR}/rootfs
 
-cd ${YOCTO_ROOT}/${YOCTO_BUILD}
-../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/var-create-yocto-sdcard.sh "$@"
-cd -
+${YOCTO_ROOT}/sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/var-create-yocto-sdcard.sh "$@"
 
 # Parse command line only to get ${node} and ${part}
 moreoptions=1
@@ -45,11 +42,11 @@ function copy_android
 	mkdir -p ${P2_MOUNT_DIR}/opt/images/Android/Emmc
 
 	echo "Copying Android to /opt/images/"
-	cp ${ANDROID_500_ROOT}/${ANDROID_IMGS_PATH}/boot*.img		${P2_MOUNT_DIR}/opt/images/Android/Emmc/
-	cp ${ANDROID_500_ROOT}/${ANDROID_IMGS_PATH}/recovery*.img	${P2_MOUNT_DIR}/opt/images/Android/Emmc/
-	pv ${ANDROID_500_ROOT}/${ANDROID_IMGS_PATH}/system.img >	${P2_MOUNT_DIR}/opt/images/Android/Emmc/system.img
-	cp ${ANDROID_500_ROOT}/${ANDROID_IMGS_PATH}/u-boot-var-imx6-nand.img	${P2_MOUNT_DIR}/opt/images/Android/Emmc/
-	cp ${ANDROID_500_ROOT}/${ANDROID_IMGS_PATH}/u-boot-var-imx6-sd.img	${P2_MOUNT_DIR}/opt/images/Android/Emmc/u-boot-var-imx6-mmc.img
+	cp ${ANDROID_IMGS_PATH}/boot*.img			${P2_MOUNT_DIR}/opt/images/Android/Emmc/
+	cp ${ANDROID_IMGS_PATH}/recovery*.img			${P2_MOUNT_DIR}/opt/images/Android/Emmc/
+	pv ${ANDROID_IMGS_PATH}/system.img >			${P2_MOUNT_DIR}/opt/images/Android/Emmc/system.img
+	cp ${ANDROID_IMGS_PATH}/u-boot-var-imx6-nand.img	${P2_MOUNT_DIR}/opt/images/Android/Emmc/
+	cp ${ANDROID_IMGS_PATH}/u-boot-var-imx6-sd.img		${P2_MOUNT_DIR}/opt/images/Android/Emmc/u-boot-var-imx6-mmc.img
 }
 
 function copy_android_scripts

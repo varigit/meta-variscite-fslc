@@ -5,10 +5,14 @@ This utility is provided on an "AS IS" basis.
 It is a part of a larger script we use to create our NAND-Recovery SD-card, which also includes Android.
 It is a good example for using the output of the Yocto build to create a bootable sdcard, and use it to flash the target flash/eMMC.
 
+Note:
+You need to bitbake both fsl-image-qt5-minimal (used for the Yocto-NAND installation)
+and fsl-image-qt5 (used for the Yocto-eMMC installation and for the rootfs of the SD card itself),
+before running this script.
+
 
 Usage: 
-cd ~/var-som-mx6-yocto-fido/build_x11
-sudo ../sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/var-create-yocto-sdcard.sh <options> /dev/sdX
+sudo ./var-create-yocto-sdcard.sh <options> /dev/sdX
 (Change /dev/sdX to your device name)
 
 options:
