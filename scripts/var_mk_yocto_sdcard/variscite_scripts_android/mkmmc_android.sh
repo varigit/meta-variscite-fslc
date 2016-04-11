@@ -114,14 +114,14 @@ function install_bootloader
 
 	if [ `dmesg | grep VAR-DART | wc -l` = 1 ] ; then
 		echo "Flashing SPL to eMMC"
-		dd if=SPL-mmc of=/dev/mmcblk2 bs=1k seek=1;sync
+		dd if=/opt/images/Yocto/SPL.mmc of=/dev/mmcblk2 bs=1k seek=1;sync
 
 		echo "Flashing U-Boot to eMMC"
 		dd if=u-boot-var-imx6-mmc.img of=/dev/mmcblk2 bs=1k seek=69;sync
 	else
 		echo "Flashing SPL to NAND "
 		flash_erase /dev/mtd0 0 0 2>/dev/null
-		kobs-ng init -x SPL-nand --search_exponent=1 -v > /dev/null
+		kobs-ng init -x /opt/images/Yocto/SPL --search_exponent=1 -v > /dev/null
 
 		echo "Flashing U-Boot to NAND"
 		flash_erase /dev/mtd1 0 0  2>/dev/null
