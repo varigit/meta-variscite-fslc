@@ -24,10 +24,17 @@ S = "${WORKDIR}/compat-wireless"
 
 SRC_URI = "git://git.ti.com/wilink8-wlan/wl18xx.git;branch=${BRANCH_wl18xx};destsuffix=wl18xx;name=wl18xx \
            git://git.ti.com/wilink8-wlan/backports.git;branch=${BRANCH_backports};destsuffix=backports;name=backports \
+           file://0001-header_add_possible_write_read_pnet_on_kernel_4.1.patch \
 "
 
 export KLIB_BUILD="${STAGING_KERNEL_BUILDDIR}"
 export KLIB="${D}"
+
+do_patch() {
+    # we have 2 repos, but there's no way to specify where apply the patch
+    cd "${WORKDIR}/backports"
+    patch -p1 < ../0001-header_add_possible_write_read_pnet_on_kernel_4.1.patch
+}
 
 do_configure() {
     cd "${WORKDIR}/backports"
