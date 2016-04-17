@@ -191,7 +191,8 @@ dd if=/dev/zero of=${node} bs=512 count=1024
 sync
 
 # Create partitions
-SECT_SIZE_BYTES=`fdisk -l ${node} 2>> /dev/null | grep 'Sector size' | cut -d " " -f 7`
+BLOCK=`echo ${node} | cut -d "/" -f 3`
+SECT_SIZE_BYTES=`cat /sys/block/${BLOCK}/queue/physical_block_size`
 
 BOOTLOAD_RESERVE_SIZE_BYTES=$((BOOTLOAD_RESERVE_SIZE * 1024 * 1024))
 BOOT_ROM_SIZE_BYTES=$((BOOT_ROM_SIZE * 1024 * 1024))

@@ -75,7 +75,8 @@ sync
 # Get total card size
 TOTAL_SIZE_KiB=`sfdisk -s ${node}`
 TOTAL_SIZE_BYTES=$((TOTAL_SIZE_KiB * 1024))
-SECT_SIZE_BYTES=`fdisk -l ${node} 2>> /dev/null | grep 'Sector size' | cut -d " " -f 7`
+BLOCK=`echo ${node} | cut -d "/" -f 3`
+SECT_SIZE_BYTES=`cat /sys/block/${BLOCK}/queue/physical_block_size`
 PART_SIZE=$(( (TOTAL_SIZE_BYTES / SECT_SIZE_BYTES) - 1 ))
 
 echo
