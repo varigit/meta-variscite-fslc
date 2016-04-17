@@ -70,6 +70,9 @@ IMAGE_INSTALL += " \
     packagegroup-fsl-tools-gpu-external \
     packagegroup-fsl-tools-testapps \
     packagegroup-fsl-tools-benchmark \
+    util-linux-sfdisk \
+    u-boot-splash \
+    u-boot-fw-utils \
     "
 export IMAGE_BASENAME = "fsl-image-gui"
 
