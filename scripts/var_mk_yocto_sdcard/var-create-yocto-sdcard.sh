@@ -127,7 +127,7 @@ function flash_yocto
 	sync
 
 	echo "Flashing Yocto Root File System"    
-	pv ${YOCTO_IMGS_PATH}/fsl-image-qt5-var-som-mx6.tar.bz2 | tar -xj -C ${P2_MOUNT_DIR}/
+	pv ${YOCTO_IMGS_PATH}/fsl-image-gui-var-som-mx6.tar.bz2 | tar -xj -C ${P2_MOUNT_DIR}/
 }
 
 function copy_yocto
@@ -136,8 +136,8 @@ function copy_yocto
 
 	echo "Copying Yocto Fido V10.1 to /opt/images/"
 	cp ${YOCTO_IMGS_PATH}/uImage 					${P2_MOUNT_DIR}/opt/images/Yocto
-	pv ${YOCTO_IMGS_PATH}/fsl-image-qt5-var-som-mx6.tar.bz2 >	${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.tar.bz2
-	pv ${YOCTO_IMGS_PATH}/fsl-image-qt5-minimal-var-som-mx6.ubi >	${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.ubi.img
+	pv ${YOCTO_IMGS_PATH}/fsl-image-gui-var-som-mx6.tar.bz2 >	${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.tar.bz2
+#	pv ${YOCTO_IMGS_PATH}/fsl-image-qt5-minimal-var-som-mx6.ubi >	${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.ubi.img
 
 	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-solo.dtb 		${P2_MOUNT_DIR}/opt/images/Yocto/
 	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-solo-vsc.dtb 	${P2_MOUNT_DIR}/opt/images/Yocto/
