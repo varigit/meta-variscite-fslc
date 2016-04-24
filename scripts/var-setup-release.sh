@@ -186,6 +186,8 @@ echo "BBLAYERS += \" \${BSPDIR}/sources/meta-openembedded/meta-networking \"" >>
 echo "BBLAYERS += \" \${BSPDIR}/sources/meta-openembedded/meta-python \"" >> $BUILD_DIR/conf/bblayers.conf
 echo "BBLAYERS += \" \${BSPDIR}/sources/meta-openembedded/meta-ruby \"" >> $BUILD_DIR/conf/bblayers.conf
 echo "BBLAYERS += \" \${BSPDIR}/sources/meta-openembedded/meta-filesystems \"" >> $BUILD_DIR/conf/bblayers.conf
+echo "EXTRA_IMAGE_FEATURES = \" debug-tweaks tools-debug eclipse-debug\"" >> $BUILD_DIR/conf/local.conf
+echo "IMAGE_INSTALL_append = \" tcf-agent openssh-sftp-server \"" >> $BUILD_DIR/conf/local.conf
 
 echo "BBLAYERS += \" \${BSPDIR}/sources/meta-qt5 \"" >> $BUILD_DIR/conf/bblayers.conf
 echo "BBLAYERS += \" \${BSPDIR}/sources/meta-variscite-mx6 \"" >> $BUILD_DIR/conf/bblayers.conf
