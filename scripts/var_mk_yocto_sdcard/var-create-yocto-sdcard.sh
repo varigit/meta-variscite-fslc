@@ -134,7 +134,7 @@ function copy_yocto
 {
 	mkdir -p ${P2_MOUNT_DIR}/opt/images/Yocto
 
-	echo "Copying Yocto Fido V10.1 to /opt/images/"
+	echo "Copying Yocto to /opt/images/"
 	cp ${YOCTO_IMGS_PATH}/uImage 					${P2_MOUNT_DIR}/opt/images/Yocto
 	pv ${YOCTO_IMGS_PATH}/fsl-image-gui-var-som-mx6.tar.bz2 >	${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.tar.bz2
 	pv ${YOCTO_IMGS_PATH}/fsl-image-gui-var-som-mx6.ubi >	${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.ubi.img

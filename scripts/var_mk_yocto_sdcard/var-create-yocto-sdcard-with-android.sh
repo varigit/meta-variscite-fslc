@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-YOCTO_ROOT=~/var-som-mx6-yocto-fido
+YOCTO_ROOT=~/var-som-mx6-yocto-jethro
 
 ANDROID_BUILD_ROOT=~/var_ll_511_210/ll_511_210_build
 ANDROID_IMGS_PATH=${ANDROID_BUILD_ROOT}/out/target/product/var_mx6

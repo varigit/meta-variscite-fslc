@@ -1,5 +1,5 @@
 #!/bin/sh
-# NAND recovery version 50. Support Yocto V10.1 Fido and above and Android Lollipop V3
+# NAND recovery version 50.
 
 MEDIA=/opt/images
 OS=Yocto
