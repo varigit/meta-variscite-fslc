@@ -39,10 +39,7 @@ do_install_class-cross () {
 	ln -s ${bindir_cross}/fw_printenv ${D}${bindir_cross}/fw_setenv
 }
 
-SYSROOT_PREPROCESS_FUNCS_class-cross = "uboot_fw_utils_cross"
-uboot_fw_utils_cross() {
-	sysroot_stage_dir ${D}${bindir_cross} ${SYSROOT_DESTDIR}${bindir_cross}
-}
+SYSROOT_DIRS_append_class-cross = " ${bindir_cross}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 BBCLASSEXTEND = "cross"
