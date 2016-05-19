@@ -21,7 +21,7 @@ P1_MOUNT_DIR=${TEMP_DIR}/BOOT-VAR-SOM
 P2_MOUNT_DIR=${TEMP_DIR}/rootfs
 
 echo "================================================"
-echo "= Variscite build recovery SD-card V50 utility ="
+echo "= Variscite build recovery SD-card V60 utility ="
 echo "================================================"
 
 help() {
@@ -117,13 +117,17 @@ function flash_u-boot
 function flash_yocto
 {
 	echo "Flashing Yocto Boot partition"    
-	cp ${YOCTO_IMGS_PATH}/uImage-imx6q-var-som.dtb 			${P1_MOUNT_DIR}/imx6q-var-som.dtb
-	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som.dtb 		${P1_MOUNT_DIR}/imx6dl-var-som.dtb
-	cp ${YOCTO_IMGS_PATH}/uImage-imx6q-var-som-vsc.dtb 		${P1_MOUNT_DIR}/imx6q-var-som-vsc.dtb
-	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-solo.dtb 		${P1_MOUNT_DIR}/imx6dl-var-som-solo.dtb
-	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-solo-vsc.dtb 	${P1_MOUNT_DIR}/imx6dl-var-som-solo-vsc.dtb
-	cp ${YOCTO_IMGS_PATH}/uImage-imx6q-var-dart.dtb 		${P1_MOUNT_DIR}/imx6q-var-dart.dtb
-	cp ${YOCTO_IMGS_PATH}/uImage 					${P1_MOUNT_DIR}/uImage
+	cp ${YOCTO_IMGS_PATH}/uImage					${P1_MOUNT_DIR}/uImage
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-cap.dtb		${P1_MOUNT_DIR}/imx6dl-var-som-cap.dtb
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-res.dtb		${P1_MOUNT_DIR}/imx6dl-var-som-res.dtb
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-solo-cap.dtb	${P1_MOUNT_DIR}/imx6dl-var-som-solo-cap.dtb
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-solo-res.dtb	${P1_MOUNT_DIR}/imx6dl-var-som-solo-res.dtb
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-solo-vsc.dtb	${P1_MOUNT_DIR}/imx6dl-var-som-solo-vsc.dtb
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-vsc.dtb		${P1_MOUNT_DIR}/imx6dl-var-som-vsc.dtb
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6q-var-dart.dtb			${P1_MOUNT_DIR}/imx6q-var-dart.dtb
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6q-var-som-cap.dtb		${P1_MOUNT_DIR}/imx6q-var-som-cap.dtb
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6q-var-som-res.dtb		${P1_MOUNT_DIR}/imx6q-var-som-res.dtb
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6q-var-som-vsc.dtb		${P1_MOUNT_DIR}/imx6q-var-som-vsc.dtb
 	sync
 
 	echo "Flashing Yocto Root File System"    
@@ -134,20 +138,25 @@ function copy_yocto
 {
 	mkdir -p ${P2_MOUNT_DIR}/opt/images/Yocto
 
-	echo "Copying Yocto to /opt/images/"
-	cp ${YOCTO_IMGS_PATH}/uImage 					${P2_MOUNT_DIR}/opt/images/Yocto
+	echo "Copying Yocto to /opt/images/Yocto"
+	cp ${YOCTO_IMGS_PATH}/uImage					${P2_MOUNT_DIR}/opt/images/Yocto
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-cap.dtb		${P2_MOUNT_DIR}/opt/images/Yocto/
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-res.dtb	 	${P2_MOUNT_DIR}/opt/images/Yocto/
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-solo-cap.dtb	${P2_MOUNT_DIR}/opt/images/Yocto/
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-solo-res.dtb	${P2_MOUNT_DIR}/opt/images/Yocto/
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-solo-vsc.dtb	${P2_MOUNT_DIR}/opt/images/Yocto/
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-vsc.dtb		${P2_MOUNT_DIR}/opt/images/Yocto/
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6q-var-dart.dtb			${P2_MOUNT_DIR}/opt/images/Yocto/
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6q-var-som-cap.dtb		${P2_MOUNT_DIR}/opt/images/Yocto/
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6q-var-som-res.dtb		${P2_MOUNT_DIR}/opt/images/Yocto/
+	cp ${YOCTO_IMGS_PATH}/uImage-imx6q-var-som-vsc.dtb		${P2_MOUNT_DIR}/opt/images/Yocto/
 	pv ${YOCTO_IMGS_PATH}/fsl-image-gui-var-som-mx6.tar.bz2 >	${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.tar.bz2
-	pv ${YOCTO_IMGS_PATH}/fsl-image-gui-var-som-mx6.ubi >	${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.ubi.img
+	pv ${YOCTO_IMGS_PATH}/fsl-image-gui-var-som-mx6.ubi >		${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.ubi.img
 
-	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-solo.dtb 		${P2_MOUNT_DIR}/opt/images/Yocto/
-	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-solo-vsc.dtb 	${P2_MOUNT_DIR}/opt/images/Yocto/
-	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som.dtb 		${P2_MOUNT_DIR}/opt/images/Yocto/
-	cp ${YOCTO_IMGS_PATH}/uImage-imx6q-var-som.dtb 			${P2_MOUNT_DIR}/opt/images/Yocto/
-	cp ${YOCTO_IMGS_PATH}/uImage-imx6q-var-som-vsc.dtb 		${P2_MOUNT_DIR}/opt/images/Yocto/
-	cp ${YOCTO_IMGS_PATH}/uImage-imx6q-var-dart.dtb 		${P2_MOUNT_DIR}/opt/images/Yocto/
 	echo "Copying NAND U-Boot to /opt/images/Yocto"
 	cp ${YOCTO_IMGS_PATH}/SPL-nand					${P2_MOUNT_DIR}/opt/images/Yocto/SPL
 	cp ${YOCTO_IMGS_PATH}/u-boot-nand-2015.04-r0.img		${P2_MOUNT_DIR}/opt/images/Yocto/u-boot.img
+
 	echo "Copying MMC U-Boot to /opt/images/Yocto"
 	cp ${YOCTO_IMGS_PATH}/SPL-sd					${P2_MOUNT_DIR}/opt/images/Yocto/SPL.mmc
 	cp ${YOCTO_IMGS_PATH}/u-boot-sd-2015.04-r0.img			${P2_MOUNT_DIR}/opt/images/Yocto/u-boot.img.mmc
@@ -160,7 +169,6 @@ function copy_scripts
 	cp ${YOCTO_SCRIPTS_PATH}/yocto-nand.sh 		${P2_MOUNT_DIR}/sbin/
 	cp ${YOCTO_SCRIPTS_PATH}/yocto-emmc.sh 		${P2_MOUNT_DIR}/sbin/
 	cp ${YOCTO_SCRIPTS_PATH}/yocto-dart.sh 		${P2_MOUNT_DIR}/sbin/
-
 	cp ${YOCTO_SCRIPTS_PATH}/mkmmc_yocto.sh 	${P2_MOUNT_DIR}/sbin/
 
 	echo "Copying desktop icons"
@@ -187,7 +195,7 @@ sync
 ((echo d; echo 1; echo d; echo 2; echo d; echo 3; echo d; echo w) | fdisk ${node} &> /dev/null) || true
 sync
 
-dd if=/dev/zero of=${node} bs=512 count=1024
+dd if=/dev/zero of=${node} bs=1M count=4
 sync
 
 # Create partitions
