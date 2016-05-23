@@ -1,10 +1,9 @@
 [Desktop Entry]
 Type=Application
-Name=Yocto-NAND
-Comment=Yocto Jethro
-Exec=terminalyn
+Name=Android L5.1.1
+Comment=SOLOCustomBoard
+Exec=/usr/bin/terminal /usr/bin/install_android.sh -b scb
 Icon=media-flash
 Terminal=false
 Categories=GTK;Utility;
 StartupNotify=true
-Name[en_US]=yocto_nand.desktop

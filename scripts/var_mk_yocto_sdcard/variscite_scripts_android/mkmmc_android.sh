@@ -13,18 +13,15 @@ DATAFOOTER_SIZE=2
 
 help() {
 
-bn=`basename $0`
-cat << EOF
-usage $bn <option> device_node
-
-options:
-  -h				displays this help message
-  -s				only get partition size
-  -np 				not partition.
-  -f soc_name			flash android image.
-  -u soc_name			format partition and flash u-boot (prepare for FASTBOOT).
-EOF
-
+	bn=`basename $0`
+	echo " usage $bn <option> device_node"
+	echo
+	echo " options:"
+	echo " -h			displays this help message"
+	echo " -s			only get partition size"
+	echo " -np 			not partition."
+	echo " -f soc_name		flash android image."
+	echo " -u soc_name		format partition and flash u-boot (prepare for FASTBOOT)."
 }
 
 # Parse command line
@@ -52,11 +49,13 @@ while [ "$moreoptions" = 1 -a $# -gt 0 ]; do
 done
 
 if [ `dmesg | grep VAR-DART | wc -l` = 1 ] ; then
-	node=/dev/mmcblk2
-	mmm=/run/media/mmcblk2p
+	block=mmcblk2
+	node=/dev/$block
+	mmm=/run/media/${block}p
 else
-	node=/dev/mmcblk1
-	mmm=/run/media/mmcblk1p
+	block=mmcblk0
+	node=/dev/$block
+	mmm=/run/media/${block}p
 fi
 
 part=""
@@ -70,13 +69,13 @@ umount ${mmm}* 2>/dev/null
 
 for ((i=0; i<=10; i++))
 do
-	if [ `ls ${node}${part}$i 2> /dev/null | grep -c ${node}${part}$i` -ne 0 ]; then
+	if [[ -e ${node}${part}${i} ]] ; then
 		dd if=/dev/zero of=${node}${part}$i bs=512 count=1024
 	fi
 done
 sync
 
-((echo d; echo 1; echo d; echo 2; echo d; echo 3; echo d; echo w) | fdisk ${node} &> /dev/null) || true
+((echo d; echo 1; echo d; echo 2; echo d; echo 3; echo d; echo w) | fdisk ${node} &> /dev/null)
 sync
 
 dd if=/dev/zero of=${node} bs=512 count=1024
@@ -87,7 +86,7 @@ sync
 seprate=40
 total_size=`sfdisk -s ${node}`
 total_size=`expr ${total_size} / 1024`
-echo "TOTAl SIZE ${total_size}MiB"
+echo "TOTAL SIZE ${total_size}MiB"
 boot_rom_sizeb=`expr ${BOOT_ROM_SIZE} + ${BOOTLOAD_RESERVE}`
 extend_size=`expr ${SYSTEM_ROM_SIZE} + ${CACHE_SIZE} + ${DEVICE_SIZE} + ${MISC_SIZE} + ${DATAFOOTER_SIZE} + ${seprate}`
 data_size=`expr ${total_size} - ${boot_rom_sizeb} - ${RECOVERY_ROM_SIZE} - ${extend_size} + ${seprate}`
@@ -114,14 +113,14 @@ function install_bootloader
 
 	if [ `dmesg | grep VAR-DART | wc -l` = 1 ] ; then
 		echo "Flashing SPL to eMMC"
-		dd if=/opt/images/Yocto/SPL.mmc of=/dev/mmcblk2 bs=1k seek=1;sync
+		dd if=SPL-mmc of=$node bs=1k seek=1;sync
 
 		echo "Flashing U-Boot to eMMC"
-		dd if=u-boot-var-imx6-mmc.img of=/dev/mmcblk2 bs=1k seek=69;sync
+		dd if=u-boot-var-imx6-mmc.img of=$node bs=1k seek=69;sync
 	else
 		echo "Flashing SPL to NAND "
 		flash_erase /dev/mtd0 0 0 2>/dev/null
-		kobs-ng init -x /opt/images/Yocto/SPL --search_exponent=1 -v > /dev/null
+		kobs-ng init -x SPL-nand --search_exponent=1 -v > /dev/null
 
 		echo "Flashing U-Boot to NAND"
 		flash_erase /dev/mtd1 0 0  2>/dev/null
@@ -162,57 +161,52 @@ function flash_android
 	sync
 }
 
+SECT_SIZE_BYTES=`cat /sys/block/${block}/queue/hw_sector_size`
+boot_rom_sizeb_sect=`expr $boot_rom_sizeb \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
+RECOVERY_ROM_SIZE_sect=`expr $RECOVERY_ROM_SIZE \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
+extend_size_sect=`expr $extend_size \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
+data_size_sect=`expr $data_size \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
+SYSTEM_ROM_SIZE_sect=`expr $SYSTEM_ROM_SIZE \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
+CACHE_SIZE_sect=`expr $CACHE_SIZE \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
+DEVICE_SIZE_sect=`expr $DEVICE_SIZE \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
+MISC_SIZE_sect=`expr $MISC_SIZE \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
+DATAFOOTER_SIZE_sect=`expr $DATAFOOTER_SIZE \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
+
 echo "Creating Android partitions"
-sfdisk --force -uM ${node} << EOF
-,${boot_rom_sizeb},83
-,${RECOVERY_ROM_SIZE},83
-,${extend_size},5
-,${data_size},83
-,${SYSTEM_ROM_SIZE},83
-,${CACHE_SIZE},83
-,${DEVICE_SIZE},83
-,${MISC_SIZE},83
-,${DATAFOOTER_SIZE},83
+sfdisk --force -uS ${node} << EOF
+,${boot_rom_sizeb_sect},83
+,${RECOVERY_ROM_SIZE_sect},83
+,${extend_size_sect},5
+,${data_size_sect},83
+,${SYSTEM_ROM_SIZE_sect},83
+,${CACHE_SIZE_sect},83
+,${DEVICE_SIZE_sect},83
+,${MISC_SIZE_sect},83
+,${DATAFOOTER_SIZE_sect},83
 EOF
 if [ "$?" = "0" ]; then
 	sync
 	sleep 4
 else
-	echo -e "\e[31msfdisk error #1! Partition is locked\e[0m"
-	echo -e "\e[31mplease reboot to unlock and try again\e[0m"
-	echo "==============================================="
-	echo " "
+	echo -e "\e[31msfdisk error!\e[0m"
+	echo "============"
 	exit 1
 fi
 
 
-if [ `dmesg |grep VAR-DART | wc -l` = 1 ] ; then
-# adjust the partition reserve for bootloader.
-# if you don't put the uboot on same device, you can remove the BOOTLOADER_ERSERVE
-# to have 8M space.
-# the minimal sylinder for some card is 4M, maybe some was 8M
-# just 8M for some big eMMC 's sylinder
-echo "Adjust DART eMMC partition table. Reserve space for bootloader"
-#sfdisk --force -uM ${node} -N1 << EOF
-#${BOOTLOAD_RESERVE},${BOOT_ROM_SIZE},83
-#EOF
-fdisk ${node} <<EOF
-d
-1
-w
-EOF
+if [[ `dmesg | grep VAR-DART | wc -l` == 1 ]] ; then
+	# adjust the partition reserve for bootloader.
+	# if you don't put the uboot on same device, you can remove the BOOTLOADER_ERSERVE
+	# to have 8M space.
+	# the minimal sylinder for some card is 4M, maybe some was 8M
+	# just 8M for some big eMMC 's sylinder
+	echo "Adjust DART eMMC partition table. Reserve space for bootloader"
 
-umount ${mmm}* 2>/dev/null
+	((echo d; echo 1; echo w) | fdisk $node)
 
-fdisk ${node} <<EOF
-n
-p
-8192
+	umount ${mmm}* 2>/dev/null
 
-w
-q
-EOF
-
+	((echo n; echo p; echo 8192; echo; echo w) | fdisk -u $node)
 fi
 
 umount ${mmm}* 2>/dev/null

@@ -1,10 +1,9 @@
 [Desktop Entry]
 Type=Application
-Name=Yocto-eMMC
-Comment=Yocto Jethro
-Exec=terminalye
+Name=Android L5.1.1
+Comment=MX6CB Res
+Exec=/usr/bin/terminal /usr/bin/install_android.sh -b mx6cb -t res
 Icon=media-flash
 Terminal=false
 Categories=GTK;Utility;
 StartupNotify=true
-Name[en_US]=yocto_emmc.desktop

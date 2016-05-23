@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Yocto Jethro
+Comment=DART (eMMC)
+Exec=/usr/bin/terminal /usr/bin/install_yocto.sh -b dart
+Icon=media-flash
+Terminal=false
+Categories=GTK;Utility;
+StartupNotify=true

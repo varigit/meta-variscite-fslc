@@ -165,15 +165,11 @@ function copy_yocto
 function copy_scripts
 {
 	echo "Copying scripts"
-	cp ${YOCTO_SCRIPTS_PATH}/nand-recovery.sh 	${P2_MOUNT_DIR}/sbin/
-	cp ${YOCTO_SCRIPTS_PATH}/yocto-nand.sh 		${P2_MOUNT_DIR}/sbin/
-	cp ${YOCTO_SCRIPTS_PATH}/yocto-emmc.sh 		${P2_MOUNT_DIR}/sbin/
-	cp ${YOCTO_SCRIPTS_PATH}/yocto-dart.sh 		${P2_MOUNT_DIR}/sbin/
-	cp ${YOCTO_SCRIPTS_PATH}/mkmmc_yocto.sh 	${P2_MOUNT_DIR}/sbin/
+	cp ${YOCTO_SCRIPTS_PATH}/*.sh		${P2_MOUNT_DIR}/usr/bin/
 
 	echo "Copying desktop icons"
-	cp ${YOCTO_SCRIPTS_PATH}/*.desktop 		${P2_MOUNT_DIR}/usr/share/applications/ 
-	cp ${YOCTO_SCRIPTS_PATH}/terminal* 		${P2_MOUNT_DIR}/usr/bin/
+	cp ${YOCTO_SCRIPTS_PATH}/*.desktop 	${P2_MOUNT_DIR}/usr/share/applications/ 
+	cp ${YOCTO_SCRIPTS_PATH}/terminal 	${P2_MOUNT_DIR}/usr/bin/
 }
 
 function ceildiv

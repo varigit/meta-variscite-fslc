@@ -1,0 +1,161 @@
+#!/bin/bash
+# Meant to be run by install_emmc.sh
+set -e
+
+. /usr/bin/echos.sh
+
+if [[ $EUID != 0 ]] ; then
+	red_bold_echo "This script must be run with super-user privileges"
+	exit 1
+fi
+
+while getopts :b: OPTION;
+do
+	case $OPTION in
+		b)
+			if [[ $OPTARG == dart ]] ; then
+				is_dart=true
+			fi
+			;;
+	esac
+done
+
+if [[ $is_dart == true ]] ; then
+	block=mmcblk2
+	bootpart=1
+	rootfspart=2
+else
+	block=mmcblk0
+	bootpart=none
+	rootfspart=1
+fi
+
+node=/dev/${block}
+part=p
+mountdir_prefix=/run/media/${block}${part}
+imagesdir=/opt/images/Yocto
+
+
+if [[ ! -b $node ]] ; then
+	red_bold_echo "ERROR: \"$node\" is not a block device"
+	exit 1
+fi
+
+if [[ $is_dart == true ]] ; then
+	if [[ ! -f $imagesdir/SPL.mmc ]] ; then
+		red_bold_echo "ERROR: SPL.mmc does not exist"
+		exit 1
+	fi
+	if [[ ! -f $imagesdir/u-boot.img.mmc ]] ; then
+		red_bold_echo "ERROR: u-boot.img.mmc does not exist"
+		exit 1
+	fi
+fi
+
+function delete_device
+{
+	echo
+	blue_underlined_bold_echo "Deleting current partitions"
+	for ((i=0; i<10; i++))
+	do
+		if [[ -e ${node}${part}${i} ]] ; then
+			dd if=/dev/zero of=${node}${part}${i} bs=512 count=1024 || true
+		fi
+	done
+	sync
+
+	((echo d; echo 1; echo d; echo 2; echo d; echo 3; echo d; echo w) | fdisk $node &> /dev/null) || true
+	sync
+
+	dd if=/dev/zero of=$node bs=1M count=4
+	sync
+}
+
+function create_parts
+{
+	echo
+	blue_underlined_bold_echo "Creating new partitions"
+	if [[ $is_dart == true ]] ; then
+		SECT_SIZE_BYTES=`cat /sys/block/${block}/queue/hw_sector_size`
+		PART1_FIRST_SECT=`expr 4 \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
+		PART2_FIRST_SECT=`expr $((4 + 8)) \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
+		PART1_LAST_SECT=`expr $PART2_FIRST_SECT - 1`
+
+		(echo n; echo p; echo $bootpart; echo $PART1_FIRST_SECT; echo $PART1_LAST_SECT; echo t; echo c; \
+		 echo n; echo p; echo $rootfspart; echo $PART2_FIRST_SECT; echo; \
+		 echo p; echo w) | fdisk -u $node > /dev/null
+	else
+		(echo n; echo p; echo $rootfspart; echo; echo; echo p; echo w) | fdisk -u $node > /dev/null
+	fi
+	fdisk -ul $node
+	sync
+	sleep 4
+}
+
+function format_boot_part
+{
+	echo
+	blue_underlined_bold_echo "Formatting BOOT partition"
+	mkfs.vfat ${node}${part}${bootpart} -n BOOT-VARSOM
+	sync
+}
+
+function format_rootfs_part
+{
+	echo
+	blue_underlined_bold_echo "Formatting rootfs partition"
+	mkfs.ext4 ${node}${part}${rootfspart} -L rootfs
+	sync
+}
+
+function install_bootloader
+{
+	echo
+	blue_underlined_bold_echo "Installing booloader"
+	sudo dd if=${imagesdir}/SPL.mmc of=${node} bs=1K seek=1; sync
+	sudo dd if=${imagesdir}/u-boot.img.mmc of=${node} bs=1K seek=69; sync
+}
+
+function install_kernel
+{
+	echo
+	blue_underlined_bold_echo "Installing kernel to BOOT partition"
+	mkdir -p ${mountdir_prefix}${bootpart}
+	mount -t vfat ${node}${part}${bootpart}		${mountdir_prefix}${bootpart}
+	cp -v ${imagesdir}/uImage-imx6q-var-dart.dtb	${mountdir_prefix}${bootpart}/imx6q-var-dart.dtb
+	cp -v ${imagesdir}/uImage			${mountdir_prefix}${bootpart}/uImage
+	sync
+}
+
+function install_rootfs
+{
+	echo
+	blue_underlined_bold_echo "Installing rootfs"
+	mkdir -p ${mountdir_prefix}${rootfspart}
+	mount ${node}${part}${rootfspart} ${mountdir_prefix}${rootfspart}
+	tar xvpf ${imagesdir}/rootfs.tar.bz2 -C ${mountdir_prefix}${rootfspart} |
+	while read line; do
+		x=$((x+1))
+		echo -en "$x files extracted\r"
+	done
+	echo
+	sync
+}
+
+
+umount ${node}${part}*  2> /dev/null || true
+
+delete_device
+create_parts
+format_rootfs_part
+install_rootfs
+umount ${node}${part}${rootfspart}
+
+if [[ $is_dart == true ]] ; then
+	format_boot_part
+	install_bootloader
+	install_kernel
+	umount ${node}${part}${bootpart}
+fi
+
+exit 0

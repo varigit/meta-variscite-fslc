@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Yocto Jethro
+Comment=MX6CB Cap NAND
+Exec=/usr/bin/terminal /usr/bin/install_yocto.sh -b mx6cb -t cap -r nand
+Icon=media-flash
+Terminal=false
+Categories=GTK;Utility;
+StartupNotify=true

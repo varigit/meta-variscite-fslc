@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Android L5.1.1
+Comment=DART
+Exec=/usr/bin/terminal /usr/bin/install_android.sh -b dart
+Icon=media-flash
+Terminal=false
+Categories=GTK;Utility;
+StartupNotify=true

@@ -34,7 +34,7 @@ if [ `echo ${node} | grep -c mmcblk` -ne 0 ]; then
 fi
 
 echo "=========================================================="
-echo "= Variscite build recovery SD-card V50 utility - Android ="
+echo "= Variscite build recovery SD-card V60 utility - Android ="
 echo "=========================================================="
 
 function copy_android
@@ -46,18 +46,18 @@ function copy_android
 	cp ${ANDROID_IMGS_PATH}/recovery*.img			${P2_MOUNT_DIR}/opt/images/Android/Emmc/
 	pv ${ANDROID_IMGS_PATH}/system.img >			${P2_MOUNT_DIR}/opt/images/Android/Emmc/system.img
 	cp ${ANDROID_IMGS_PATH}/u-boot-var-imx6-nand.img	${P2_MOUNT_DIR}/opt/images/Android/Emmc/
-	cp ${ANDROID_IMGS_PATH}/u-boot-var-imx6-sd.img		${P2_MOUNT_DIR}/opt/images/Android/Emmc/u-boot-var-imx6-mmc.img
+	cp ${ANDROID_IMGS_PATH}/u-boot-var-imx6-mmc.img		${P2_MOUNT_DIR}/opt/images/Android/Emmc/
+	cp ${ANDROID_IMGS_PATH}/SPL-nand			${P2_MOUNT_DIR}/opt/images/Android/Emmc/
+	cp ${ANDROID_IMGS_PATH}/SPL-mmc				${P2_MOUNT_DIR}/opt/images/Android/Emmc/
 }
 
 function copy_android_scripts
 {
 	echo "Copying Android scripts"
-	cp ${ANDROID_SCRIPTS_PATH}/android-emmc.sh	${P2_MOUNT_DIR}/sbin/
-	cp ${ANDROID_SCRIPTS_PATH}/mkmmc_android.sh	${P2_MOUNT_DIR}/sbin/
+	cp ${ANDROID_SCRIPTS_PATH}/*.sh		${P2_MOUNT_DIR}/usr/bin/
 
-	echo "Copying Android desktop icon"
-	cp ${ANDROID_SCRIPTS_PATH}/android_emmc.desktop	${P2_MOUNT_DIR}/usr/share/applications/ 
-	cp ${ANDROID_SCRIPTS_PATH}/terminalae		${P2_MOUNT_DIR}/usr/bin/
+	echo "Copying Android desktop icons"
+	cp ${ANDROID_SCRIPTS_PATH}/*.desktop	${P2_MOUNT_DIR}/usr/share/applications/ 
 }
 
 
