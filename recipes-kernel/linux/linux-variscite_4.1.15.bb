@@ -1,24 +1,18 @@
-#
-#@DESCRIPTION: Linux for Variscite i.MX6Q/Dl/Solo VAR-SOM-MX6
-#@MAINTAINER: Ron Donio <ron.d@variscite.com>
+#@DESCRIPTION: Linux for Variscite i.MX6Q/D/DL/S VAR-SOM-MX6 family
 #
 # http://www.variscite.com
 # support@variscite.com
-#
+
 require recipes-kernel/linux/linux-imx.inc
 require recipes-kernel/linux/linux-dtb.inc
 
 DEPENDS += "lzop-native bc-native"
 
-#SRC_URI = "git://github.com/varigit/linux-2.6-imx.git;protocol=git;branch=imx_3.14.28-r0_var3"
-
-
 SRCBRANCH = "imx-rel_imx_4.1.15_1.1.0_ga-var02"
 LOCALVERSION = "-6QP"
-SRCREV = "245c27785b7768223b44472025a07012f1efdf3c"
+SRCREV = "${AUTOREV}"
 KERNEL_SRC ?= "git://github.com/varigit/linux-2.6-imx.git;protocol=git"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
-#LOCALVERSION = "-1.1.0"
 
 FSL_KERNEL_DEFCONFIG = "imx_v7_var_defconfig"
 
