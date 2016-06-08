@@ -2,7 +2,7 @@
 Type=Application
 Name=Yocto Jethro
 Comment=MX6CB Cap eMMC
-Exec=/usr/bin/terminal /usr/bin/install_yocto.sh -b mx6cb -t cap -r emmc
+Exec=/usr/bin/terminal bash -c "/usr/bin/install_yocto.sh -b mx6cb -t cap -r emmc; read"
 Icon=media-flash
 Terminal=false
 Categories=GTK;Utility;

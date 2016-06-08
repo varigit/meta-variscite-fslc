@@ -89,7 +89,7 @@ usage()
 finish()
 {
 	echo
-	read -p "Yocto Flashed. Press any key to continue... " -n1
+	blue_bold_echo "Yocto installed successfully"
 	exit 0
 }
 
@@ -163,10 +163,10 @@ printf "Installing rootfs to: "
 blue_bold_echo $STR
 
 
-CPUS=`cat /proc/cpuinfo | grep processor | wc -l`
+CPUS=`cat /proc/cpuinfo | grep -c processor`
 
 if [[ $CPUS == 1 ]] || [[ $CPUS == 2 ]] ; then
-	if [[ `dmesg | grep SOM-SOLO | wc -l` == 1 ]] ; then
+	if [[ `dmesg | grep -c SOM-SOLO` == 1 ]] ; then
 		if [[ "$BOARD" == "scb" ]] ; then
 			KERNEL_DTB=uImage-imx6dl-var-som-solo-vsc.dtb
 		else
@@ -177,7 +177,7 @@ if [[ $CPUS == 1 ]] || [[ $CPUS == 2 ]] ; then
 			fi
 		fi
 	else
-		if [[ $CPUS == 1 ]] || [[ `dmesg | grep i.MX6DL | wc -l` == 1 ]] ; then
+		if [[ $CPUS == 1 ]] || [[ `dmesg | grep -c i.MX6DL` == 1 ]] ; then
 			# iMX6 Solo/DualLite
 			if [[ $BOARD == "scb" ]] ; then
 				KERNEL_DTB=uImage-imx6dl-var-som-vsc.dtb

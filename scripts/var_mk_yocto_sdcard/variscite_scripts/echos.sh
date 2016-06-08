@@ -12,5 +12,3 @@ red_bold_echo()
 {
 	echo -e "\e[31m\e[1m$1\e[0m"
 }
-
-

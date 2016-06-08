@@ -1,5 +1,6 @@
 #!/bin/sh
-# Installs Android 
+# Installs Android
+set -e
 
 . /usr/bin/echos.sh
 
@@ -16,11 +17,10 @@ usage()
 	echo
 }
 
-
 blue_underlined_bold_echo "*** VAR-MX6 Android eMMC/NAND RECOVERY Version 60 ***"
 echo
 
-while getopts :b:t:r: OPTION;
+while getopts :b:t: OPTION;
 do
 	case $OPTION in
 	b)
@@ -36,14 +36,16 @@ do
 	esac
 done
 
+is_dart=flase
 STR=""
 
 if [[ $BOARD == "mx6cb" ]] ; then
 	STR="MX6CustomBoard"
-elif [[ $BOARD == "scb" ]] ; then 
+elif [[ $BOARD == "scb" ]] ; then
 	STR="SOLOCustomBoard"
-elif [[ $BOARD == "dart" ]] ; then 
+elif [[ $BOARD == "dart" ]] ; then
 	STR="DART-MX6"
+	is_dart=true
 else
 	usage
 	exit 1
@@ -57,9 +59,6 @@ if [[ $BOARD == "dart" ]] ; then
 else
 	block=mmcblk0
 fi
-
-node=/dev/${block}
-
 
 if [[ $BOARD == "mx6cb" ]] ; then
 	if [[ $TOUCHSCREEN == "cap" ]] ; then
@@ -76,17 +75,17 @@ if [[ $BOARD == "mx6cb" ]] ; then
 	blue_bold_echo $STR
 fi
 
-CPUS=`cat /proc/cpuinfo | grep processor | wc -l`
+CPUS=`cat /proc/cpuinfo | grep -c processor`
 
 if [[ $CPUS == 1 ]] || [[ $CPUS == 2 ]] ; then
-	if [[ `dmesg | grep SOM-SOLO | wc -l` == 1 ]] ; then
+	if [[ `dmesg | grep -c SOM-SOLO` == 1 ]] ; then
 		if [[ "$BOARD" == "scb" ]] ; then
 			BOOTI=som-solo-vsc
 		else
 			BOOTI=som-solo-$TOUCHSCREEN
 		fi
 	else
-		if [[ $CPUS == 1 ]] || [[ `dmesg | grep i.MX6DL | wc -l` == 1 ]] ; then
+		if [[ $CPUS == 1 ]] || [[ `dmesg | grep -c i.MX6DL` == 1 ]] ; then
 			# iMX6 Solo/DualLite
 			BOOTI=som-mx6dl-$TOUCHSCREEN
 		else
@@ -110,8 +109,8 @@ fi
 printf "Android eMMC flash "
 blue_bold_echo "<$BOOTI>"
 
-/usr/bin/mkmmc_android.sh -f $BOOTI $node
+/usr/bin/install_android_emmc.sh -f $BOOTI $block $is_dart
 
 echo
-read -p "Android Flashed. Press any key to continue... " -n1
+blue_bold_echo "Android installed successfully"
 exit 0

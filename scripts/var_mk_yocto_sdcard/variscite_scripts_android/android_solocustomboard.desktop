@@ -1,8 +1,8 @@
 [Desktop Entry]
 Type=Application
-Name=Android L5.1.1
+Name=Android M6.0.1
 Comment=SOLOCustomBoard
-Exec=/usr/bin/terminal /usr/bin/install_android.sh -b scb
+Exec=/usr/bin/terminal bash -c "/usr/bin/install_android.sh -b scb; read"
 Icon=media-flash
 Terminal=false
 Categories=GTK;Utility;

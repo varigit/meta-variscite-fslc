@@ -1,5 +1,5 @@
 #!/bin/bash
-# Meant to be run by install_emmc.sh
+# Meant to be called by install_emmc.sh
 set -e
 
 . /usr/bin/echos.sh
@@ -35,31 +35,33 @@ part=p
 mountdir_prefix=/run/media/${block}${part}
 imagesdir=/opt/images/Yocto
 
-
-if [[ ! -b $node ]] ; then
-	red_bold_echo "ERROR: \"$node\" is not a block device"
-	exit 1
-fi
-
-if [[ $is_dart == true ]] ; then
-	if [[ ! -f $imagesdir/SPL.mmc ]] ; then
-		red_bold_echo "ERROR: SPL.mmc does not exist"
+function check_images
+{
+	if [[ ! -b $node ]] ; then
+		red_bold_echo "ERROR: \"$node\" is not a block device"
 		exit 1
 	fi
-	if [[ ! -f $imagesdir/u-boot.img.mmc ]] ; then
-		red_bold_echo "ERROR: u-boot.img.mmc does not exist"
-		exit 1
+
+	if [[ $is_dart == true ]] ; then
+		if [[ ! -f ${imagesdir}/SPL.mmc ]] ; then
+			red_bold_echo "ERROR: SPL.mmc does not exist"
+			exit 1
+		fi
+		if [[ ! -f ${imagesdir}/u-boot.img.mmc ]] ; then
+			red_bold_echo "ERROR: u-boot.img.mmc does not exist"
+			exit 1
+		fi
 	fi
-fi
+}
 
 function delete_device
 {
 	echo
 	blue_underlined_bold_echo "Deleting current partitions"
-	for ((i=0; i<10; i++))
+	for ((i=0; i<=10; i++))
 	do
 		if [[ -e ${node}${part}${i} ]] ; then
-			dd if=/dev/zero of=${node}${part}${i} bs=512 count=1024 || true
+			dd if=/dev/zero of=${node}${part}${i} bs=1024 count=1024 2> /dev/null || true
 		fi
 	done
 	sync
@@ -88,8 +90,7 @@ function create_parts
 		(echo n; echo p; echo $rootfspart; echo; echo; echo p; echo w) | fdisk -u $node > /dev/null
 	fi
 	fdisk -ul $node
-	sync
-	sleep 4
+	sync; sleep 1
 }
 
 function format_boot_part
@@ -125,6 +126,7 @@ function install_kernel
 	cp -v ${imagesdir}/uImage-imx6q-var-dart.dtb	${mountdir_prefix}${bootpart}/imx6q-var-dart.dtb
 	cp -v ${imagesdir}/uImage			${mountdir_prefix}${bootpart}/uImage
 	sync
+	umount ${node}${part}${bootpart}
 }
 
 function install_rootfs
@@ -140,8 +142,10 @@ function install_rootfs
 	done
 	echo
 	sync
+	umount ${node}${part}${rootfspart}
 }
 
+check_images
 
 umount ${node}${part}*  2> /dev/null || true
 
@@ -149,13 +153,11 @@ delete_device
 create_parts
 format_rootfs_part
 install_rootfs
-umount ${node}${part}${rootfspart}
 
 if [[ $is_dart == true ]] ; then
 	format_boot_part
 	install_bootloader
 	install_kernel
-	umount ${node}${part}${bootpart}
 fi
 
 exit 0
