@@ -10,6 +10,7 @@ PV = "R8.6_SP1"
 #Tag: R8.6_SP1
 SRCREV = "d39cb9d35247ad6c06542fbac1d40a7c5bcb9856"
 SRC_URI = "git://git.ti.com/wilink8-wlan/18xx-ti-utils.git \
+	   file://makefile.patch \
 "
 
 PROVIDES += "ti-wifi-utils"

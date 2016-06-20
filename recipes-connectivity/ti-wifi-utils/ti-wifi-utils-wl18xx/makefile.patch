@@ -1,0 +1,17 @@
+diff --git a/Makefile b/Makefile
+index 78ed271..044180e 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,12 +1,3 @@
+-CC = $(CROSS_COMPILE)gcc
+-CFLAGS = -O2 -Wall
+-CFLAGS += -I$(NFSROOT)/usr/include -I$(NFSROOT)/include
+-
+-ifdef NLROOT
+-CFLAGS += -I${NLROOT}
+-endif
+-
+-LDFLAGS += -L$(NFSROOT)/lib
+ LIBS += -lm
+ 
+ ifeq ($(NLVER),3)
