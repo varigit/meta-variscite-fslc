@@ -16,6 +16,7 @@ SRCREV = "13e24dccdb13db899199a41b9e5f9dde2c38a9ec"
 BRANCH = "service_pack"
 SRC_URI = "git://git.ti.com/wilink8-wlan/wl18xx_fw.git;protocol=git;branch=${BRANCH} \
            file://0001-Add-Makefile-for-SDK.patch \
+	   file://wl18xx-fw-4.bin \
           "
 #
 #Variscite Firmware
@@ -35,6 +36,8 @@ do_install() {
     oe_runmake 'DEST_DIR=${D}' install
 #add Variscite Firmware
 	cp -r ../BT_VAR_FW-yocto_v5/* ${D}/lib/firmware/ti-connectivity
+# custom TI bugfix based on R8.6_SP1
+	cp -r ../wl18xx-fw-4.bin ${D}/lib/firmware/ti-connectivity
 }
 
 FILES_${PN} = "/lib/firmware/ti-connectivity/*"
