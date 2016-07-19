@@ -13,19 +13,19 @@
 # I/O
 
 #Check if device exist
-(dmesg | grep "tuple 0x91") # Check if BT/WIFI is up
-if [ $? -eq 0 ]      # check exit code; if 0 No BT else BT
+(dmesg | grep -q "tuple 0x91") # Check if BT/WIFI is up
+if [ $? -eq 0 ]
 then
-    echo "BT found"
-  else
-    echo "No BT found"
-    exit 0
+	echo "BT found"
+else
+	echo "No BT found"
+	exit 0
 fi
 
 echo 178 >/sys/class/gpio/export
 echo "out" > /sys/class/gpio/gpio178/direction
 echo 0 > /sys/class/gpio/gpio178/value
-sleep 1
+sleep 0.1
 echo 1 > /sys/class/gpio/gpio178/value
 
 hciattach -t 10 -s 115200 /dev/ttymxc1 texas 3000000
