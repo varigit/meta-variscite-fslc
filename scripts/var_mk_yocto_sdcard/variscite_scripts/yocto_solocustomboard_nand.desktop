@@ -5,5 +5,5 @@ Comment=SOLOCB NAND
 Exec=/usr/bin/terminal bash -c "/usr/bin/install_yocto.sh -b scb -r nand; read"
 Icon=media-flash
 Terminal=false
-Categories=GTK;Utility;
+Categories=GTK;Application;
 StartupNotify=true

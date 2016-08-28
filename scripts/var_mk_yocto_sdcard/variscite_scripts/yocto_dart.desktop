@@ -5,5 +5,5 @@ Comment=DART (eMMC)
 Exec=/usr/bin/terminal bash -c "/usr/bin/install_yocto.sh -b dart; read"
 Icon=media-flash
 Terminal=false
-Categories=GTK;Utility;
+Categories=GTK;Application;
 StartupNotify=true

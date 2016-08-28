@@ -5,5 +5,5 @@ Comment=DART
 Exec=/usr/bin/terminal bash -c "/usr/bin/install_android.sh -b dart; read"
 Icon=media-flash
 Terminal=false
-Categories=GTK;Utility;
+Categories=GTK;Application;
 StartupNotify=true

@@ -5,5 +5,5 @@ Comment=MX6CB Res NAND
 Exec=/usr/bin/terminal bash -c "/usr/bin/install_yocto.sh -b mx6cb -t res -r nand; read"
 Icon=media-flash
 Terminal=false
-Categories=GTK;Utility;
+Categories=GTK;Application;
 StartupNotify=true
