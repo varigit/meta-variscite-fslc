@@ -7,7 +7,7 @@ set -e
 usage()
 {
 	echo
-	echo "This script installs Andorid on VAR-SOM-MX6"
+	echo "This script installs Andorid on the SOM's internal storage device/s"
 	echo
 	echo " Usage: $0 OPTIONS"
 	echo
@@ -17,7 +17,7 @@ usage()
 	echo
 }
 
-blue_underlined_bold_echo "*** VAR-MX6 Android eMMC/NAND RECOVERY Version 60 ***"
+blue_underlined_bold_echo "*** Variscite MX6 Android eMMC/NAND Recovery ***"
 echo
 
 while getopts :b:t: OPTION;

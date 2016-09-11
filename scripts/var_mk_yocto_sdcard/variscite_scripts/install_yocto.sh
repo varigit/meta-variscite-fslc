@@ -75,7 +75,7 @@ install_rootfs()
 usage()
 {
 	echo
-	echo "This script installs Yocto on VAR-SOM-MX6"
+	echo "This script installs Yocto on the SOM's internal storage device/s"
 	echo
 	echo " Usage: $0 OPTIONS"
 	echo
@@ -94,7 +94,7 @@ finish()
 }
 
 
-blue_underlined_bold_echo "*** VAR-MX6 Yocto eMMC/NAND RECOVERY Version 60 ***"
+blue_underlined_bold_echo "*** Variscite MX6 Yocto eMMC/NAND Recovery ***"
 echo
 
 while getopts :b:t:r: OPTION;

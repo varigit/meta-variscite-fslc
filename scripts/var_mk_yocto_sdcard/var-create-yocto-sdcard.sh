@@ -21,9 +21,9 @@ P1_MOUNT_DIR=${TEMP_DIR}/BOOT-VAR-SOM
 P2_MOUNT_DIR=${TEMP_DIR}/rootfs
 
 
-echo "================================================"
-echo "= Variscite build recovery SD-card V60 utility ="
-echo "================================================"
+echo "==============================================="
+echo "= Variscite recovery SD card creation script  ="
+echo "==============================================="
 
 help() {
 	bn=`basename $0`
@@ -32,7 +32,7 @@ help() {
 	echo " options:"
 	echo " -h		Display this help message"
 	echo " -s		Only show partition sizes to be written, without actually write them"
-	echo " -a		Automatically set the rootfs partition size to fill the SD-card (leaving spare ${SPARE_SIZE}MiB)"
+	echo " -a		Automatically set the rootfs partition size to fill the SD card (leaving spare ${SPARE_SIZE}MiB)"
 	echo
 }
 
@@ -68,7 +68,7 @@ if [[ $node == *mmcblk* ]] ; then
 fi
 
 echo "Device:  ${node}"
-echo "================================================"
+echo "==============================================="
 read -p "Press Enter to continue"
 
 # Call sfdisk to get total card size

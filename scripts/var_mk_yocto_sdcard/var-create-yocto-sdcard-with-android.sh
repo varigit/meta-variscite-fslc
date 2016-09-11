@@ -33,9 +33,9 @@ if [[ $node == *mmcblk* ]] ; then
 	part="p"
 fi
 
-echo "=========================================================="
-echo "= Variscite build recovery SD-card V60 utility - Android ="
-echo "=========================================================="
+echo "========================================================"
+echo "= Variscite recovery SD card creation script - Android ="
+echo "========================================================"
 
 function mount_parts
 {
