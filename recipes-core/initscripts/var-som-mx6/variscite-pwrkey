@@ -1,0 +1,21 @@
+#!/bin/sh -e
+#
+# Variscite Power Key
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# Run shutdown upon release of a short press on the ON/OFF key
+
+devfiles=`ls -1 /dev/input/by-path/*:snvs-powerkey-event 2> /dev/null | wc -l`
+if [ $devfiles -eq 1 ]
+then
+	KEY_POWER=116
+	/usr/bin/runonkeyrls /dev/input/by-path/*:snvs-powerkey-event $KEY_POWER 'shutdown -h -P now' &
+fi
+
+exit 0
