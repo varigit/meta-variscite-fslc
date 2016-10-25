@@ -1,6 +1,21 @@
 #!/bin/bash
 set -e
 
+#### Script version ####
+SCRIPT_NAME=${0##*/}
+readonly SCRIPT_VERSION="0.1"
+
+#### Exports Variables ####
+#### global variables ####
+readonly ABSOLUTE_FILENAME=`readlink -e "$0"`
+readonly ABSOLUTE_DIRECTORY=`dirname ${ABSOLUTE_FILENAME}`
+readonly SCRIPT_POINT=${ABSOLUTE_DIRECTORY}
+
+readonly YOCTO_ROOT="${SCRIPT_POINT}/../../../../"
+readonly YOCTO_BUILD=${YOCTO_ROOT}/build_x11
+readonly YOCTO_SCRIPTS_PATH=${SCRIPT_POINT}/variscite_scripts
+readonly YOCTO_IMGS_PATH=${YOCTO_BUILD}/tmp/deploy/images/var-som-mx6
+
 # Sizes are in MiB
 BOOTLOAD_RESERVE_SIZE=4
 BOOT_ROM_SIZE=8
@@ -9,12 +24,6 @@ DEFAULT_ROOTFS_SIZE=3700
 AUTO_FILL_SD=0
 SPARE_SIZE=4
 
-YOCTO_ROOT=~/var-som-mx6-yocto-jethro
-YOCTO_BUILD=${YOCTO_ROOT}/build_x11
-
-
-YOCTO_IMGS_PATH=${YOCTO_BUILD}/tmp/deploy/images/var-som-mx6
-YOCTO_SCRIPTS_PATH=${YOCTO_ROOT}/sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts
 
 TEMP_DIR=./var_tmp
 P1_MOUNT_DIR=${TEMP_DIR}/BOOT-VAR-SOM
