@@ -30,7 +30,7 @@ echo 1 > /sys/class/gpio/gpio178/value
 
 hciattach -t 10 -s 115200 /dev/ttymxc1 texas 3000000
 
-/usr/lib/bluez5/bluetooth/bluetoothd &
+/usr/libexec/bluetooth/bluetoothd &
 
 hciconfig hci0 up
 
