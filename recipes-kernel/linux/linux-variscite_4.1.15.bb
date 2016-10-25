@@ -20,7 +20,7 @@ KERNEL_IMAGETYPE = "uImage"
 
 KERNEL_EXTRA_ARGS += "LOADADDR=${UBOOT_ENTRYPOINT}"
 
-do_configure_prepend() {
+do_preconfigure_prepend() {
    # copy latest defconfig for imx_v7_var_defoonfig to use
    cp ${S}/arch/arm/configs/imx_v7_var_defconfig ${B}/.config
    cp ${S}/arch/arm/configs/imx_v7_var_defconfig ${B}/../defconfig
