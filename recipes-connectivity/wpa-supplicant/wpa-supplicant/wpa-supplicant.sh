@@ -6,6 +6,9 @@ WPA_SUP_PNAME="wpa_supplicant"
 WPA_SUP_PIDFILE="/var/run/wpa_supplicant.$IFACE.pid"
 WPA_SUP_OPTIONS="-B -P $WPA_SUP_PIDFILE -i $IFACE"
 
+# force set wpa_supplicant driver to XX80211
+IF_WPA_DRIVER="nl80211"
+
 VERBOSITY=0
 
 
