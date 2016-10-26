@@ -26,6 +26,10 @@ do_preconfigure_prepend() {
    cp ${S}/arch/arm/configs/imx_v7_var_defconfig ${B}/../defconfig
 }
 
+do_configure_prepend() {
+   # delete old .config from source code
+   rm ${S}/.config
+}
 
 # Copy the config file required by ti-compat-wirless-wl18xx
 do_deploy_append () {
