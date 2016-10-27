@@ -89,7 +89,7 @@ function create_parts
 	else
 		(echo n; echo p; echo $rootfspart; echo; echo; echo p; echo w) | fdisk -u $node > /dev/null
 	fi
-	fdisk -ul $node
+	fdisk -u -l $node
 	sync; sleep 1
 }
 
