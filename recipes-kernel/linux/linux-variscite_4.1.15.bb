@@ -28,7 +28,7 @@ do_preconfigure_prepend() {
 
 do_configure_prepend() {
    # delete old .config from source code
-   rm ${S}/.config
+   rm ${S}/.config || true
 }
 
 # Copy the config file required by ti-compat-wirless-wl18xx
