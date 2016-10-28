@@ -1,7 +1,17 @@
 #!/bin/bash
 set -e
 
-YOCTO_ROOT=~/var-som-mx6-yocto-jethro
+#### Script version ####
+SCRIPT_NAME=${0##*/}
+readonly SCRIPT_VERSION="0.1"
+
+#### Exports Variables ####
+#### global variables ####
+readonly ABSOLUTE_FILENAME=`readlink -e "$0"`
+readonly ABSOLUTE_DIRECTORY=`dirname ${ABSOLUTE_FILENAME}`
+readonly SCRIPT_POINT=${ABSOLUTE_DIRECTORY}
+
+readonly YOCTO_ROOT="${SCRIPT_POINT}/../../../../"
 
 ANDROID_BUILD_ROOT=~/var_m_601_100/m_601_100_build
 ANDROID_IMGS_PATH=${ANDROID_BUILD_ROOT}/out/target/product/var_mx6
