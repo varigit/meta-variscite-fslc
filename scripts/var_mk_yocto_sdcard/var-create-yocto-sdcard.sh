@@ -76,6 +76,8 @@ while [ "$moreoptions" = 1 -a $# -gt 0 ]; do
 done
 
 if [[ ! -e ${node} ]] ; then
+	echo "W: Wrong path to the block device!"
+	echo
 	help
 	exit 1
 fi
