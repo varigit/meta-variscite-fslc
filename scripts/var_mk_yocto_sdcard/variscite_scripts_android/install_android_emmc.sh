@@ -5,10 +5,10 @@ set -e
 . /usr/bin/echos.sh
 
 # Partition sizes in MiB
-BOOTLOAD_RESERVE=8
+BOOTLOAD_RESERVE=4
 BOOT_ROM_SIZE=16
 RECOVERY_ROM_SIZE=16
-SYSTEM_ROM_SIZE=512
+SYSTEM_ROM_SIZE=800
 CACHE_SIZE=512
 DEVICE_SIZE=8
 MISC_SIZE=6
@@ -61,7 +61,7 @@ total_size=`expr ${total_size} / 1024`
 echo "TOTAL SIZE ${total_size}MiB"
 boot_rom_sizeb=`expr ${BOOT_ROM_SIZE} + ${BOOTLOAD_RESERVE}`
 extend_size=`expr ${SYSTEM_ROM_SIZE} + ${CACHE_SIZE} + ${DEVICE_SIZE} + ${MISC_SIZE} + ${DATAFOOTER_SIZE} + ${seprate}`
-data_size=`expr ${total_size} - ${boot_rom_sizeb} - ${RECOVERY_ROM_SIZE} - ${extend_size} + ${seprate}`
+data_size=`expr ${total_size} - ${boot_rom_sizeb} - ${RECOVERY_ROM_SIZE} - ${extend_size}`
 
 # Echo partitions
 cat << EOF
@@ -150,6 +150,7 @@ function create_parts
 	blue_underlined_bold_echo "Creating Android partitions"
 
 	SECT_SIZE_BYTES=`cat /sys/block/${block}/queue/hw_sector_size`
+	BOOTLOAD_RESERVE_sect=`expr $BOOTLOAD_RESERVE \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
 	boot_rom_sizeb_sect=`expr $boot_rom_sizeb \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
 	RECOVERY_ROM_SIZE_sect=`expr $RECOVERY_ROM_SIZE \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
 	extend_size_sect=`expr $extend_size \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
@@ -175,18 +176,14 @@ EOF
 	sync; sleep 1
 
 	if [[ $is_dart == true ]] ; then
-		# adjust the partition reserve for bootloader.
-		# if you don't put the uboot on same device, you can remove the BOOTLOADER_ERSERVE
-		# to have 8M space.
-		# the minimal sylinder for some card is 4M, maybe some was 8M
-		# just 8M for some big eMMC 's sylinder
-
+		# Adjust the partition reserve for bootloader.
 		((echo d; echo 1; echo w) | fdisk $node > /dev/null)
-		((echo n; echo p; echo 8192; echo; echo w) | fdisk -u $node > /dev/null)
+		sync; sleep 1
+		((echo n; echo p; echo $BOOTLOAD_RESERVE_sect; echo; echo w) | fdisk -u $node > /dev/null)
+		sync; sleep 1
 	fi
 
 	fdisk -ul $node
-	sync; sleep 1
 }
 
 function install_bootloader

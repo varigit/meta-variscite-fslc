@@ -13,7 +13,7 @@ readonly SCRIPT_POINT=${ABSOLUTE_DIRECTORY}
 
 readonly YOCTO_ROOT="${SCRIPT_POINT}/../../../../"
 
-ANDROID_BUILD_ROOT=~/var_m_601_100/m_601_100_build
+ANDROID_BUILD_ROOT=~/var_m_601_210/m_601_210_build
 ANDROID_IMGS_PATH=${ANDROID_BUILD_ROOT}/out/target/product/var_mx6
 ANDROID_SCRIPTS_PATH=${YOCTO_ROOT}/sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts_android
 
@@ -69,8 +69,8 @@ function copy_android
 	echo "Copying Android images to /opt/images/"
 	mkdir -p ${P2_MOUNT_DIR}/opt/images/Android
 
-	cp ${ANDROID_IMGS_PATH}/boot*.img			${P2_MOUNT_DIR}/opt/images/Android/
-	cp ${ANDROID_IMGS_PATH}/recovery*.img			${P2_MOUNT_DIR}/opt/images/Android/
+	cp ${ANDROID_IMGS_PATH}/boot-*.img			${P2_MOUNT_DIR}/opt/images/Android/
+	cp ${ANDROID_IMGS_PATH}/recovery-*.img			${P2_MOUNT_DIR}/opt/images/Android/
 	pv ${ANDROID_IMGS_PATH}/system.img >			${P2_MOUNT_DIR}/opt/images/Android/system.img
 	cp ${ANDROID_IMGS_PATH}/u-boot-var-imx6-nand.img	${P2_MOUNT_DIR}/opt/images/Android/
 	cp ${ANDROID_IMGS_PATH}/u-boot-var-imx6-sd.img		${P2_MOUNT_DIR}/opt/images/Android/u-boot-var-imx6-mmc.img
