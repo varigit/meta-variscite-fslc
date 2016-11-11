@@ -83,7 +83,7 @@ if [[ ! -e ${node} ]] ; then
 fi
 
 part=""
-if [[ $node == *mmcblk* ]] ; then
+if [[ $node == *mmcblk* ]] || [[ $node == *loop* ]] ; then
 	part="p"
 fi
 
