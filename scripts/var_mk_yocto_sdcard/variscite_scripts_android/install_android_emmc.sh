@@ -183,7 +183,7 @@ EOF
 		sync; sleep 1
 	fi
 
-	fdisk -ul $node
+	fdisk -u -l $node
 }
 
 function install_bootloader
