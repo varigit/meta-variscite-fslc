@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Name=Android M6.0.1
+Name=Install Android
 Comment=SOLOCustomBoard
 Exec=/usr/bin/terminal bash -c "/usr/bin/install_android.sh -b scb; read"
 Icon=media-flash

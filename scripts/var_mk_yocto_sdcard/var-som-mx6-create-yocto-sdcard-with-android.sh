@@ -15,13 +15,19 @@ readonly YOCTO_ROOT="${SCRIPT_POINT}/../../../../"
 
 ANDROID_BUILD_ROOT=~/var_m_601_210/m_601_210_build
 ANDROID_IMGS_PATH=${ANDROID_BUILD_ROOT}/out/target/product/var_mx6
-ANDROID_SCRIPTS_PATH=${YOCTO_ROOT}/sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/variscite_scripts_android
+ANDROID_SCRIPTS_PATH=${YOCTO_ROOT}/sources/meta-variscite-imx/scripts/var_mk_yocto_sdcard/variscite_scripts_android
 
 TEMP_DIR=./var_tmp
 P1_MOUNT_DIR=${TEMP_DIR}/BOOT-VAR-SOM
 P2_MOUNT_DIR=${TEMP_DIR}/rootfs
 
-${YOCTO_ROOT}/sources/meta-variscite-mx6/scripts/var_mk_yocto_sdcard/var-create-yocto-sdcard.sh "$@"
+if [[ $MACHINE != var-som-mx6 ]] ; then
+	echo
+	echo "Setting MACHINE=var-som-mx6"
+	echo
+fi
+
+MACHINE=var-som-mx6 ${YOCTO_ROOT}/sources/meta-variscite-imx/scripts/var_mk_yocto_sdcard/var-create-yocto-sdcard.sh "$@"
 
 # Parse command line only to get ${node} and ${part}
 moreoptions=1
@@ -74,8 +80,8 @@ function copy_android
 	pv ${ANDROID_IMGS_PATH}/system.img >			${P2_MOUNT_DIR}/opt/images/Android/system.img
 	cp ${ANDROID_IMGS_PATH}/u-boot-var-imx6-nand.img	${P2_MOUNT_DIR}/opt/images/Android/
 	cp ${ANDROID_IMGS_PATH}/u-boot-var-imx6-sd.img		${P2_MOUNT_DIR}/opt/images/Android/u-boot-var-imx6-mmc.img
-	ln -s /opt/images/Yocto/SPL				${P2_MOUNT_DIR}/opt/images/Android/SPL-nand
-	ln -s /opt/images/Yocto/SPL.mmc				${P2_MOUNT_DIR}/opt/images/Android/SPL-mmc
+	ln -s /opt/images/Yocto/SPL-nand			${P2_MOUNT_DIR}/opt/images/Android/SPL-nand
+	ln -s /opt/images/Yocto/SPL-sd				${P2_MOUNT_DIR}/opt/images/Android/SPL-mmc
 }
 
 function copy_android_scripts

@@ -1,8 +1,8 @@
 [Desktop Entry]
 Type=Application
-Name=Install Android
-Comment=DART
-Exec=/usr/bin/terminal bash -c "/usr/bin/install_android.sh -b dart; read"
+Name=Install Yocto
+Comment=eMMC
+Exec=/usr/bin/terminal bash -c "/usr/bin/install_yocto.sh -b mx7 -r emmc; read"
 Icon=media-flash
 Terminal=false
 Categories=GTK;Application;

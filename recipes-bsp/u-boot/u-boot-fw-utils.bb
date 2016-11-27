@@ -4,11 +4,15 @@ LIC_FILES_CHKSUM = "file://Licenses/gpl-2.0.txt;md5=b234ee4d69f5fce4486a80fdaf4a
 SECTION = "bootloader"
 DEPENDS = "mtd-utils"
 
+SRCBRANCH_var-som-mx6 = "imx_v2015.04_4.1.15_1.1.0_ga_var01"
+SRCBRANCH_imx6ul-var-dart = "imx_v2015.10_dart_6ul_var1"
+SRCBRANCH_imx7-var-som = "imx_v2015.04_4.1.15_1.1.0_ga_var02"
+UBOOT_SRC = "git://github.com/varigit/uboot-imx.git;protocol=git"
+SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH}"
 SRCREV = "${AUTOREV}"
-SRCBRANCH = "imx_v2015.04_4.1.15_1.1.0_ga_var01"
 
-SRC_URI = "git://github.com/varigit/uboot-imx.git;protocol=git;branch=${SRCBRANCH}"
-LIC_FILES_CHKSUM = "file://README;md5=d3893ecbe5dadb7446983acba5cd607d"
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+SRC_URI_append_imx7-var-som = " file://tools-env-fix-build-error.patch"
 
 S = "${WORKDIR}/git"
 
@@ -18,8 +22,18 @@ EXTRA_OEMAKE_class-cross = 'ARCH=${TARGET_ARCH} CC="${CC} ${CFLAGS} ${LDFLAGS}" 
 
 inherit uboot-config
 
-do_compile () {
+do_compile_var-som-mx6 () {
 	oe_runmake mx6var_som_nand_defconfig
+	oe_runmake env
+}
+
+do_compile_imx6ul-var-dart () {
+	oe_runmake mx6ul_var_dart_nand_defconfig
+	oe_runmake env
+}
+
+do_compile_imx7-var-som () {
+	oe_runmake mx7dvar_som_nand_defconfig
 	oe_runmake env
 }
 
@@ -28,7 +42,7 @@ do_install () {
 	install -d ${D}${sysconfdir}
 	install -m 755 ${S}/tools/env/fw_printenv ${D}${base_sbindir}/fw_printenv
 	ln -s ${base_sbindir}/fw_printenv ${D}${base_sbindir}/fw_setenv
-	install -m 0644 ${THISDIR}/u-boot-fw-utils/fw_env.config ${D}${sysconfdir}/fw_env.config
+	install -m 0644 ${THISDIR}/${PN}/${MACHINE}/fw_env.config ${D}${sysconfdir}/fw_env.config
 }
 
 do_install_class-cross () {

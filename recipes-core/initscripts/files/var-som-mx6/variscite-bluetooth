@@ -1,6 +1,6 @@
 #!/bin/sh -e
 #
-# variscite bluetooth 
+# Activate Bluetooth for Variscite VAR-SOM-MX6 board family
 #
 # This script is executed at the end of each multiuser runlevel.
 # Make sure that the script will "exit 0" on success or any other
@@ -8,11 +8,7 @@
 #
 # In order to enable or disable this script just change the execution
 # bits.
-#
-# This script activate the Bluetooth for Variscite SOM MX6
-# I/O
 
-#Check if device exist
 (dmesg | grep -q "tuple 0x91") # Check if BT/WIFI is up
 if [ $? -eq 0 ]
 then

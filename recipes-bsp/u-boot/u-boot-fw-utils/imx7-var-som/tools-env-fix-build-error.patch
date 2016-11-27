@@ -1,0 +1,9 @@
+diff --git a/tools/env/env_flags.c b/tools/env/env_flags.c
+index b261cb8..65150fc 100644
+--- a/tools/env/env_flags.c
++++ b/tools/env/env_flags.c
+@@ -1 +1,4 @@
++#ifndef ARRAY_SIZE(x)
++#define ARRAY_SIZE(x)	(sizeof(x) / sizeof((x)[0]))
++#endif
+ #include "../../common/env_flags.c"

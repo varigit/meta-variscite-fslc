@@ -5,11 +5,11 @@ set -e
 . /usr/bin/echos.sh
 
 MEDIA=/opt/images/Yocto
-SPL_IMAGE=SPL
-UBOOT_IMAGE=u-boot.img
+SPL_IMAGE=SPL-nand
+UBOOT_IMAGE=u-boot.img-nand
 KERNEL_IMAGE=uImage
 KERNEL_DTB=""
-ROOTFS_IMAGE=rootfs.ubi.img
+ROOTFS_IMAGE=rootfs.ubi
 ROOTFS_DEV=""
 
 
@@ -168,24 +168,24 @@ CPUS=`cat /proc/cpuinfo | grep -c processor`
 if [[ $CPUS == 1 ]] || [[ $CPUS == 2 ]] ; then
 	if [[ `dmesg | grep -c SOM-SOLO` == 1 ]] ; then
 		if [[ "$BOARD" == "scb" ]] ; then
-			KERNEL_DTB=uImage-imx6dl-var-som-solo-vsc.dtb
+			KERNEL_DTB=imx6dl-var-som-solo-vsc.dtb
 		else
 			if [[ $TOUCHSCREEN == "cap" ]] ; then
-				KERNEL_DTB=uImage-imx6dl-var-som-solo-cap.dtb
+				KERNEL_DTB=imx6dl-var-som-solo-cap.dtb
 			else
-				KERNEL_DTB=uImage-imx6dl-var-som-solo-res.dtb
+				KERNEL_DTB=imx6dl-var-som-solo-res.dtb
 			fi
 		fi
 	else
 		if [[ $CPUS == 1 ]] || [[ `dmesg | grep -c i.MX6DL` == 1 ]] ; then
 			# iMX6 Solo/DualLite
 			if [[ $BOARD == "scb" ]] ; then
-				KERNEL_DTB=uImage-imx6dl-var-som-vsc.dtb
+				KERNEL_DTB=imx6dl-var-som-vsc.dtb
 			else
 				if [[ $TOUCHSCREEN == "cap" ]] ; then
-					KERNEL_DTB=uImage-imx6dl-var-som-cap.dtb
+					KERNEL_DTB=imx6dl-var-som-cap.dtb
 				else
-					KERNEL_DTB=uImage-imx6dl-var-som-res.dtb
+					KERNEL_DTB=imx6dl-var-som-res.dtb
 				fi
 			fi
 		else
@@ -198,12 +198,12 @@ fi
 #iMX6 Dual/Quad
 if [[ $CPUS == 4 ]] ; then
 	if [[ $BOARD == "scb" ]] ; then
-		KERNEL_DTB=uImage-imx6q-var-som-vsc.dtb
+		KERNEL_DTB=imx6q-var-som-vsc.dtb
 	else
 		if [[ $TOUCHSCREEN == "cap" ]] ; then
-			KERNEL_DTB=uImage-imx6q-var-som-cap.dtb
+			KERNEL_DTB=imx6q-var-som-cap.dtb
 		else
-			KERNEL_DTB=uImage-imx6q-var-som-res.dtb
+			KERNEL_DTB=imx6q-var-som-res.dtb
 		fi
 	fi
 fi

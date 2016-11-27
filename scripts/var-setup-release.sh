@@ -2,7 +2,8 @@
 #
 # FSL Build Enviroment Setup Script
 #
-# Copyright (C) 2011-2013 Freescale Semiconductor
+# Copyright (C) 2011-2015 Freescale Semiconductor
+# Copyright (C) 2015-2016 Variscite Ltd.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,8 +31,10 @@ exit_message ()
 usage()
 {
     echo -e "\nUsage: source fsl-setup-release.sh
+    Mandatory environment variable: MACHINE
     Optional parameters: [-b build-dir] [-e back-end] [-h]"
 echo "
+    * MACHINE must be set to one of the following: {var-som-mx6, imx6ul-var-dart, imx7-var-som}
     * [-b build-dir]: Build directory, if unspecified script uses 'build' as output directory
     * [-e back-end]: Options are 'fb', 'dfb', 'x11, 'wayland'
     * [-h]: help
@@ -64,36 +67,36 @@ do
             BACKEND="$OPTARG"
             if [ "$BACKEND" = "fb" ]; then
                 if [ -z "$DISTRO" ]; then
-                    FSLDISTRO='fsl-imx-release-fb'
+                    FSLDISTRO='fsl-imx-fb'
                     echo -e "\n Using FB backend with FB DIST_FEATURES to override poky X11 DIST FEATURES"
-                elif [ ! "$DISTRO" = "fsl-imx-release-fb" ]; then
+                elif [ ! "$DISTRO" = "fsl-imx-fb" ]; then
                     echo -e "\n DISTRO specified conflicts with -e. Please use just one or the other."
                     fsl_setup_error='true'
                 fi
 
             elif [ "$BACKEND" = "dfb" ]; then
                 if [ -z "$DISTRO" ]; then
-                    FSLDISTRO='fsl-imx-release-dfb'
+                    FSLDISTRO='fsl-imx-dfb'
                     echo -e "\n Using DirectFB backend with DirectFB DIST_FEATURES to override poky X11 DIST FEATURES"
-                elif [ ! "$DISTRO" = "fsl-imx-release-dfb" ]; then
+                elif [ ! "$DISTRO" = "fsl-imx-dfb" ]; then
                     echo -e "\n DISTRO specified conflicts with -e. Please use just one or the other."
                     fsl_setup_error='true'
                 fi
 
             elif [ "$BACKEND" = "wayland" ]; then
                 if [ -z "$DISTRO" ]; then
-                    FSLDISTRO='fsl-imx-release-wayland'
+                    FSLDISTRO='fsl-imx-wayland'
                     echo -e "\n Using Wayland backend."
-                elif [ ! "$DISTRO" = "fsl-imx-release-wayland" ]; then
+                elif [ ! "$DISTRO" = "fsl-imx-wayland" ]; then
                     echo -e "\n DISTRO specified conflicts with -e. Please use just one or the other."
                     fsl_setup_error='true'
                 fi
 
             elif [ "$BACKEND" = "x11" ]; then
                 if [ -z "$DISTRO" ]; then
-                    FSLDISTRO='fsl-imx-release-x11'
+                    FSLDISTRO='fsl-imx-x11'
                     echo -e  "\n Using X11 backend with poky DIST_FEATURES"
-                elif [ ! "$DISTRO" = "fsl-imx-release-x11" ]; then
+                elif [ ! "$DISTRO" = "fsl-imx-x11" ]; then
                     echo -e "\n DISTRO specified conflicts with -e. Please use just one or the other."
                     fsl_setup_error='true'
                 fi
@@ -113,7 +116,7 @@ done
 
 if [ -z "$DISTRO" ]; then
     if [ -z "$FSLDISTRO" ]; then
-        FSLDISTRO='fsl-imx-release-x11'
+        FSLDISTRO='fsl-imx-x11'
     fi
 else
     FSLDISTRO="$DISTRO"
@@ -130,18 +133,26 @@ if [ -z "$BUILD_DIR" ]; then
     BUILD_DIR='build'
 fi
 
-if [ -z "$MACHINE" ]; then
-    echo setting to default machine
-    MACHINE='var-som-mx6'
+if [ "$MACHINE" != "var-som-mx6" ] && [ "$MACHINE" != "imx6ul-var-dart" ] && [ "$MACHINE" != "imx7-var-som" ]; then
+    usage && clean_up && return 1
 fi
 
 # New machine definitions may need to be added to the expected location
-cp -r sources/meta-fsl-bsp-release/imx/meta-bsp/conf/machine/* sources/meta-fsl-arm/conf/machine
+if [ -d ./sources/meta-freescale ]; then
+   cp -r sources/meta-fsl-bsp-release/imx/meta-bsp/conf/machine/* sources/meta-freescale/conf/machine
+else
+   cp -r sources/meta-fsl-bsp-release/imx/meta-bsp/conf/machine/* sources/meta-fsl-arm/conf/machine
+fi
 
 # copy new EULA into community so setup uses latest i.MX EULA
-cp sources/meta-fsl-bsp-release/imx/EULA.txt sources/meta-fsl-arm/EULA
-# copy unpack class with md5sum that matches new EULA
-cp sources/meta-fsl-bsp-release/imx/classes/fsl-eula-unpack.bbclass sources/meta-fsl-arm/classes
+cp sources/meta-fsl-bsp-release/imx/EULA.txt sources/meta-variscite-imx/EULA
+if [ -d ./sources/meta-freescale ]; then
+   cp sources/meta-fsl-bsp-release/imx/EULA.txt sources/meta-freescale/EULA
+   cp sources/meta-fsl-bsp-release/imx/classes/fsl-eula-unpack.bbclass sources/meta-freescale/classes
+else
+   cp sources/meta-fsl-bsp-release/imx/EULA.txt sources/meta-fsl-arm/EULA
+   cp sources/meta-fsl-bsp-release/imx/classes/fsl-eula-unpack.bbclass sources/meta-fsl-arm/classes
+fi
 
 # Set up the basic yocto environment
 if [ -z "$DISTRO" ]; then
@@ -159,38 +170,41 @@ if [ ! -e $BUILD_DIR/conf/local.conf ]; then
     return 1
 fi
 
-# On the first script run, backup the local.conf file
-# Consecutive runs, it restores the backup and changes are appended on this one.
+# On the first script run, backup local.conf & bblayers.conf and append changes to bblayers.conf
+# On consecutive runs, do nothing
 if [ ! -e $BUILD_DIR/conf/local.conf.org ]; then
     cp $BUILD_DIR/conf/local.conf $BUILD_DIR/conf/local.conf.org
-else
-    cp $BUILD_DIR/conf/local.conf.org $BUILD_DIR/conf/local.conf
 fi
-
 
 if [ ! -e $BUILD_DIR/conf/bblayers.conf.org ]; then
     cp $BUILD_DIR/conf/bblayers.conf $BUILD_DIR/conf/bblayers.conf.org
-else
-    cp $BUILD_DIR/conf/bblayers.conf.org $BUILD_DIR/conf/bblayers.conf
+
+    META_FSL_BSP_RELEASE="${CWD}/sources/meta-fsl-bsp-release/imx/meta-bsp"
+    echo "##Freescale Yocto Project Release layer" >> $BUILD_DIR/conf/bblayers.conf
+    echo "BBLAYERS += \" \${BSPDIR}/sources/meta-fsl-bsp-release/imx/meta-bsp \"" >> $BUILD_DIR/conf/bblayers.conf
+    echo "BBLAYERS += \" \${BSPDIR}/sources/meta-fsl-bsp-release/imx/meta-sdk \"" >> $BUILD_DIR/conf/bblayers.conf
+
+    echo "BBLAYERS += \" \${BSPDIR}/sources/meta-browser \"" >> $BUILD_DIR/conf/bblayers.conf
+    echo "BBLAYERS += \" \${BSPDIR}/sources/meta-openembedded/meta-gnome \"" >> $BUILD_DIR/conf/bblayers.conf
+    echo "BBLAYERS += \" \${BSPDIR}/sources/meta-openembedded/meta-networking \"" >> $BUILD_DIR/conf/bblayers.conf
+    echo "BBLAYERS += \" \${BSPDIR}/sources/meta-openembedded/meta-python \"" >> $BUILD_DIR/conf/bblayers.conf
+    echo "BBLAYERS += \" \${BSPDIR}/sources/meta-openembedded/meta-filesystems \"" >> $BUILD_DIR/conf/bblayers.conf
+
+    echo "BBLAYERS += \" \${BSPDIR}/sources/meta-qt5 \"" >> $BUILD_DIR/conf/bblayers.conf
+
+    echo "BBLAYERS += \" \${BSPDIR}/sources/meta-variscite-imx \"" >> $BUILD_DIR/conf/bblayers.conf
+
+    echo BSPDIR=$BSPDIR
+    echo BUILD_DIR=$BUILD_DIR
+
+    # Support integrating community meta-freescale instead of meta-fsl-arm
+    if [ -d ../sources/meta-freescale ]; then
+	    echo meta-freescale directory found
+	    # Change settings according to environment
+	    sed -e "s,meta-fsl-arm\s,meta-freescale ,g" -i conf/bblayers.conf
+	    sed -e "s,\$.BSPDIR./sources/meta-fsl-arm-extra\s,,g" -i conf/bblayers.conf
+    fi
 fi
-
-
-META_FSL_BSP_RELEASE="${CWD}/sources/meta-fsl-bsp-release/imx/meta-bsp"
-echo "##Freescale Yocto Release layer" >> $BUILD_DIR/conf/bblayers.conf
-echo "BBLAYERS += \" \${BSPDIR}/sources/meta-fsl-bsp-release/imx/meta-bsp \"" >> $BUILD_DIR/conf/bblayers.conf
-echo "BBLAYERS += \" \${BSPDIR}/sources/meta-fsl-bsp-release/imx/meta-sdk \"" >> $BUILD_DIR/conf/bblayers.conf
-
-echo "BBLAYERS += \" \${BSPDIR}/sources/meta-browser \"" >> $BUILD_DIR/conf/bblayers.conf
-echo "BBLAYERS += \" \${BSPDIR}/sources/meta-openembedded/meta-gnome \"" >> $BUILD_DIR/conf/bblayers.conf
-echo "BBLAYERS += \" \${BSPDIR}/sources/meta-openembedded/meta-networking \"" >> $BUILD_DIR/conf/bblayers.conf
-echo "BBLAYERS += \" \${BSPDIR}/sources/meta-openembedded/meta-python \"" >> $BUILD_DIR/conf/bblayers.conf
-echo "BBLAYERS += \" \${BSPDIR}/sources/meta-openembedded/meta-ruby \"" >> $BUILD_DIR/conf/bblayers.conf
-echo "BBLAYERS += \" \${BSPDIR}/sources/meta-openembedded/meta-filesystems \"" >> $BUILD_DIR/conf/bblayers.conf
-echo "EXTRA_IMAGE_FEATURES = \" debug-tweaks tools-debug eclipse-debug\"" >> $BUILD_DIR/conf/local.conf
-echo "IMAGE_INSTALL_append = \" tcf-agent openssh-sftp-server \"" >> $BUILD_DIR/conf/local.conf
-
-echo "BBLAYERS += \" \${BSPDIR}/sources/meta-qt5 \"" >> $BUILD_DIR/conf/bblayers.conf
-echo "BBLAYERS += \" \${BSPDIR}/sources/meta-variscite-mx6 \"" >> $BUILD_DIR/conf/bblayers.conf
 
 cd  $BUILD_DIR
 clean_up

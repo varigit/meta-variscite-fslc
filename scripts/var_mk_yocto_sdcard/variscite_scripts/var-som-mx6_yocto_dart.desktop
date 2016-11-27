@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Name=Yocto Krogoth
+Name=Install Yocto
 Comment=DART (eMMC)
 Exec=/usr/bin/terminal bash -c "/usr/bin/install_yocto.sh -b dart; read"
 Icon=media-flash

@@ -3,7 +3,7 @@ set -e
 
 #### Script version ####
 SCRIPT_NAME=${0##*/}
-readonly SCRIPT_VERSION="0.2"
+readonly SCRIPT_VERSION="0.3"
 
 #### Exports Variables ####
 #### global variables ####
@@ -14,7 +14,7 @@ readonly SCRIPT_POINT=${ABSOLUTE_DIRECTORY}
 readonly YOCTO_ROOT="${SCRIPT_POINT}/../../../../"
 readonly YOCTO_BUILD=${YOCTO_ROOT}/build_x11
 readonly YOCTO_SCRIPTS_PATH=${SCRIPT_POINT}/variscite_scripts
-readonly YOCTO_IMGS_PATH=${YOCTO_BUILD}/tmp/deploy/images/var-som-mx6
+readonly YOCTO_IMGS_PATH=${YOCTO_BUILD}/tmp/deploy/images/${MACHINE}
 
 # Sizes are in MiB
 BOOTLOAD_RESERVE_SIZE=4
@@ -25,27 +25,23 @@ AUTO_FILL_SD=0
 SPARE_SIZE=4
 
 
-TEMP_DIR=./var_tmp
-P1_MOUNT_DIR=${TEMP_DIR}/BOOT-VAR-SOM
-P2_MOUNT_DIR=${TEMP_DIR}/rootfs
-
 YOCTO_RECOVERY_ROOTFS_PATH=${YOCTO_IMGS_PATH}
-YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME=fsl-image-gui-var-som-mx6
+YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME=fsl-image-gui-${MACHINE}
 
-echo "==============================================="
-echo "= Variscite recovery SD card creation script  ="
-echo "==============================================="
+echo "=============================================="
+echo "= Variscite recovery SD card creation script ="
+echo "=============================================="
 
 help() {
 	bn=`basename $0`
-	echo " Usage: $bn <options> device_node"
+	echo " Usage: MACHINE=<var-som-mx6|imx6ul-var-dart|imx7-var-som> $bn <options> device_node"
 	echo
 	echo " options:"
 	echo " -h		Display this help message"
 	echo " -s		Only show partition sizes to be written, without actually write them"
 	echo " -a		Automatically set the rootfs partition size to fill the SD card (leaving spare ${SPARE_SIZE}MiB)"
 	echo " -r		Select alternative rootfs for recovery images"
-	echo " 		(default: \"${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME})\")"
+	echo " 		(default: \"${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}\")"
 	echo
 }
 
@@ -53,6 +49,25 @@ if [[ $EUID -ne 0 ]] ; then
 	echo "This script must be run with super-user privileges"
 	exit 1
 fi
+
+if [[ $MACHINE == var-som-mx6 ]] ; then
+	FAT_VOLNAME=BOOT-VARMX6
+	IS_SPL=true
+elif [[ $MACHINE == imx6ul-var-dart ]] ; then
+	FAT_VOLNAME=BOOT-VAR6UL
+	IS_SPL=true
+elif [[ $MACHINE == imx7-var-som ]] ; then
+	FAT_VOLNAME=BOOT-VARMX7
+	IS_SPL=false
+else
+	help
+	exit 1
+fi
+
+TEMP_DIR=./var_tmp
+P1_MOUNT_DIR=${TEMP_DIR}/${FAT_VOLNAME}
+P2_MOUNT_DIR=${TEMP_DIR}/rootfs
+
 
 # Parse command line
 moreoptions=1
@@ -161,11 +176,11 @@ EOF
 	sync
 }
 
-function format_yocto
+function format_parts
 {
 	echo
 	echo "Formating Yocto partitions"
-	mkfs.vfat ${node}${part}1 -n BOOT-VARSOM
+	mkfs.vfat ${node}${part}1 -n ${FAT_VOLNAME}
 	mkfs.ext4 ${node}${part}2 -L rootfs
 }
 
@@ -173,8 +188,12 @@ function install_bootloader
 {
 	echo
 	echo "Installing U-Boot"
-	dd if=${YOCTO_IMGS_PATH}/SPL-sd of=${node} bs=1K seek=1; sync
-	dd if=${YOCTO_IMGS_PATH}/u-boot-sd-2015.04-r0.img of=${node} bs=1K seek=69; sync
+	if [[ $IS_SPL == true ]] ; then
+		dd if=${YOCTO_IMGS_PATH}/SPL-sd of=${node} bs=1K seek=1; sync
+		dd if=${YOCTO_IMGS_PATH}/u-boot.img-sd of=${node} bs=1K seek=69; sync
+	else
+		dd if=${YOCTO_IMGS_PATH}/u-boot.imx-sd of=${node} bs=1K seek=1; sync
+	fi
 }
 
 function mount_parts
@@ -197,22 +216,15 @@ function install_yocto
 {
 	echo
 	echo "Installing Yocto Boot partition"
-	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-cap.dtb		${P1_MOUNT_DIR}/imx6dl-var-som-cap.dtb
-	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-res.dtb		${P1_MOUNT_DIR}/imx6dl-var-som-res.dtb
-	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-solo-cap.dtb	${P1_MOUNT_DIR}/imx6dl-var-som-solo-cap.dtb
-	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-solo-res.dtb	${P1_MOUNT_DIR}/imx6dl-var-som-solo-res.dtb
-	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-solo-vsc.dtb	${P1_MOUNT_DIR}/imx6dl-var-som-solo-vsc.dtb
-	cp ${YOCTO_IMGS_PATH}/uImage-imx6dl-var-som-vsc.dtb		${P1_MOUNT_DIR}/imx6dl-var-som-vsc.dtb
-	cp ${YOCTO_IMGS_PATH}/uImage-imx6q-var-dart.dtb			${P1_MOUNT_DIR}/imx6q-var-dart.dtb
-	cp ${YOCTO_IMGS_PATH}/uImage-imx6q-var-som-cap.dtb		${P1_MOUNT_DIR}/imx6q-var-som-cap.dtb
-	cp ${YOCTO_IMGS_PATH}/uImage-imx6q-var-som-res.dtb		${P1_MOUNT_DIR}/imx6q-var-som-res.dtb
-	cp ${YOCTO_IMGS_PATH}/uImage-imx6q-var-som-vsc.dtb		${P1_MOUNT_DIR}/imx6q-var-som-vsc.dtb
-	pv ${YOCTO_IMGS_PATH}/uImage >					${P1_MOUNT_DIR}/uImage
+	cp ${YOCTO_IMGS_PATH}/?Image-imx*.dtb		${P1_MOUNT_DIR}/
+	rename 's/.Image-//' ${P1_MOUNT_DIR}/?Image-*
+
+	pv ${YOCTO_IMGS_PATH}/?Image >			${P1_MOUNT_DIR}/`cd ${YOCTO_IMGS_PATH}; ls ?Image`
 	sync
 
 	echo
 	echo "Installing Yocto Root File System"
-	pv ${YOCTO_IMGS_PATH}/fsl-image-gui-var-som-mx6.tar.bz2 | tar -xj -C ${P2_MOUNT_DIR}/
+	pv ${YOCTO_IMGS_PATH}/fsl-image-gui-${MACHINE}.tar.bz2 | tar -xj -C ${P2_MOUNT_DIR}/
 }
 
 function copy_images
@@ -221,62 +233,66 @@ function copy_images
 	echo "Copying Yocto images to /opt/images/"
 	mkdir -p ${P2_MOUNT_DIR}/opt/images/Yocto
 
-	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/uImage					${P2_MOUNT_DIR}/opt/images/Yocto/
-	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/uImage-imx6dl-var-som-cap.dtb		${P2_MOUNT_DIR}/opt/images/Yocto/
-	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/uImage-imx6dl-var-som-res.dtb	 	${P2_MOUNT_DIR}/opt/images/Yocto/
-	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/uImage-imx6dl-var-som-solo-cap.dtb	${P2_MOUNT_DIR}/opt/images/Yocto/
-	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/uImage-imx6dl-var-som-solo-res.dtb	${P2_MOUNT_DIR}/opt/images/Yocto/
-	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/uImage-imx6dl-var-som-solo-vsc.dtb	${P2_MOUNT_DIR}/opt/images/Yocto/
-	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/uImage-imx6dl-var-som-vsc.dtb		${P2_MOUNT_DIR}/opt/images/Yocto/
-	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/uImage-imx6q-var-dart.dtb			${P2_MOUNT_DIR}/opt/images/Yocto/
-	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/uImage-imx6q-var-som-cap.dtb		${P2_MOUNT_DIR}/opt/images/Yocto/
-	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/uImage-imx6q-var-som-res.dtb		${P2_MOUNT_DIR}/opt/images/Yocto/
-	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/uImage-imx6q-var-som-vsc.dtb		${P2_MOUNT_DIR}/opt/images/Yocto/
+	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/?Image-imx*.dtb		${P2_MOUNT_DIR}/opt/images/Yocto/
+	rename 's/.Image-//' ${P2_MOUNT_DIR}/opt/images/Yocto/?Image-*
 
-	## coping image for emmc
+	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/?Image				${P2_MOUNT_DIR}/opt/images/Yocto/
+
+	# Copy image for eMMC
 	if [ -f ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}.tar.bz2 ]; then
-		echo "Copying rootfs.tar.bz2 archive"
-		pv ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}.tar.bz2 >	${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.tar.bz2
+		pv ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}.tar.bz2 > ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.tar.bz2
 	else
-		echo "W:rootfs.tar.bz2 file is not present. Installation on \"EMMC\" will not be supported!"
+		echo "W:rootfs.tar.bz2 file is not present. Installation on \"eMMC\" will not be supported!"
 	fi
 
-	## coping image for nand
+	# Copy image for NAND flash
 	if [ -f ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}.ubi ]; then
-		echo "Copying rootfs.ubi.img file"
-		pv ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}.ubi > ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.ubi.img
+		pv ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}.ubi > ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.ubi
 	else
-		echo "W:rootfs.ubi.img file is not present. Installation on \"NAND\" will not be supported!"
+		echo "W:rootfs.ubi file is not present. Installation on \"NAND flash\" will not be supported!"
 	fi
 
-	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/SPL-nand					${P2_MOUNT_DIR}/opt/images/Yocto/SPL
-	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/u-boot-nand-2015.04-r0.img		${P2_MOUNT_DIR}/opt/images/Yocto/u-boot.img
+	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/u-boot.im?-nand			${P2_MOUNT_DIR}/opt/images/Yocto/
+	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/u-boot.im?-sd				${P2_MOUNT_DIR}/opt/images/Yocto/
 
-	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/SPL-sd					${P2_MOUNT_DIR}/opt/images/Yocto/SPL.mmc
-	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/u-boot-sd-2015.04-r0.img			${P2_MOUNT_DIR}/opt/images/Yocto/u-boot.img.mmc
+	if [[ $IS_SPL == true ]] ; then
+		cp ${YOCTO_RECOVERY_ROOTFS_PATH}/SPL-nand				${P2_MOUNT_DIR}/opt/images/Yocto/
+		cp ${YOCTO_RECOVERY_ROOTFS_PATH}/SPL-sd					${P2_MOUNT_DIR}/opt/images/Yocto/
+	fi
 }
 
 function copy_scripts
 {
 	echo
 	echo "Copying scripts and desktop icons"
-	cp ${YOCTO_SCRIPTS_PATH}/*.sh		${P2_MOUNT_DIR}/usr/bin/
 
-	cp ${YOCTO_SCRIPTS_PATH}/*.desktop 	${P2_MOUNT_DIR}/usr/share/applications/
-
-	if [ ! -f ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.ubi.img ]; then
-	## delete unactive configurations (NAND)
-		rm -rf ${P2_MOUNT_DIR}/usr/share/applications/yocto_*_nand.desktop
+	cp ${YOCTO_SCRIPTS_PATH}/echos.sh				${P2_MOUNT_DIR}/usr/bin/
+	if [[ $MACHINE == var-som-mx6 ]] ; then
+		cp ${YOCTO_SCRIPTS_PATH}/mx6_install_yocto.sh		${P2_MOUNT_DIR}/usr/bin/install_yocto.sh
+		cp ${YOCTO_SCRIPTS_PATH}/mx6_install_yocto_emmc.sh	${P2_MOUNT_DIR}/usr/bin/install_yocto_emmc.sh
+	else
+		cp ${YOCTO_SCRIPTS_PATH}/mx6ul_mx7_install_yocto.sh	${P2_MOUNT_DIR}/usr/bin/install_yocto.sh
 	fi
 
-	cp ${YOCTO_SCRIPTS_PATH}/terminal	${P2_MOUNT_DIR}/usr/bin/
+	cp ${YOCTO_SCRIPTS_PATH}/${MACHINE}*.desktop 			${P2_MOUNT_DIR}/usr/share/applications/
+
+	# Remove inactive icons
+	if [ ! -f ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.tar.bz2 ]; then
+		rm -rf ${P2_MOUNT_DIR}/usr/share/applications/${MACHINE}_yocto_*_emmc.desktop
+	fi
+
+	if [ ! -f ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.ubi ]; then
+		rm -rf ${P2_MOUNT_DIR}/usr/share/applications/${MACHINE}_yocto_*_nand.desktop
+	fi
+
+	cp ${YOCTO_SCRIPTS_PATH}/terminal				${P2_MOUNT_DIR}/usr/bin/
 }
 
 umount ${node}${part}*  2> /dev/null || true
 
 delete_device
 create_parts
-format_yocto
+format_parts
 install_bootloader
 mount_parts
 install_yocto

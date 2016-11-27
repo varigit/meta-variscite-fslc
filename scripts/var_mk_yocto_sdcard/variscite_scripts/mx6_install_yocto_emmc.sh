@@ -43,12 +43,12 @@ function check_images
 	fi
 
 	if [[ $is_dart == true ]] ; then
-		if [[ ! -f ${imagesdir}/SPL.mmc ]] ; then
-			red_bold_echo "ERROR: SPL.mmc does not exist"
+		if [[ ! -f ${imagesdir}/SPL-sd ]] ; then
+			red_bold_echo "ERROR: SPL-sd does not exist"
 			exit 1
 		fi
-		if [[ ! -f ${imagesdir}/u-boot.img.mmc ]] ; then
-			red_bold_echo "ERROR: u-boot.img.mmc does not exist"
+		if [[ ! -f ${imagesdir}/u-boot.img-sd ]] ; then
+			red_bold_echo "ERROR: u-boot.img-sd does not exist"
 			exit 1
 		fi
 	fi
@@ -113,8 +113,8 @@ function install_bootloader
 {
 	echo
 	blue_underlined_bold_echo "Installing booloader"
-	sudo dd if=${imagesdir}/SPL.mmc of=${node} bs=1K seek=1; sync
-	sudo dd if=${imagesdir}/u-boot.img.mmc of=${node} bs=1K seek=69; sync
+	sudo dd if=${imagesdir}/SPL-sd of=${node} bs=1K seek=1; sync
+	sudo dd if=${imagesdir}/u-boot.img-sd of=${node} bs=1K seek=69; sync
 }
 
 function install_kernel
@@ -123,8 +123,8 @@ function install_kernel
 	blue_underlined_bold_echo "Installing kernel to BOOT partition"
 	mkdir -p ${mountdir_prefix}${bootpart}
 	mount -t vfat ${node}${part}${bootpart}		${mountdir_prefix}${bootpart}
-	cp -v ${imagesdir}/uImage-imx6q-var-dart.dtb	${mountdir_prefix}${bootpart}/imx6q-var-dart.dtb
-	cp -v ${imagesdir}/uImage			${mountdir_prefix}${bootpart}/uImage
+	cp -v ${imagesdir}/imx6q-var-dart.dtb		${mountdir_prefix}${bootpart}
+	cp -v ${imagesdir}/uImage			${mountdir_prefix}${bootpart}
 	sync
 	umount ${node}${part}${bootpart}
 }

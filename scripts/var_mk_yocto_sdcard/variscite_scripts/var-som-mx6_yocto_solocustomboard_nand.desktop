@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Name=Yocto Krogoth
+Name=Install Yocto
 Comment=SOLOCB NAND
 Exec=/usr/bin/terminal bash -c "/usr/bin/install_yocto.sh -b scb -r nand; read"
 Icon=media-flash

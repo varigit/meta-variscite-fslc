@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Install Yocto
+Comment=NAND flash
+Exec=/usr/bin/terminal bash -c "/usr/bin/install_yocto.sh -b mx7 -r nand; read"
+Icon=media-flash
+Terminal=false
+Categories=GTK;Application;
+StartupNotify=true

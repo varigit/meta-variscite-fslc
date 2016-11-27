@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Install Yocto
+Comment=NAND, SD card
+Exec=/usr/bin/terminal bash -c "/usr/bin/install_yocto.sh -b mx6ul -r nand -v sd; read"
+Icon=media-flash
+Terminal=false
+Categories=GTK;Application;
+StartupNotify=true

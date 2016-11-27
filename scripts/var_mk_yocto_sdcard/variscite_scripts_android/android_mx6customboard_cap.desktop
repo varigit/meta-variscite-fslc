@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Name=Android M6.0.1
+Name=Install Android
 Comment=MX6CB Cap
 Exec=/usr/bin/terminal bash -c "/usr/bin/install_android.sh -b mx6cb -t cap; read"
 Icon=media-flash

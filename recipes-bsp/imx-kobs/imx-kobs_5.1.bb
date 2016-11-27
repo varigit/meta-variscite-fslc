@@ -13,4 +13,3 @@ SRC_URI[sha256sum] = "28c7356187ae26a2b37fb37a4b7bfdb63b3628b72d737d897ae6d5b969
 inherit  autotools pkgconfig
 
 COMPATIBLE_MACHINE = "(imx)"
-
