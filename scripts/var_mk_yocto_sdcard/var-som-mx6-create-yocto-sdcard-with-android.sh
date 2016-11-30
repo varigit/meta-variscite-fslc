@@ -35,13 +35,17 @@ node="na"
 cal_only=0
 
 while [ "$moreoptions" = 1 -a $# -gt 0 ]; do
-        case $1 in
-            -h) ;;
-            -s) ;;
-            -a) ;;
-            *)  moreoptions=0; node=$1 ;;
-        esac
-        [ "$moreoptions" = 1 ] && shift
+	case $1 in
+	    -h) ;;
+	    -s) ;;
+	    -a) ;;
+	    -r) shift;
+	    ;;
+	    -n) shift;
+	    ;;
+	    *)  moreoptions=0; node=$1 ;;
+	esac
+	[ "$moreoptions" = 1 ] && shift
 done
 
 part=""

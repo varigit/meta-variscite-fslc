@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Release Notes
+Comment=Recovery SD card
+Exec=/usr/bin/terminal bash -c "cat /opt/images/release_notes.txt; read"
+Icon=accessories-text-editor
+Terminal=false
+Categories=GTK;Application;
+StartupNotify=true

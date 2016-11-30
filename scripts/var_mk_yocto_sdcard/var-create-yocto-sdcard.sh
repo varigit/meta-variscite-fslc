@@ -3,7 +3,7 @@ set -e
 
 #### Script version ####
 SCRIPT_NAME=${0##*/}
-readonly SCRIPT_VERSION="0.3"
+readonly SCRIPT_VERSION="0.4"
 
 #### Exports Variables ####
 #### global variables ####
@@ -26,7 +26,8 @@ SPARE_SIZE=4
 
 
 YOCTO_RECOVERY_ROOTFS_PATH=${YOCTO_IMGS_PATH}
-YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME=fsl-image-gui-${MACHINE}
+YOCTO_DEFAULT_IMAGE=fsl-image-gui
+YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME=${YOCTO_DEFAULT_IMAGE}-${MACHINE}
 
 echo "=============================================="
 echo "= Variscite recovery SD card creation script ="
@@ -37,11 +38,12 @@ help() {
 	echo " Usage: MACHINE=<var-som-mx6|imx6ul-var-dart|imx7-var-som> $bn <options> device_node"
 	echo
 	echo " options:"
-	echo " -h		Display this help message"
-	echo " -s		Only show partition sizes to be written, without actually write them"
+	echo " -h		display this Help message"
+	echo " -s		only Show partition sizes to be written, without actually write them"
 	echo " -a		Automatically set the rootfs partition size to fill the SD card (leaving spare ${SPARE_SIZE}MiB)"
-	echo " -r		Select alternative rootfs for recovery images"
-	echo " 		(default: \"${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}\")"
+	echo " -r ROOTFS_NAME	select an alternative Rootfs for recovery images"
+	echo " 		(default: \"${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_DEFAULT_IMAGE}-\${MACHINE}\")"
+	echo " -n TEXT_FILE	add a release Notes text file"
 	echo
 }
 
@@ -83,6 +85,9 @@ while [ "$moreoptions" = 1 -a $# -gt 0 ]; do
 			YOCTO_RECOVERY_ROOTFS_MASK_PATH=`readlink -e "${1}.tar.bz2"`;
 			YOCTO_RECOVERY_ROOTFS_PATH=`dirname ${YOCTO_RECOVERY_ROOTFS_MASK_PATH}`
 			YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME=`basename ${1}`
+	    ;;
+	    -n) shift;
+			RELEASE_NOTES_FILE=${1}
 	    ;;
 	    *)  moreoptions=0; node=$1 ;;
 	esac
@@ -283,6 +288,11 @@ function copy_scripts
 
 	if [ ! -f ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.ubi ]; then
 		rm -rf ${P2_MOUNT_DIR}/usr/share/applications/${MACHINE}_yocto_*_nand.desktop
+	fi
+
+	if [ -f ${RELEASE_NOTES_FILE} ]; then
+		cp ${RELEASE_NOTES_FILE} 				${P2_MOUNT_DIR}/opt/images/release_notes.txt
+		cp ${YOCTO_SCRIPTS_PATH}/release_notes.desktop		${P2_MOUNT_DIR}/usr/share/applications/
 	fi
 
 	cp ${YOCTO_SCRIPTS_PATH}/terminal				${P2_MOUNT_DIR}/usr/bin/
