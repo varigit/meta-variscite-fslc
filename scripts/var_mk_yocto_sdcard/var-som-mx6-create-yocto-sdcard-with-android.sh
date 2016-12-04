@@ -3,7 +3,7 @@ set -e
 
 #### Script version ####
 SCRIPT_NAME=${0##*/}
-readonly SCRIPT_VERSION="0.1"
+readonly SCRIPT_VERSION="0.5"
 
 #### Exports Variables ####
 #### global variables ####

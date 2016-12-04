@@ -3,7 +3,7 @@ set -e
 
 #### Script version ####
 SCRIPT_NAME=${0##*/}
-readonly SCRIPT_VERSION="0.4"
+readonly SCRIPT_VERSION="0.5"
 
 #### Exports Variables ####
 #### global variables ####
@@ -146,7 +146,7 @@ function delete_device
 	sync
 
 	dd if=/dev/zero of=$node bs=1M count=4
-	sync
+	sync; sleep 1
 }
 
 function ceildiv
@@ -177,8 +177,9 @@ ${PART1_START},${PART1_SIZE},c
 ${PART2_START},${PART2_SIZE},83
 EOF
 
+	sync; sleep 1
+
 	fdisk -l $node
-	sync
 }
 
 function format_parts
@@ -187,6 +188,7 @@ function format_parts
 	echo "Formating Yocto partitions"
 	mkfs.vfat ${node}${part}1 -n ${FAT_VOLNAME}
 	mkfs.ext4 ${node}${part}2 -L rootfs
+	sync; sleep 1
 }
 
 function install_bootloader
@@ -290,7 +292,7 @@ function copy_scripts
 		rm -rf ${P2_MOUNT_DIR}/usr/share/applications/${MACHINE}_yocto_*_nand.desktop
 	fi
 
-	if [ -f ${RELEASE_NOTES_FILE} ]; then
+	if [ ${RELEASE_NOTES_FILE} ] && [ -f ${RELEASE_NOTES_FILE} ]; then
 		cp ${RELEASE_NOTES_FILE} 				${P2_MOUNT_DIR}/opt/images/release_notes.txt
 		cp ${YOCTO_SCRIPTS_PATH}/release_notes.desktop		${P2_MOUNT_DIR}/usr/share/applications/
 	fi

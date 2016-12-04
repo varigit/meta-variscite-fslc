@@ -88,6 +88,7 @@ usage()
 
 finish()
 {
+	sync
 	echo
 	blue_bold_echo "Yocto installed successfully"
 	exit 0

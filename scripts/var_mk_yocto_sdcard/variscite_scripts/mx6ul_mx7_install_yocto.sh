@@ -98,7 +98,7 @@ delete_emmc()
 	sync
 
 	dd if=/dev/zero of=$node bs=1M count=4
-	sync
+	sync; sleep 1
 }
 
 create_emmc_parts()
@@ -115,8 +115,8 @@ create_emmc_parts()
 	 echo n; echo p; echo $rootfspart; echo $PART2_FIRST_SECT; echo; \
 	 echo p; echo w) | fdisk -u $node > /dev/null
 
-	fdisk -u -l $node
 	sync; sleep 1
+	fdisk -u -l $node
 }
 
 format_emmc_parts()
@@ -126,7 +126,7 @@ format_emmc_parts()
 
 	mkfs.vfat ${node}${part}${bootpart} -n ${FAT_VOLNAME}
 	mkfs.ext4 ${node}${part}${rootfspart} -L rootfs
-	sync
+	sync; sleep 1
 }
 
 install_bootloader_to_emmc()

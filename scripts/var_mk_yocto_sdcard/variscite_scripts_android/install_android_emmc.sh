@@ -141,7 +141,7 @@ function delete_device
 	sync
 
 	dd if=/dev/zero of=$node bs=1M count=4
-	sync
+	sync; sleep 1
 }
 
 function create_parts
@@ -214,7 +214,7 @@ function format_android
 	mkfs.ext4 ${node}${part}5 -Lsystem
 	mkfs.ext4 ${node}${part}6 -Lcache
 	mkfs.ext4 ${node}${part}7 -Ldevice
-	sync
+	sync; sleep 1
 }
 
 function install_android

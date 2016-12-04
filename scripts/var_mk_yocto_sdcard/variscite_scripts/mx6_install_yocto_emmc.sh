@@ -70,7 +70,7 @@ function delete_device
 	sync
 
 	dd if=/dev/zero of=$node bs=1M count=4
-	sync
+	sync; sleep 1
 }
 
 function create_parts
@@ -89,8 +89,8 @@ function create_parts
 	else
 		(echo n; echo p; echo $rootfspart; echo; echo; echo p; echo w) | fdisk -u $node > /dev/null
 	fi
-	fdisk -u -l $node
 	sync; sleep 1
+	fdisk -u -l $node
 }
 
 function format_boot_part
@@ -98,7 +98,7 @@ function format_boot_part
 	echo
 	blue_underlined_bold_echo "Formatting BOOT partition"
 	mkfs.vfat ${node}${part}${bootpart} -n BOOT-VARSOM
-	sync
+	sync; sleep 1
 }
 
 function format_rootfs_part
@@ -106,7 +106,7 @@ function format_rootfs_part
 	echo
 	blue_underlined_bold_echo "Formatting rootfs partition"
 	mkfs.ext4 ${node}${part}${rootfspart} -L rootfs
-	sync
+	sync; sleep 1
 }
 
 function install_bootloader
