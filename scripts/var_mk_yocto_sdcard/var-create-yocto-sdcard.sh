@@ -3,7 +3,7 @@ set -e
 
 #### Script version ####
 SCRIPT_NAME=${0##*/}
-readonly SCRIPT_VERSION="0.5"
+readonly SCRIPT_VERSION="0.6"
 
 #### Exports Variables ####
 #### global variables ####
@@ -231,7 +231,7 @@ function install_yocto
 
 	echo
 	echo "Installing Yocto Root File System"
-	pv ${YOCTO_IMGS_PATH}/fsl-image-gui-${MACHINE}.tar.bz2 | tar -xj -C ${P2_MOUNT_DIR}/
+	pv ${YOCTO_IMGS_PATH}/${YOCTO_DEFAULT_IMAGE}-${MACHINE}.tar.bz2 | tar -xj -C ${P2_MOUNT_DIR}/
 }
 
 function copy_images
@@ -281,20 +281,25 @@ function copy_scripts
 		cp ${YOCTO_SCRIPTS_PATH}/mx6ul_mx7_install_yocto.sh	${P2_MOUNT_DIR}/usr/bin/install_yocto.sh
 	fi
 
-	cp ${YOCTO_SCRIPTS_PATH}/${MACHINE}*.desktop 			${P2_MOUNT_DIR}/usr/share/applications/
+	if [ -d ${P2_MOUNT_DIR}/usr/share/applications ]; then
+		cp ${YOCTO_SCRIPTS_PATH}/${MACHINE}*.desktop		${P2_MOUNT_DIR}/usr/share/applications/
 
-	# Remove inactive icons
-	if [ ! -f ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.tar.bz2 ]; then
-		rm -rf ${P2_MOUNT_DIR}/usr/share/applications/${MACHINE}_yocto_*_emmc.desktop
-	fi
+		# Remove inactive icons
+		if [ ! -f ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.tar.bz2 ]; then
+			rm -rf ${P2_MOUNT_DIR}/usr/share/applications/${MACHINE}_yocto_*_emmc.desktop
+		fi
 
-	if [ ! -f ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.ubi ]; then
-		rm -rf ${P2_MOUNT_DIR}/usr/share/applications/${MACHINE}_yocto_*_nand.desktop
+		if [ ! -f ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.ubi ]; then
+			rm -rf ${P2_MOUNT_DIR}/usr/share/applications/${MACHINE}_yocto_*_nand.desktop
+		fi
+
+		if [ ${RELEASE_NOTES_FILE} ] && [ -f ${RELEASE_NOTES_FILE} ]; then
+			cp ${YOCTO_SCRIPTS_PATH}/release_notes.desktop		${P2_MOUNT_DIR}/usr/share/applications/
+		fi
 	fi
 
 	if [ ${RELEASE_NOTES_FILE} ] && [ -f ${RELEASE_NOTES_FILE} ]; then
 		cp ${RELEASE_NOTES_FILE} 				${P2_MOUNT_DIR}/opt/images/release_notes.txt
-		cp ${YOCTO_SCRIPTS_PATH}/release_notes.desktop		${P2_MOUNT_DIR}/usr/share/applications/
 	fi
 
 	cp ${YOCTO_SCRIPTS_PATH}/terminal				${P2_MOUNT_DIR}/usr/bin/
