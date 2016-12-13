@@ -1,16 +1,22 @@
 --- server mode ---
+info: Connect device to Mobile phone by bluetooth and make sure that sound is playing using connector J 19 in device.
+
 To start the A2DP device in server mode, run the following command (Into console of device):
 
-	# /opt/var-bluetooth-snd-dev/./bluetooth-snd-server.sh -t <bd adress for client device>
-
-Example:
- # /opt/var-bluetooth-snd-dev/./bluetooth-snd-server.sh -t C8:14:79:27:F1:82
+# /opt/var-bluetooth-snd-dev/./bluetooth-snd-server.sh -t <bd adress for client device>
+Where "bd adress" we can get with command "hcitool scan"
+For example:
+# /opt/var-bluetooth-snd-dev/./bluetooth-snd-server.sh -t C8:14:79:27:F1:82
 
 On the side of the client device to connect to the device VAR-A2DP and play sound through it.
-For audio playback, make sure you connect headphones or speakers to the connector J19.
+For audio playback, make sure you connect headphones or speakers to the connector J19 in device.
 
---- clien mode ---
-Connect and play sound through bluetooth headphones.
+Note: If sound not playing you can see paragraph "FAQ".
+
+
+
+--- client mode ---
+info: Connect and play sound through bluetooth headphones.
 
 ---- connect ----
 Into console of device:
@@ -174,8 +180,9 @@ example:
 
 3. play wav file from pulse subsystem to bluetooth headphones
 	# paplay -p  --device=bluez_sink.XX_XX_XX_XX_XX_XX test.wav
-
+Where:
 XX_XX_XX_XX_XX_XX - bd_add from item 1
+test.wav - is the path to audio file
 
 example:
  root@imx6ul-var-dart:~# paplay -p --device=bluez_sink.00_06_F7_B3_E9_ED test.wav
