@@ -69,6 +69,7 @@ else
   # Load BT firmware and set MAC address
   brcm_patchram_plus --patchram ${BT_FIRMWARE} \
 		     --enable_hci --bd_addr ${BT_MACADDR} --no2bytes \
+		     --baudrate 921600 \
 		     --tosleep 1000 ${BT_TTY_DEV} &
 fi
 
