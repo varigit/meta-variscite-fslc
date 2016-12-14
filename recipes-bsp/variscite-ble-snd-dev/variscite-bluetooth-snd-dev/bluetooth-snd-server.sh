@@ -1,6 +1,4 @@
-#!/bin/bash
-
-set -e
+#!/bin/sh -e
 
 #### Script version ####
 SCRIPT_NAME=${0##*/}
