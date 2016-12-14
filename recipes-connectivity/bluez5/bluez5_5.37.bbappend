@@ -33,3 +33,9 @@ do_install_append() {
 	fi
 }
 
+# added audio.conf file for 6ul dart board
+SRC_URI_append_mx6ul = "file://audio.conf"
+
+do_install_append_mx6ul() {
+    install -m 0644 ${WORKDIR}/audio.conf ${D}/${sysconfdir}/bluetooth/
+}
