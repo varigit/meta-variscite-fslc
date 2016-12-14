@@ -1,6 +1,6 @@
 #!/bin/sh -e
 #
-# variscite touch 
+# Variscite touch 
 #
 # This script is executed at the end of each multiuser runlevel.
 # Make sure that the script will "exit 0" on success or any other
@@ -9,13 +9,10 @@
 # In order to enable or disable this script just change the execution
 # bits.
 #
-# This script disable the build in spi ADS7846 Touchscreen in case ctw6120-tsc
-# I/O
+# This script disables ADS7846 Touchscreen if CTW6120 touch screen is available
 
-#Check if device exist
-(dmesg | grep -q " CTW6120: revid 0 touchscreen")  # Check ifctw6120-tsc
-if [ $? -eq 0 ]
-then
+# Check if CTW6120 touchscreen is available
+if dmesg | grep -q " CTW6120: revid 0 touchscreen"; then
 	echo "CTW6120 found disabling ADS784"
 	export DISPLAY=:0.0
 	xinput disable "ADS7846 Touchscreen"

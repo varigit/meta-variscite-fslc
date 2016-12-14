@@ -1,0 +1,10 @@
+[Unit]
+Description=Variscite touchscreen setup service
+After=display-manager.service
+
+[Service]
+Type=forking
+ExecStart=/etc/X11/variscite-touch
+
+[Install]
+WantedBy=multi-user.target
