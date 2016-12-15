@@ -70,6 +70,7 @@ else
   brcm_patchram_plus --patchram ${BT_FIRMWARE} \
 		     --enable_hci --bd_addr ${BT_MACADDR} --no2bytes \
 		     --baudrate 921600 \
+		     --scopcm=1,0,0,0,0,0,0,0,0,0 \
 		     --tosleep 1000 ${BT_TTY_DEV} &
 fi
 
