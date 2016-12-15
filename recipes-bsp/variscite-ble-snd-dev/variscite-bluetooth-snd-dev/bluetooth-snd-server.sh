@@ -35,22 +35,9 @@ function up() {
 	## set class (a2dp)
 	${HCICONFIG} ${HCI_DEV} class 0x200414
 	sleep 0.5
-
-	[ "${OPT_TRUST_BDADDR}" = "" ] || {
-${BLUETOOTHCTL} << EOF
-trust ${OPT_TRUST_BDADDR}
-EOF
-	};
-
 }
 
 function down() {
-	[ "${OPT_TRUST_BDADDR}" = "" ] || {
-${BLUETOOTHCTL} << EOF
-untrust ${OPT_TRUST_BDADDR}
-EOF
-	};
-
 	${HCICONFIG} ${HCI_DEV} noscan
 	sleep 2
 
@@ -101,6 +88,14 @@ while true; do
 done
 
 ## main ##
+### trust connected device ###
+[ "${OPT_TRUST_BDADDR}" = "" ] || {
+${BLUETOOTHCTL} << EOF
+trust ${OPT_TRUST_BDADDR}
+EOF
+	exit $?;
+};
+
 ### disable server ###
 [ ${OPT_DISABLE} = "1" ] && {
 	down

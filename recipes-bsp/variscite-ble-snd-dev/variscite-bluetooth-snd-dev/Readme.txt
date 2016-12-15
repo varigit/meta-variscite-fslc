@@ -1,18 +1,29 @@
 --- server mode ---
 info: Connect device to Mobile phone by bluetooth and make sure that sound is playing using connector J 19 in device.
 
-To start the A2DP device in server mode, run the following command (Into console of device):
+1. Start the device in A2DP server mode, run the following command (Into console of device):
+# /opt/var-bluetooth-snd-dev/./bluetooth-snd-server.sh
 
-# /opt/var-bluetooth-snd-dev/./bluetooth-snd-server.sh -t <bd adress for client device>
+2. scan and connecting the external device to Variscite board over bluetooth
+
+3. Trusr external device to Variscite board
+/opt/var-bluetooth-snd-dev/./bluetooth-snd-server.sh -t C8:14:79:27:F1:82
 Where "bd adress" we can get with command "hcitool scan"
+
 For example:
+# /opt/var-bluetooth-snd-dev/./bluetooth-snd-server.sh
+.. connect external device via bluetooth
 # /opt/var-bluetooth-snd-dev/./bluetooth-snd-server.sh -t C8:14:79:27:F1:82
+ [NEW] Controller F8:DC:7A:07:8D:A6 VAR-A2DP [default]
+ [NEW] Device C8:14:79:27:F1:82 SM-T315
+ [bluetooth]# trust C8:14:79:27:F1:82
+ [bluetooth]# quit
+ [DEL] Controller F8:DC:7A:07:8D:A6 VAR-A2DP [default]
 
 On the side of the client device to connect to the device VAR-A2DP and play sound through it.
 For audio playback, make sure you connect headphones or speakers to the connector J19 in device.
 
 Note: If sound not playing you can see paragraph "FAQ".
-
 
 
 --- client mode ---
