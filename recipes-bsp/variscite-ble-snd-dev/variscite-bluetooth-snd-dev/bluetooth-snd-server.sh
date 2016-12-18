@@ -24,6 +24,10 @@ OPT_TRUST_BDADDR=""
 ## functions ##
 function up() {
 	# enable
+	${HCICONFIG} ${HCI_DEV} up
+	sleep 0.5
+
+	# make it discoverable
 	${HCICONFIG} ${HCI_DEV} piscan
 	sleep 2
 
@@ -35,6 +39,9 @@ function up() {
 	## set class (a2dp)
 	${HCICONFIG} ${HCI_DEV} class 0x200414
 	sleep 0.5
+
+	# force starting pulseaudio server
+	pactl list cards > /dev/null
 }
 
 function down() {
