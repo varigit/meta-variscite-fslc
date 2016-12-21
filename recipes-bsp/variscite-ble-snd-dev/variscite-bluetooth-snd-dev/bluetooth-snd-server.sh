@@ -25,7 +25,7 @@ OPT_TRUST_BDADDR=""
 function up() {
 	# enable
 	${HCICONFIG} ${HCI_DEV} up
-	sleep 0.5
+	sleep 1
 
 	# make it discoverable
 	${HCICONFIG} ${HCI_DEV} piscan
@@ -34,11 +34,11 @@ function up() {
 	# tuning bluetooth config
 	## set name
 	${HCICONFIG} ${HCI_DEV} name "VAR-A2DP"
-	sleep 0.5
+	sleep 1
 
 	## set class (a2dp)
 	${HCICONFIG} ${HCI_DEV} class 0x200414
-	sleep 0.5
+	sleep 1
 
 	# force starting pulseaudio server
 	pactl list cards > /dev/null
