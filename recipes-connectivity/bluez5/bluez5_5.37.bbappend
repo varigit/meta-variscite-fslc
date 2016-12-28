@@ -12,11 +12,13 @@ SRC_URI_append = " \
 	file://variscite-bt \
 	file://variscite-bt.service \
 	file://variscite-bt.conf \
+	file://audio.conf \
 "
 
 do_install_append() {
 	install -d ${D}${sysconfdir}/bluetooth
 	install -m 0644 ${WORKDIR}/variscite-bt.conf ${D}${sysconfdir}/bluetooth
+	install -m 0644 ${WORKDIR}/audio.conf ${D}/${sysconfdir}/bluetooth
 
 	if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)}; then
 		install -d ${D}${systemd_unitdir}/system
@@ -31,11 +33,4 @@ do_install_append() {
 		update-rc.d -r ${D} variscite-bt start 99 2 3 4 5 .
 		update-rc.d -r ${D} bluetooth defaults
 	fi
-}
-
-# added audio.conf file for 6ul dart board
-SRC_URI_append_mx6ul = "file://audio.conf"
-
-do_install_append_mx6ul() {
-    install -m 0644 ${WORKDIR}/audio.conf ${D}/${sysconfdir}/bluetooth/
 }
