@@ -62,6 +62,8 @@ enable_bt
 if [ "${BT_CHIP}" = "wl18xx" ]; then
   # Attach UART to bluetooth stack
   hciattach -t 10 -s 115200 ${BT_TTY_DEV} texas 3000000
+  # Enable SCO over HCI
+  hcitool cmd 0x3f 0x210 0x01 0x00 0x00 0xff
 else
   # Get BT MAC address
   BT_MACADDR=$(get_bt_macaddr)
