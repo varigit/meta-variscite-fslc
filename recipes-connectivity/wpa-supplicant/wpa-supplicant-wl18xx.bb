@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://../COPYING;md5=36b27801447e0662ee0138d17fe93880 \
                     file://../README;md5=7f393579f8b109fe91f3b9765d26c7d3 \
                     file://wpa_supplicant.c;beginline=1;endline=17;md5=8a3131126465e08eb6b8d17ea880e162"
 
-FILESEXTRAPATHS_append := ":${THISDIR}/wpa-supplicant"
+FILESEXTRAPATHS_prepend := "${THISDIR}/wpa-supplicant:"
 
 # Tag: R8.6_SP1
 SRCREV = "${AUTOREV}"
