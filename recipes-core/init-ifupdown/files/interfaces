@@ -1,5 +1,5 @@
 # /etc/network/interfaces -- configuration file for ifup(8), ifdown(8)
- 
+
 # The loopback interface
 auto lo
 iface lo inet loopback
@@ -10,7 +10,6 @@ iface wlan0 inet dhcp
 	wireless_essid any
 	wpa-driver wext
 	wpa-conf /etc/wpa_supplicant.conf
-
 
 # Wired or wireless interfaces
 auto eth0

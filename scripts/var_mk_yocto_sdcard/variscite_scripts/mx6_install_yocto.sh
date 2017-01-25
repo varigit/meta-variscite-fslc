@@ -32,7 +32,7 @@ install_bootloader()
 	kobs-ng init -x $MEDIA/$SPL_IMAGE --search_exponent=1 -v > /dev/null
 
 	flash_erase /dev/mtd1 0 0 2> /dev/null
-	nandwrite -p /dev/mtd1 $MEDIA/$UBOOT_IMAGE 
+	nandwrite -p /dev/mtd1 $MEDIA/$UBOOT_IMAGE
 }
 
 install_kernel()
@@ -121,9 +121,9 @@ STR=""
 
 if [[ $BOARD == "mx6cb" ]] ; then
 	STR="MX6CustomBoard"
-elif [[ $BOARD == "scb" ]] ; then 
+elif [[ $BOARD == "scb" ]] ; then
 	STR="SOLOCustomBoard"
-elif [[ $BOARD == "dart" ]] ; then 
+elif [[ $BOARD == "dart" ]] ; then
 	STR="DART-MX6"
 else
 	usage

@@ -1,4 +1,4 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/xinput:"
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI_append_var-som-mx6 = " \
 	file://variscite-touch \
@@ -25,4 +25,3 @@ do_install_append_var-som-mx6() {
 		update-rc.d -r ${D} variscite-touch start 99 2 3 4 5 .
 	fi
 }
-

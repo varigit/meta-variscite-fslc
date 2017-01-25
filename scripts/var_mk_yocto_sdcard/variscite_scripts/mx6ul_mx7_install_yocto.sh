@@ -235,7 +235,7 @@ fi
 printf "Board: "
 blue_bold_echo $STR
 
-if [[ $BOARD == "mx6ul" || $BOARD == "mx6ull" ]] ; then 
+if [[ $BOARD == "mx6ul" || $BOARD == "mx6ull" ]] ; then
 	if [[ $STORAGE_DEV == "nand" ]] ; then
 		if [[ $DART6UL_VARIANT == "wifi" ]] ; then
 			STR="WiFi (no SD card)"

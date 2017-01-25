@@ -1,3 +1,1 @@
-FILESEXTRAPATHS_append := "${THISDIR}/${PN}:"
-
 PARALLEL_MAKE = ""

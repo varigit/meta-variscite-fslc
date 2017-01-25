@@ -1,6 +1,4 @@
-#
 # Copyright (C) 2016 Variscite
-#
 
 DESCRIPTION = "Demo scripts for bluetooth a2pd"
 LICENSE = "GPLv2"

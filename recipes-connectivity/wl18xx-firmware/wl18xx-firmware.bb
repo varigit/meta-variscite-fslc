@@ -11,9 +11,10 @@ SRCREV_wlan = "fe3909e93d15a4b17e43699dde2bba0e9a3c0abc"
 BRANCH_wlan = "master"
 SRCREV_bt = "54f5c151dacc608b19ab2ce4c30e27a3983048b2"
 BRANCH_bt = "master"
-SRC_URI = "git://git.ti.com/wilink8-wlan/wl18xx_fw.git;protocol=git;branch=${BRANCH_wlan};destsuffix=wlan;name=wlan \
+SRC_URI = " \
+	   git://git.ti.com/wilink8-wlan/wl18xx_fw.git;protocol=git;branch=${BRANCH_wlan};destsuffix=wlan;name=wlan \
 	   git://git.ti.com/ti-bt/service-packs.git;protocol=git;branch=${BRANCH_bt};destsuffix=bt;name=bt \
-          "
+	   "
 
 S = "${WORKDIR}"
 
