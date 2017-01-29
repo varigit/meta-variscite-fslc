@@ -3,7 +3,7 @@ set -e
 
 #### Script version ####
 SCRIPT_NAME=${0##*/}
-readonly SCRIPT_VERSION="0.5"
+readonly SCRIPT_VERSION="0.6"
 
 #### Exports Variables ####
 #### global variables ####
@@ -11,11 +11,9 @@ readonly ABSOLUTE_FILENAME=`readlink -e "$0"`
 readonly ABSOLUTE_DIRECTORY=`dirname ${ABSOLUTE_FILENAME}`
 readonly SCRIPT_POINT=${ABSOLUTE_DIRECTORY}
 
-readonly YOCTO_ROOT="${SCRIPT_POINT}/../../../../"
-
 ANDROID_BUILD_ROOT=~/var_m_601_210/m_601_210_build
 ANDROID_IMGS_PATH=${ANDROID_BUILD_ROOT}/out/target/product/var_mx6
-ANDROID_SCRIPTS_PATH=${YOCTO_ROOT}/sources/meta-variscite-imx/scripts/var_mk_yocto_sdcard/variscite_scripts_android
+ANDROID_SCRIPTS_PATH=${SCRIPT_POINT}/variscite_scripts_android
 
 TEMP_DIR=./var_tmp
 P1_MOUNT_DIR=${TEMP_DIR}/BOOT-VAR-SOM
@@ -27,7 +25,7 @@ if [[ $MACHINE != var-som-mx6 ]] ; then
 	echo
 fi
 
-MACHINE=var-som-mx6 ${YOCTO_ROOT}/sources/meta-variscite-imx/scripts/var_mk_yocto_sdcard/var-create-yocto-sdcard.sh "$@"
+MACHINE=var-som-mx6 ${SCRIPT_POINT}/var-create-yocto-sdcard.sh "$@"
 
 # Parse command line only to get ${node} and ${part}
 moreoptions=1
