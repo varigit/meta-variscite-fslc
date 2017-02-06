@@ -1,0 +1,11 @@
+[Unit]
+Description=Bluetooth OBEX service
+
+[Service]
+Type=dbus
+BusName=org.bluez.obex
+Environment="DBUS_SESSION_BUS_ADDRESS=unix:path=/var/run/dbus/system_bus_socket"
+ExecStart=@libexecdir@/obexd
+
+[Install]
+Alias=dbus-org.bluez.obex.service
