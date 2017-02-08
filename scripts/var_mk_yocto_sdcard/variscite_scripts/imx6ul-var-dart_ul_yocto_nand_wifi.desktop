@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
-Name=Install Yocto
-Comment=NAND, WiFi
+Name=Yocto->NAND
+Comment=iMX6UL, WiFi
 Exec=/usr/bin/terminal bash -c "/usr/bin/install_yocto.sh -b mx6ul -r nand -v wifi; read"
 Icon=media-flash
 Terminal=false

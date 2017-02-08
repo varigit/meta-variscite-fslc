@@ -149,8 +149,10 @@ install_kernel_to_emmc()
 
 	mkdir -p ${mountdir_prefix}${bootpart}
 	mount -t vfat ${node}${part}${bootpart}		${mountdir_prefix}${bootpart}
-	cp -v ${IMGS_PATH}/*emmc*.dtb			${mountdir_prefix}${bootpart}
-	cp -v ${IMGS_PATH}/${KERNEL_IMAGE}		${mountdir_prefix}${bootpart}
+	cd ${IMGS_PATH}
+	cp -v ${KERNEL_DTBS}	${mountdir_prefix}${bootpart}
+	cp -v ${KERNEL_IMAGE}	${mountdir_prefix}${bootpart}
+	cd - >/dev/null
 	sync
 	umount ${node}${part}${bootpart}
 }
@@ -266,21 +268,21 @@ blue_bold_echo $STR
 
 
 if [[ $STORAGE_DEV == "nand" ]] ; then
-	if [[ $BOARD == "mx6ul" ]] ; then
+	if [[ $BOARD == "mx6ul" || $BOARD == "mx6ull" ]] ; then
 		SPL_IMAGE=SPL-nand
 		UBOOT_IMAGE=u-boot.img-nand
-		if [[ $DART6UL_VARIANT == "wifi" ]] ; then
-			KERNEL_DTB=imx6ul-var-dart-nand_wifi.dtb
-		elif [[ $DART6UL_VARIANT == "sd" ]] ; then
-			KERNEL_DTB=imx6ul-var-dart-sd_nand.dtb
-		fi
-	elif [[ $BOARD == "mx6ull" ]] ; then
-		SPL_IMAGE=SPL-nand
-		UBOOT_IMAGE=u-boot.img-nand
-		if [[ $DART6UL_VARIANT == "wifi" ]] ; then
-			KERNEL_DTB=imx6ull-var-dart-nand_wifi.dtb
-		elif [[ $DART6UL_VARIANT == "sd" ]] ; then
-			KERNEL_DTB=imx6ull-var-dart-sd_nand.dtb
+		if [[ $BOARD == "mx6ul" ]] ; then
+			if [[ $DART6UL_VARIANT == "wifi" ]] ; then
+				KERNEL_DTB=imx6ul-var-dart-nand_wifi.dtb
+			elif [[ $DART6UL_VARIANT == "sd" ]] ; then
+				KERNEL_DTB=imx6ul-var-dart-sd_nand.dtb
+			fi
+		elif [[ $BOARD == "mx6ull" ]] ; then
+			if [[ $DART6UL_VARIANT == "wifi" ]] ; then
+				KERNEL_DTB=imx6ull-var-dart-nand_wifi.dtb
+			elif [[ $DART6UL_VARIANT == "sd" ]] ; then
+				KERNEL_DTB=imx6ull-var-dart-sd_nand.dtb
+			fi
 		fi
 	elif [[ $BOARD == "mx7" ]] ; then
 		UBOOT_IMAGE=u-boot.imx-nand
@@ -301,19 +303,23 @@ if [[ $STORAGE_DEV == "nand" ]] ; then
 	install_kernel_to_nand
 	install_rootfs_to_nand
 elif [[ $STORAGE_DEV == "emmc" ]] ; then
-	if [[ $BOARD == "mx6ul" ]] ; then
+	if [[ $BOARD == "mx6ul" || $BOARD == "mx6ull" ]] ; then
 		block=mmcblk1
 		SPL_IMAGE=SPL-sd
 		UBOOT_IMAGE=u-boot.img-sd
-		FAT_VOLNAME=BOOT-VAR6UL
-	elif [[ $BOARD == "mx6ull" ]] ; then
-		block=mmcblk1
-		SPL_IMAGE=SPL-sd
-		UBOOT_IMAGE=u-boot.img-sd
-		FAT_VOLNAME=BOOT-VAR6ULL
+		if [[ $BOARD == "mx6ul" ]] ; then
+			KERNEL_DTBS="imx6ul-var-dart-emmc_wifi.dtb
+				     imx6ul-var-dart-sd_emmc.dtb"
+			FAT_VOLNAME=BOOT-VAR6UL
+		elif [[ $BOARD == "mx6ull" ]] ; then
+			KERNEL_DTBS="imx6ull-var-dart-emmc_wifi.dtb
+				     imx6ull-var-dart-sd_emmc.dtb"
+			FAT_VOLNAME=BOOT-VAR6ULL
+		fi
 	elif [[ $BOARD == "mx7" ]] ; then
 		block=mmcblk2
 		UBOOT_IMAGE=u-boot.imx-sd
+		KERNEL_DTBS=imx7d-var-som-emmc.dtb
 		FAT_VOLNAME=BOOT-VARMX7
 	fi
 	node=/dev/${block}

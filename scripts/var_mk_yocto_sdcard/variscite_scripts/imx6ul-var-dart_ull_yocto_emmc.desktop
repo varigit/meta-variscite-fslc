@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Yocto->eMMC
+Comment=iMX6ULL, SD/WiFi
+Exec=/usr/bin/terminal bash -c "/usr/bin/install_yocto.sh -b mx6ull -r emmc; read"
+Icon=media-flash
+Terminal=false
+Categories=GTK;Application;
+StartupNotify=true

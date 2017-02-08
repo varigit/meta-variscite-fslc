@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
-Name=Install Yocto
-Comment=eMMC  (SD/WiFi)
+Name=Yocto->eMMC
+Comment=iMX6UL, SD/WiFi
 Exec=/usr/bin/terminal bash -c "/usr/bin/install_yocto.sh -b mx6ul -r emmc; read"
 Icon=media-flash
 Terminal=false
