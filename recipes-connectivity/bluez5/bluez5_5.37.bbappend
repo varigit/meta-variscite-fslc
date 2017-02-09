@@ -12,7 +12,9 @@ SRC_URI_append = " \
 	file://variscite-bt \
 	file://variscite-bt.service \
 	file://variscite-bt.conf \
+	file://main.conf \
 	file://audio.conf \
+	file://bluetooth \
 	file://obexd \
 	file://obexd.conf \
 	file://obex.service \
@@ -28,6 +30,7 @@ do_install_append() {
 	install -d ${D}${sysconfdir}/profile.d
 	install -m 0644 ${WORKDIR}/variscite-bt.conf ${D}${sysconfdir}/bluetooth
 	install -m 0644 ${WORKDIR}/audio.conf ${D}/${sysconfdir}/bluetooth
+	install -m 0644 ${WORKDIR}/main.conf ${D}/${sysconfdir}/bluetooth
 	install -m 0644 ${WORKDIR}/obexd.conf ${D}${sysconfdir}/dbus-1/system.d
 	install -m 0755 ${WORKDIR}/dbus.sh ${D}${sysconfdir}/profile.d
 
@@ -46,6 +49,7 @@ do_install_append() {
 
 	else
 		install -m 0755 ${WORKDIR}/obexd ${D}${sysconfdir}/init.d
+		install -m 0755 ${WORKDIR}/bluetooth ${D}${sysconfdir}/init.d
 		install -m 0755 ${WORKDIR}/variscite-bt ${D}${sysconfdir}/init.d
 		update-rc.d -r ${D} variscite-bt start 99 2 3 4 5 .
 		update-rc.d -r ${D} bluetooth defaults
