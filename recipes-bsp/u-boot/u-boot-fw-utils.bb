@@ -10,6 +10,7 @@ SRCBRANCH_imx7-var-som = "imx_v2015.04_4.1.15_1.1.0_ga_var02"
 UBOOT_SRC = "git://github.com/varigit/uboot-imx.git;protocol=git"
 SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH}"
 SRCREV = "${AUTOREV}"
+SRCREV_imx7-var-som = "e52190072e578b9897005f19208b9e8c59c4c7c5"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 SRC_URI_append_imx7-var-som = " file://tools-env-fix-build-error.patch"
