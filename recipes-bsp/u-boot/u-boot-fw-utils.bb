@@ -12,7 +12,6 @@ SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH}"
 SRCREV = "${AUTOREV}"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
-SRC_URI_append_imx7-var-som = " file://tools-env-fix-build-error.patch"
 
 S = "${WORKDIR}/git"
 
