@@ -24,18 +24,7 @@ KERNEL_DEFCONFIG_imx6ul-var-dart = "imx6ul-var-dart_defconfig"
 KERNEL_DEFCONFIG_imx7-var-som = "imx7-var-som_defconfig"
 
 do_preconfigure_prepend() {
-   cp ${S}/arch/arm/configs/${KERNEL_DEFCONFIG} ${B}/.config
-   cp ${S}/arch/arm/configs/${KERNEL_DEFCONFIG} ${B}/../defconfig
-}
-
-do_configure_prepend() {
-   # delete old .config from source code
-   rm ${S}/.config || true
-}
-
-# Copy the config file required by ti-compat-wirless-wl18xx
-do_deploy_append () {
-   cp ${S}/arch/arm/configs/${KERNEL_DEFCONFIG} ${S}/.config
+   cp ${S}/arch/arm/configs/${KERNEL_DEFCONFIG} ${WORKDIR}/defconfig
 }
 
 COMPATIBLE_MACHINE = "(var-som-mx6|imx6ul-var-dart|imx7-var-som)"
