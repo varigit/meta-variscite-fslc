@@ -23,6 +23,7 @@ do_install() {
 	install -m 0755 bt/initscripts/*.bts ${D}/lib/firmware/ti-connectivity
 	install -m 0755 wlan/*.bin ${D}/lib/firmware/ti-connectivity
 	install -m 0644 wlan/LICENCE ${D}/lib/firmware/ti-connectivity
+	ln -sf /lib/firmware/ti-connectivity/wl18xx-fw-4.bin ${D}/lib/firmware/ti-connectivity/wl1271-nvs.bin
 }
 
 FILES_${PN} = "/lib/firmware/ti-connectivity/*"
