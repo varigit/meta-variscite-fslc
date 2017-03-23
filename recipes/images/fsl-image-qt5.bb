@@ -32,6 +32,14 @@ QT5_IMAGE_INSTALL_common = " \
     qtwebkit \
     qtwebkit-examples \
     qt3d \
+    qt3d-examples \
+    qtbase-examples \
+    ttf-dejavu-mathtexgyre \
+    ttf-dejavu-sans \
+    ttf-dejavu-sans-condensed \
+    ttf-dejavu-sans-mono \
+    ttf-dejavu-serif \
+    ttf-dejavu-serif-condensed \
     qt3d-qmlplugins \
     qt3d-tools \
     gstreamer1.0 \
@@ -61,17 +69,14 @@ QT5_IMAGE_INSTALL_common = " \
     gstreamer1.0-plugins-good-wavparse \
     gstreamer1.0-plugins-base-ximagesink \
     gstreamer1.0-plugins-imx \
-    imx-gst1.0-plugin \
-    imx-gst1.0-plugin-gplay \
-    imx-gst1.0-plugin-grecorder \
     ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'libxkbcommon', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'qtwayland qtwayland-plugins', \
        bb.utils.contains('DISTRO_FEATURES',     'x11', '${QT5_IMAGE_INSTALL_APPS}', \
                                                        '', d), d)} \
     "
-QT5_IMAGE_INSTALL_mx6 = " \
-    ${QT5_IMAGE_INSTALL_common} \
-    "
+QT5_IMAGE_INSTALL_mx6 = "${@bb.utils.contains('DISTRO_FEATURES', 'x11','${QT5_IMAGE_INSTALL_common}', \
+    'qtbase qtbase-examples qtbase-fonts qtbase-plugins', d)}"
+
 QT5_IMAGE_INSTALL_mx6sl = "${@bb.utils.contains('DISTRO_FEATURES', 'x11','${QT5_IMAGE_INSTALL_common}', \
     'qtbase qtbase-fonts qtbase-plugins', d)}"
 

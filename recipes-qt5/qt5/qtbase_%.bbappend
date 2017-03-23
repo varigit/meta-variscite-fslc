@@ -1,1 +1,1 @@
-PACKAGECONFIG_append = " linuxfb tslib"
+PACKAGECONFIG_append = " examples linuxfb tslib"
