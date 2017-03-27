@@ -52,11 +52,9 @@ CORE_IMAGE_EXTRA_INSTALL += " \
 	make \
 	iperf \
 	libtool \
-	nano \
 	python-compiler \
 	strace \
 	screen \
 	minicom \
 	openssl \
-	cryptodev-module \
 "
