@@ -23,7 +23,45 @@ DEFAULT_ROOTFS_SIZE=3700
 
 AUTO_FILL_SD=0
 SPARE_SIZE=4
+LOOP_MAJOR=7
 
+# This function performs sanity check to verify  that the target device is removable devise of proper size
+function check_device()
+{
+	# Check that parameter is a valid block device
+	if [ ! -b "$1" ]; then
+          echo "$1 is not a valid block device, exiting"
+	  exit 1
+        fi
+
+	local dev=$(basename $1)
+
+	# Check that /sys/block/$dev exists
+	if [ ! -d /sys/block/$dev ]; then
+	  echo "Directory /sys/block/${dev} missing, exiting"
+	  exit 1
+        fi
+
+	# Get device parameters
+	local removable=$(cat /sys/block/${dev}/removable)
+	local size_bytes=$((512*$(cat /sys/class/block/${dev}/size)))
+	local size_gb=$((size_bytes/1000000000))
+
+	# Check that device is either removable or loop
+	if [ "$removable" != "1" -a $(stat -c '%t' /dev/$dev) != ${LOOP_MAJOR} ]; then
+          echo "$1 is not a removable device, exiting"
+	  exit 1
+        fi
+
+	# Check that device is attached
+	if [ ${size_bytes} -eq 0 ]; then
+          echo "$1 is not attached, exiting"
+          exit 1
+	fi
+
+	# Check that device has a valid size
+	echo "Detected removable device $1, size=${size_gb}GB"
+}
 
 YOCTO_RECOVERY_ROOTFS_PATH=${YOCTO_IMGS_PATH}
 YOCTO_DEFAULT_IMAGE=fsl-image-gui
@@ -94,20 +132,13 @@ while [ "$moreoptions" = 1 -a $# -gt 0 ]; do
 	[ "$moreoptions" = 0 ] && [ $# -gt 1 ] && help && exit 1
 	[ "$moreoptions" = 1 ] && shift
 done
-
-if [[ ! -e ${node} ]] ; then
-	echo "W: Wrong path to the block device!"
-	echo
-	help
-	exit 1
-fi
-
 part=""
 if [[ $node == *mmcblk* ]] || [[ $node == *loop* ]] ; then
 	part="p"
 fi
 
-echo "Device:  ${node}"
+# allow only removable/loopback devices, to protect host PC
+check_device $node
 echo "==============================================="
 read -p "Press Enter to continue"
 
