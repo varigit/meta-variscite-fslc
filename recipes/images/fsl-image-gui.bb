@@ -46,6 +46,7 @@ CORE_IMAGE_EXTRA_INSTALL += " \
 	nodejs \
 	flex \
 	gcc \
+	xterm \
 	git \
 	m4 \
 	make \

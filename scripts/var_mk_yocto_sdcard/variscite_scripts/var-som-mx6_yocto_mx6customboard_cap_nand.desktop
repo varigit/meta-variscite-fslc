@@ -2,7 +2,7 @@
 Type=Application
 Name=Install Yocto
 Comment=MX6CB Cap NAND
-Exec=/usr/bin/terminal bash -c "/usr/bin/install_yocto.sh -b mx6cb -t cap -r nand; read"
+Exec=/usr/bin/xterm -e "/usr/bin/install_yocto.sh -b mx6cb -t cap -r nand; read"
 Icon=media-flash
 Terminal=false
 Categories=GTK;Application;

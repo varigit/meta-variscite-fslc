@@ -2,7 +2,7 @@
 Type=Application
 Name=Yocto->NAND
 Comment=iMX6ULL, WiFi
-Exec=/usr/bin/terminal bash -c "/usr/bin/install_yocto.sh -b mx6ull -r nand -v wifi; read"
+Exec=/usr/bin/xterm -e "/usr/bin/install_yocto.sh -b mx6ull -r nand -v wifi; read"
 Icon=media-flash
 Terminal=false
 Categories=GTK;Application;

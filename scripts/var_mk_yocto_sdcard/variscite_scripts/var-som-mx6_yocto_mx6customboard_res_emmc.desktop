@@ -2,7 +2,7 @@
 Type=Application
 Name=Install Yocto
 Comment=MX6CB Res eMMC
-Exec=/usr/bin/terminal bash -c "/usr/bin/install_yocto.sh -b mx6cb -t res -r emmc; read"
+Exec=/usr/bin/xterm -e "/usr/bin/install_yocto.sh -b mx6cb -t res -r emmc; read"
 Icon=media-flash
 Terminal=false
 Categories=GTK;Application;
