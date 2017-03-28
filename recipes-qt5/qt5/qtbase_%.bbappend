@@ -1,1 +1,1 @@
-PACKAGECONFIG_append = " examples linuxfb tslib"
+PACKAGECONFIG_append = " accessibility examples linuxfb tslib"
