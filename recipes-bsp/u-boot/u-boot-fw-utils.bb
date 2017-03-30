@@ -9,8 +9,7 @@ SRCBRANCH_imx6ul-var-dart = "imx_v2015.10_dart_6ul_var1"
 SRCBRANCH_imx7-var-som = "imx_v2015.04_4.1.15_1.1.0_ga_var02"
 UBOOT_SRC = "git://github.com/varigit/uboot-imx.git;protocol=git"
 SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH}"
-SRCREV = "${AUTOREV}"
-
+SRCREV_var-som-mx6 = "f8b449392656231021897a67bdce689985e608c1"
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 S = "${WORKDIR}/git"
