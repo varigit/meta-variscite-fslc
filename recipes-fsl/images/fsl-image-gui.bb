@@ -27,11 +27,7 @@ IMAGE_FEATURES += " \
                                                        '', d), d)} \
 "
 
-REQUIRED_DISTRO_FEATURES = "x11"
-CONFLICT_DISTRO_FEATURES = "wayland"
-
 CORE_IMAGE_EXTRA_INSTALL += " \
-	packagegroup-core-x11-sato-games \
 	packagegroup-core-full-cmdline \
 	packagegroup-tools-bluetooth \
 	packagegroup-imx-tools-audio \
@@ -43,10 +39,11 @@ CORE_IMAGE_EXTRA_INSTALL += " \
 	packagegroup-fsl-gstreamer1.0-full \
 	${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'weston-init', '', d)} \
         ${@bb.utils.contains('DISTRO_FEATURES', 'x11 wayland', 'weston-xwayland xterm', '', d)} \
+        ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'xterm', '', d)} \
+        ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'packagegroup-core-x11-sato-games', '', d)} \
 	nodejs \
 	flex \
 	gcc \
-	xterm \
 	git \
 	m4 \
 	make \
