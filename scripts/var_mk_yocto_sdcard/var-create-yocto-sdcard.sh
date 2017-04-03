@@ -333,7 +333,6 @@ function copy_scripts
 		cp ${RELEASE_NOTES_FILE} 				${P2_MOUNT_DIR}/opt/images/release_notes.txt
 	fi
 
-	cp ${YOCTO_SCRIPTS_PATH}/terminal				${P2_MOUNT_DIR}/usr/bin/
 }
 
 umount ${node}${part}*  2> /dev/null || true
