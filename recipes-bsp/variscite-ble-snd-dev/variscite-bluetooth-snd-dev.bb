@@ -13,6 +13,20 @@ SRC_URI = " \
 	file://Readme.txt \
 "
 
+RDEPENDS_${PN} += " \
+	pulseaudio \
+    pulseaudio-server \
+    pulseaudio-misc \
+    pulseaudio-module-dbus-protocol \
+    pulseaudio-module-cli \
+    pulseaudio-module-device-manager \
+    pulseaudio-lib-bluez5-util \
+    pulseaudio-module-bluez5-discover \
+    pulseaudio-module-bluez5-device \
+    pulseaudio-module-bluetooth-policy \
+    pulseaudio-module-bluetooth-discover \
+"
+
 do_install() {
 	install -d ${D}/opt
 	install -d ${D}/opt/var-bluetooth-snd-dev
