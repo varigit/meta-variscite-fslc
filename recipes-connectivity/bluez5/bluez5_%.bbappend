@@ -18,7 +18,6 @@ SRC_URI_append = " \
 	file://obexd \
 	file://obexd.conf \
 	file://obex.service \
-	file://dbus.sh \
 "
 
 # Required by obexd
@@ -32,7 +31,6 @@ do_install_append() {
 	install -m 0644 ${WORKDIR}/audio.conf ${D}/${sysconfdir}/bluetooth
 	install -m 0644 ${WORKDIR}/main.conf ${D}/${sysconfdir}/bluetooth
 	install -m 0644 ${WORKDIR}/obexd.conf ${D}${sysconfdir}/dbus-1/system.d
-	install -m 0755 ${WORKDIR}/dbus.sh ${D}${sysconfdir}/profile.d
 
 	if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)}; then
 		install -d ${D}${systemd_unitdir}/system
