@@ -75,16 +75,16 @@ QT5_IMAGE_INSTALL_common = " \
                                                        '', d), d)} \
     "
 QT5_IMAGE_INSTALL_mx6 = "${@bb.utils.contains('DISTRO_FEATURES', 'x11','${QT5_IMAGE_INSTALL_common}', \
-    'qtbase qtbase-examples qtbase-fonts qtbase-plugins', d)}"
+    'qtbase qtbase-examples qtbase-plugins', d)}"
 
 QT5_IMAGE_INSTALL_mx6sl = "${@bb.utils.contains('DISTRO_FEATURES', 'x11','${QT5_IMAGE_INSTALL_common}', \
-    'qtbase qtbase-fonts qtbase-plugins', d)}"
+    'qtbase qtbase-plugins', d)}"
 
 QT5_IMAGE_INSTALL_mx6ul = "${@bb.utils.contains('DISTRO_FEATURES', 'x11','${QT5_IMAGE_INSTALL_common}', \
-    'qtbase qtbase-examples qtbase-fonts qtbase-plugins', d)}"
+    'qtbase qtbase-examples qtbase-plugins', d)}"
 
 QT5_IMAGE_INSTALL_mx7 = "${@bb.utils.contains('DISTRO_FEATURES', 'x11','${QT5_IMAGE_INSTALL_common}', \
-    'qtbase qtbase-examples qtbase-fonts qtbase-plugins', d)}"
+    'qtbase qtbase-examples qtbase-plugins', d)}"
 
 QT5_IMAGE_INSTALL_mx8 = " \
     ${QT5_IMAGE_INSTALL_common} \
