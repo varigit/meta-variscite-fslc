@@ -19,7 +19,7 @@ UBOOT_SRC = "git://github.com/varigit/uboot-imx.git;protocol=git"
 SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH}"
 SRCREV_var-som-mx6 = "f8b449392656231021897a67bdce689985e608c1"
 SRCREV_imx7-var-som = "e09e375e0d5fa0e4f232a1fbffe5b9e20a93e687"
-SRCREV_imx6ul-var-dart = "404c3c0618cd484fb319b8a8bc4cba8573b103e1"
+SRCREV_imx6ul-var-dart = "54b4e127b10c3a78e6b8fe7f66c08404c50a8752"
 
 S = "${WORKDIR}/git"
 
