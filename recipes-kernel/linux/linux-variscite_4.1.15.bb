@@ -7,13 +7,13 @@ require recipes-kernel/linux/linux-dtb.inc
 
 DEPENDS += "lzop-native bc-native"
 
-SRCBRANCH = "imx-rel_imx_4.1.15_2.0.0_ga-var01"
+SRCBRANCH = "imx-rel_imx_4.1.15_2.0.0_ga-var02"
 
 LOCALVERSION_var-som-mx6 = "-6QP"
 LOCALVERSION_imx6ul-var-dart = "-6UL"
 LOCALVERSION_imx7-var-som = "-7Dual"
 
-SRCREV = "bc0cd16ca18f305b8ebae955aa5d87ef38463dfd"
+SRCREV = "9ff4245b40fdca90bb0e4b3a1349d35ab22659cf"
 KERNEL_SRC ?= "git://github.com/varigit/linux-2.6-imx.git;protocol=git"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
 
