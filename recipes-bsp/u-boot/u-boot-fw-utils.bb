@@ -9,6 +9,8 @@ SRCBRANCH_imx6ul-var-dart = "imx_v2015.10_dart_6ul_var1"
 SRCBRANCH_imx7-var-som = "imx_v2015.04_4.1.15_1.1.0_ga_var02"
 UBOOT_SRC = "git://github.com/varigit/uboot-imx.git;protocol=git"
 SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH}"
+SRC_URI += "file://default-gcc.patch"
+
 SRCREV_var-som-mx6 = "e09e375e0d5fa0e4f232a1fbffe5b9e20a93e687"
 SRCREV_imx7-var-som = "e09e375e0d5fa0e4f232a1fbffe5b9e20a93e687"
 SRCREV_imx6ul-var-dart = "404c3c0618cd484fb319b8a8bc4cba8573b103e1"
@@ -17,7 +19,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 S = "${WORKDIR}/git"
 
 INSANE_SKIP_${PN} = "already-stripped"
-EXTRA_OEMAKE_class-target = 'CROSS_COMPILE=${TARGET_PREFIX} CC="${CC} ${CFLAGS} ${LDFLAGS}" V=1'
+EXTRA_OEMAKE_class-target = 'CROSS_COMPILE=${TARGET_PREFIX} CC="${CC} ${CFLAGS} ${LDFLAGS}" HOSTCC="${BUILD_CC} ${BUILD_CFLAGS} ${BUILD_LDFLAGS}" V=1'
 EXTRA_OEMAKE_class-cross = 'ARCH=${TARGET_ARCH} CC="${CC} ${CFLAGS} ${LDFLAGS}" V=1'
 
 inherit uboot-config
