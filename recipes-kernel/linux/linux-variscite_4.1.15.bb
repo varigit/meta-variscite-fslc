@@ -29,6 +29,24 @@ do_preconfigure_prepend() {
    cp ${KERNEL_DEFCONFIG} ${WORKDIR}/defconfig
 }
 
+do_merge_delta_config() {
+    # copy desired defconfig so we pick it up for the real kernel_do_configure
+    cp ${KERNEL_DEFCONFIG} ${B}/.config
+
+    # add config fragments
+    for deltacfg in ${DELTA_KERNEL_DEFCONFIG}; do
+        if [ -f "${deltacfg}" ]; then
+            ${S}/scripts/kconfig/merge_config.sh -m ${B}/.config ${deltacfg}
+        elif [ -f "${WORKDIR}/${deltacfg}" ]; then
+            ${S}/scripts/kconfig/merge_config.sh -m ${B}/.config ${WORKDIR}/${deltacfg}
+        elif [ -f "${S}/arch/${ARCH}/configs/${deltacfg}" ]; then
+            ${S}/scripts/kconfig/merge_config.sh -m ${B}/.config \
+                ${S}/arch/${ARCH}/configs/${deltacfg}
+        fi
+    done
+    mv ${B}/.config ${WORKDIR}/defconfig
+}
+
 do_configure_prepend_imx6ul-var-dart() {
    # Disable WIFI support, relevant code is built from external tree
    kernel_conf_variable CFG80211 n
@@ -40,3 +58,7 @@ do_configure_prepend_imx7-var-som() {
 }
 
 COMPATIBLE_MACHINE = "(var-som-mx6|imx6ul-var-dart|imx7-var-som)"
+
+do_merge_delta_config[dirs] = "${B}"
+
+addtask merge_delta_config before do_preconfigure after do_patch
