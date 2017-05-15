@@ -10,5 +10,7 @@ LOCALVERSION_imx7-var-som = "-mx7"
 
 PROVIDES += "u-boot"
 
+SRC_URI += "file://0001-compiler-.h-sync-include-linux-compiler-.h-with-Linu.patch"
+
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 COMPATIBLE_MACHINE = "(var-som-mx6|imx6ul-var-dart|imx7-var-som)"
