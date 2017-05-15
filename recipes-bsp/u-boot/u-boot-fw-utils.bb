@@ -2,6 +2,10 @@ SUMMARY = "U-Boot bootloader fw_printenv/setenv utilities"
 require u-boot-common.inc
 DEPENDS = "mtd-utils"
 
+SRC_URI += "file://0001-Revert-Fix-the-compile-issue-under-gcc6.patch \
+            file://0001-compiler-.h-sync-include-linux-compiler-.h-with-Linu.patch \
+"
+
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI += "file://fw_env.config"
