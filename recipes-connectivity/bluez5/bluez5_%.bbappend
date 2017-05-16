@@ -21,7 +21,7 @@ SRC_URI_append = " \
 "
 
 # Required by obexd
-RDEPENDS_${PN} += "glibc-gconv-utf-16"
+RDEPENDS_${PN}_append_libc-glibc = " glibc-gconv-utf-16"
 
 DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES','systemd','','update-rc.d-native',d)}"
 
