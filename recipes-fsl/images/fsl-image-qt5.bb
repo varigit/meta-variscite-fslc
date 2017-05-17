@@ -12,6 +12,15 @@ QT5_IMAGE_INSTALL_APPS = ""
 QT5_IMAGE_INSTALL_APPS_mx6q = "${@bb.utils.contains("MACHINE_GSTREAMER_1_0_PLUGIN", "imx-gst1.0-plugin", "imx-qtapplications", "", d)}"
 QT5_IMAGE_INSTALL_APPS_mx6dl = "${@bb.utils.contains("MACHINE_GSTREAMER_1_0_PLUGIN", "imx-gst1.0-plugin", "imx-qtapplications", "", d)}"
 
+QT5_FONTS = " \
+    ttf-dejavu-mathtexgyre \
+    ttf-dejavu-sans \
+    ttf-dejavu-sans-condensed \
+    ttf-dejavu-sans-mono \
+    ttf-dejavu-serif \
+    ttf-dejavu-serif-condensed \
+    "
+
 # Install Freescale QT demo applications for X11 backend only
 #
 MACHINE_QT5_MULTIMEDIA_APPS = ""
@@ -34,12 +43,6 @@ QT5_IMAGE_INSTALL_common = " \
     qt3d \
     qt3d-examples \
     qtbase-examples \
-    ttf-dejavu-mathtexgyre \
-    ttf-dejavu-sans \
-    ttf-dejavu-sans-condensed \
-    ttf-dejavu-sans-mono \
-    ttf-dejavu-serif \
-    ttf-dejavu-serif-condensed \
     qt3d-qmlplugins \
     qt3d-tools \
     gstreamer1.0 \
@@ -94,5 +97,6 @@ QT5_IMAGE_INSTALL_mx8 = " \
 QT5_IMAGE_INSTALL_remove = " packagegroup-qt5-webengine"
 
 IMAGE_INSTALL += " \
+${QT5_FONTS} \
 ${QT5_IMAGE_INSTALL} \
 "
