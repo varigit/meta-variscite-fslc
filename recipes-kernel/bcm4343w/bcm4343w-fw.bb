@@ -16,7 +16,7 @@ do_install() {
 	install -d ${D}/lib/firmware/brcm
 	install -d ${D}/lib/firmware/bcm
 	install -m 0755 ${S}/brcm/* ${D}/lib/firmware/brcm/
-	install -m 0755 ${S}/bcm43430a1.hcd ${D}/lib/firmware/bcm
+	install -m 0755 ${S}/*.hcd ${D}/lib/firmware/bcm
 	install -m 0644 ${S}/LICENSE ${D}/lib/firmware/bcm/
 	install -m 0644 ${S}/LICENSE ${D}/lib/firmware/brcm/
 }
