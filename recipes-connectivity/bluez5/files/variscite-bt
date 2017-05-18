@@ -9,6 +9,9 @@
 # In order to enable or disable this script just change the execution
 # bits.
 
+WIFI_MMC_DTS_DIR="/proc/device-tree/soc/aips-bus@02100000/usdhc@02190000"
+WIFI_MMC_DTS_FILE="${WIFI_MMC_DTS_DIR}/no-1-8-v"
+
 # Load board-specific configuration settings
 . /etc/bluetooth/variscite-bt.conf
 
@@ -49,6 +52,16 @@ get_bt_macaddr() {
   echo $bt_addr | sed 's/\(..\)/\1:/g;s/:$//'
 }
 
+# Detect SOM with LWB5 WIFI/BT chip
+som_has_lwb5()
+{
+  if [ -d ${WIFI_MMC_DTS_DIR} -a ! -f ${WIFI_MMC_DTS_FILE} ]; then
+    return 0
+  fi
+
+  return 1
+}
+
 ###########################
 #  Execution starts here  #
 ###########################
@@ -67,6 +80,11 @@ if [ "${BT_CHIP}" = "wl18xx" ]; then
 else
   # Get BT MAC address
   BT_MACADDR=$(get_bt_macaddr)
+
+  # On SOMs with LWB5 WIFI chip use different firmware binary
+  if som_has_lwb5; then
+    . /etc/bluetooth/variscite-bt-lwb5.conf
+  fi
 
   # Load BT firmware and set MAC address
   brcm_patchram_plus --patchram ${BT_FIRMWARE} \
