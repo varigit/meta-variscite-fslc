@@ -17,6 +17,8 @@ RDEPENDS_${PN} += " \
     coreutils \
     mmc-utils \
     udev-extraconf \
+    tslib-calibrate \
+    tslib-tests \
     ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'tk', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'weston-examples', '', d)} \
 "
