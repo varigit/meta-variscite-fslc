@@ -7,12 +7,12 @@ inherit allarch
 PV = "R8.7_SP1"
 
 # Tag: R8.7 SP1
-SRCREV_wlan = "fe3909e93d15a4b17e43699dde2bba0e9a3c0abc"
+SRCREV_wlan = "3bad7e76e820869f3a276bf02617c17096e28321"
 BRANCH_wlan = "master"
 SRCREV_bt = "0ee619b598d023fffc77679f099bc2a4815510e4"
 BRANCH_bt = "master"
 SRC_URI = " \
-	   git://git.ti.com/wilink8-wlan/wl18xx_fw.git;protocol=git;branch=${BRANCH_wlan};destsuffix=wlan;name=wlan \
+	   git://github.com/varigit/ti-wl18xx-fw.git;protocol=http;branch=${BRANCH_wlan};destsuffix=wlan;name=wlan \
 	   git://git.ti.com/ti-bt/service-packs.git;protocol=git;branch=${BRANCH_bt};destsuffix=bt;name=bt \
 	   "
 
