@@ -1,3 +1,5 @@
+DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES','sysvinit','update-rc.d-native','',d)}"
+
 NOINST_TOOLS_READLINE_append = " \
     tools/btmgmt \
 "
@@ -21,7 +23,7 @@ SRC_URI_append = " \
 "
 
 # Required by obexd
-RDEPENDS_${PN} += "glibc-gconv-utf-16"
+RDEPENDS_${PN}_append_libc-glibc = " glibc-gconv-utf-16"
 
 do_install_append() {
 	install -d ${D}${sysconfdir}/bluetooth
