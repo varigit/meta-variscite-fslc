@@ -12,7 +12,6 @@ SRC_URI_append = " \
 	file://variscite-bt \
 	file://variscite-bt.service \
 	file://variscite-bt.conf \
-	file://variscite-bt-lwb5.conf \
 	file://main.conf \
 	file://audio.conf \
 	file://bluetooth \
@@ -29,7 +28,6 @@ do_install_append() {
 	install -d ${D}${sysconfdir}/dbus-1/system.d
 	install -d ${D}${sysconfdir}/profile.d
 	install -m 0644 ${WORKDIR}/variscite-bt.conf ${D}${sysconfdir}/bluetooth
-	install -m 0644 ${WORKDIR}/variscite-bt-lwb5.conf ${D}${sysconfdir}/bluetooth
 	install -m 0644 ${WORKDIR}/audio.conf ${D}/${sysconfdir}/bluetooth
 	install -m 0644 ${WORKDIR}/main.conf ${D}/${sysconfdir}/bluetooth
 	install -m 0644 ${WORKDIR}/obexd.conf ${D}${sysconfdir}/dbus-1/system.d
@@ -55,4 +53,12 @@ do_install_append() {
 		update-rc.d -r ${D} bluetooth defaults
 		update-rc.d -r ${D} obexd defaults
 	fi
+}
+
+SRC_URI_append_imx6ul-var-dart = " \
+	file://variscite-bt-lwb5.conf \
+"
+
+do_install_append_imx6ul-var-dart() {
+	install -m 0644 ${WORKDIR}/variscite-bt-lwb5.conf ${D}${sysconfdir}/bluetooth
 }
