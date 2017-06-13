@@ -13,7 +13,7 @@ LOCALVERSION_var-som-mx6 = "-6QP"
 LOCALVERSION_imx6ul-var-dart = "-6UL"
 LOCALVERSION_imx7-var-som = "-7Dual"
 
-SRCREV = "6f316f69201d82001713e927d1b96f6d01848ab1"
+SRCREV = "bc0d152b9f09c9e8c29f7ecb8d856aebd43d72e8"
 KERNEL_SRC ?= "git://github.com/varigit/linux-2.6-imx.git;protocol=git"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
 
