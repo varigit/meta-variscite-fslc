@@ -97,12 +97,17 @@ fi
 
 #iMX6 Dual/Quad
 if [[ $CPUS == 4 ]] ; then
+	if [[ `cat /sys/devices/soc0/soc_id` == "i.MX6QP" ]] ; then
+		QUADTYPE="mx6qp"
+	else
+		QUADTYPE="mx6q"
+	fi
 	if [[ $BOARD == "dart" ]] ; then
 		BOOTI=imx6q-var-dart
 	elif [[ $BOARD == "scb" ]] ; then
-		BOOTI=som-mx6q-vsc
+		BOOTI=som-$QUADTYPE-vsc
 	else
-		BOOTI=som-mx6q-$TOUCHSCREEN
+		BOOTI=som-$QUADTYPE-$TOUCHSCREEN
 	fi
 fi
 

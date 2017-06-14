@@ -3,7 +3,7 @@ set -e
 
 #### Script version ####
 SCRIPT_NAME=${0##*/}
-readonly SCRIPT_VERSION="0.6"
+readonly SCRIPT_VERSION="0.7"
 
 #### Exports Variables ####
 #### global variables ####
@@ -11,7 +11,7 @@ readonly ABSOLUTE_FILENAME=`readlink -e "$0"`
 readonly ABSOLUTE_DIRECTORY=`dirname ${ABSOLUTE_FILENAME}`
 readonly SCRIPT_POINT=${ABSOLUTE_DIRECTORY}
 
-ANDROID_BUILD_ROOT=~/var_m_601_210/m_601_210_build
+ANDROID_BUILD_ROOT=~/var_n_711_100/n_711_100_build
 ANDROID_IMGS_PATH=${ANDROID_BUILD_ROOT}/out/target/product/var_mx6
 ANDROID_SCRIPTS_PATH=${SCRIPT_POINT}/variscite_scripts_android
 
@@ -64,6 +64,18 @@ function mount_parts
 	mount ${node}${part}2  ${P2_MOUNT_DIR}
 }
 
+#### WARNING ####
+# current uboot branch used by yocto does not support i.MX6QP: next function
+# and related calls must be removed as soon as support will be integrated
+YOCTO_IMGS_PATH=${ANDROID_BUILD_ROOT}/device/variscite/common/firmware/Yocto
+function update_yocto_bootloader
+{
+	echo "Updating Yocto bootloader"
+	dd if=${YOCTO_IMGS_PATH}/SPL-sd of=${node} bs=1K seek=1; sync
+	dd if=${YOCTO_IMGS_PATH}/u-boot.img-sd of=${node} bs=1K seek=69; sync
+	cp ${YOCTO_IMGS_PATH}/* ${P2_MOUNT_DIR}/opt/images/Yocto/; sync
+}
+
 function unmount_parts
 {
 	umount ${P1_MOUNT_DIR}
@@ -79,11 +91,20 @@ function copy_android
 
 	cp ${ANDROID_IMGS_PATH}/boot-*.img			${P2_MOUNT_DIR}/opt/images/Android/
 	cp ${ANDROID_IMGS_PATH}/recovery-*.img			${P2_MOUNT_DIR}/opt/images/Android/
-	pv ${ANDROID_IMGS_PATH}/system.img >			${P2_MOUNT_DIR}/opt/images/Android/system.img
+
 	cp ${ANDROID_IMGS_PATH}/u-boot-var-imx6-nand.img	${P2_MOUNT_DIR}/opt/images/Android/
 	cp ${ANDROID_IMGS_PATH}/u-boot-var-imx6-sd.img		${P2_MOUNT_DIR}/opt/images/Android/u-boot-var-imx6-mmc.img
-	ln -s /opt/images/Yocto/SPL-nand			${P2_MOUNT_DIR}/opt/images/Android/SPL-nand
-	ln -s /opt/images/Yocto/SPL-sd				${P2_MOUNT_DIR}/opt/images/Android/SPL-mmc
+	cp ${ANDROID_IMGS_PATH}/SPL-var-imx6-nand		${P2_MOUNT_DIR}/opt/images/Android/SPL-nand
+	cp ${ANDROID_IMGS_PATH}/SPL-var-imx6-sd			${P2_MOUNT_DIR}/opt/images/Android/SPL-mmc
+
+	echo "Creating system raw image"
+	${ANDROID_BUILD_ROOT}/out/host/linux-x86/bin/simg2img	${ANDROID_IMGS_PATH}/system.img ${ANDROID_IMGS_PATH}/system_raw.img
+	sync | pv -t
+	echo "Copying system raw image to /opt/images/"
+	pv ${ANDROID_IMGS_PATH}/system_raw.img >		${P2_MOUNT_DIR}/opt/images/Android/system_raw.img
+	sync | pv -t
+	echo "Removing system raw image"
+	rm ${ANDROID_IMGS_PATH}/system_raw.img
 }
 
 function copy_android_scripts
@@ -96,6 +117,7 @@ function copy_android_scripts
 }
 
 mount_parts
+update_yocto_bootloader
 copy_android
 copy_android_scripts
 

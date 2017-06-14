@@ -5,15 +5,17 @@ set -e
 . /usr/bin/echos.sh
 
 # Partition sizes in MiB
-BOOTLOAD_RESERVE=4
-BOOT_ROM_SIZE=16
-RECOVERY_ROM_SIZE=16
-SYSTEM_ROM_SIZE=800
+BOOTLOAD_RESERVE=8
+BOOT_ROM_SIZE=32
+RECOVERY_ROM_SIZE=32
+SYSTEM_ROM_SIZE=1536
 CACHE_SIZE=512
 DEVICE_SIZE=8
-MISC_SIZE=6
+MISC_SIZE=4
 DATAFOOTER_SIZE=2
-
+METADATA_SIZE=2
+FBMISC_SIZE=1
+PRESISTDATA_SIZE=1
 
 help() {
 
@@ -43,7 +45,7 @@ while [ "$moreoptions" = 1 -a $# -gt 0 ]; do
 	[ "$moreoptions" = 1 ] && shift
 done
 
-systemimage_file="system.img"
+systemimage_file="system_raw.img"
 bootimage_file="boot-${soc_name}.img"
 recoveryimage_file="recovery-${soc_name}.img"
 imagesdir=/opt/images/Android
@@ -55,16 +57,16 @@ fi
 
 # Call sfdisk to create partition table
 # Get total card size
-seprate=40
+seprate=100
 total_size=`sfdisk -s ${node}`
-total_size=`expr ${total_size} / 1024`
-echo "TOTAL SIZE ${total_size}MiB"
+total_size=`expr ${total_size} \/ 1024`
 boot_rom_sizeb=`expr ${BOOT_ROM_SIZE} + ${BOOTLOAD_RESERVE}`
-extend_size=`expr ${SYSTEM_ROM_SIZE} + ${CACHE_SIZE} + ${DEVICE_SIZE} + ${MISC_SIZE} + ${DATAFOOTER_SIZE} + ${seprate}`
+extend_size=`expr ${SYSTEM_ROM_SIZE} + ${CACHE_SIZE} + ${DEVICE_SIZE} + ${MISC_SIZE} + ${FBMISC_SIZE} + ${PRESISTDATA_SIZE} + ${DATAFOOTER_SIZE} + ${METADATA_SIZE} +  ${seprate}`
 data_size=`expr ${total_size} - ${boot_rom_sizeb} - ${RECOVERY_ROM_SIZE} - ${extend_size}`
 
 # Echo partitions
 cat << EOF
+TOTAL    : ${total_size}MB
 U-BOOT   : ${BOOTLOAD_RESERVE}MiB
 BOOT     : ${BOOT_ROM_SIZE}MiB
 RECOVERY : ${RECOVERY_ROM_SIZE}MiB
@@ -154,23 +156,28 @@ function create_parts
 	boot_rom_sizeb_sect=`expr $boot_rom_sizeb \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
 	RECOVERY_ROM_SIZE_sect=`expr $RECOVERY_ROM_SIZE \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
 	extend_size_sect=`expr $extend_size \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
-	data_size_sect=`expr $data_size \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
 	SYSTEM_ROM_SIZE_sect=`expr $SYSTEM_ROM_SIZE \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
 	CACHE_SIZE_sect=`expr $CACHE_SIZE \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
 	DEVICE_SIZE_sect=`expr $DEVICE_SIZE \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
 	MISC_SIZE_sect=`expr $MISC_SIZE \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
 	DATAFOOTER_SIZE_sect=`expr $DATAFOOTER_SIZE \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
+	METADATA_SIZE_sect=`expr $METADATA_SIZE \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
+	FBMISC_SIZE_sect=`expr $FBMISC_SIZE \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
+	PRESISTDATA_SIZE_sect=`expr $PRESISTDATA_SIZE \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
 
 sfdisk --force -uS ${node} &> /dev/null << EOF
 ,${boot_rom_sizeb_sect},83
 ,${RECOVERY_ROM_SIZE_sect},83
 ,${extend_size_sect},5
-,${data_size_sect},83
+,-,83
 ,${SYSTEM_ROM_SIZE_sect},83
 ,${CACHE_SIZE_sect},83
 ,${DEVICE_SIZE_sect},83
 ,${MISC_SIZE_sect},83
 ,${DATAFOOTER_SIZE_sect},83
+,${METADATA_SIZE_sect},83
+,${FBMISC_SIZE_sect},83
+,${PRESISTDATA_SIZE_sect},83
 EOF
 
 	sync; sleep 1
