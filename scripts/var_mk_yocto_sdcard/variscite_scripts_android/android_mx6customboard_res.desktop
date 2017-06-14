@@ -2,7 +2,7 @@
 Type=Application
 Name=Install Android
 Comment=MX6CB Res
-Exec=/usr/bin/terminal bash -c "/usr/bin/install_android.sh -b mx6cb -t res; read"
+Exec=/usr/bin/xterm -e "/usr/bin/install_android.sh -b mx6cb -t res; read"
 Icon=media-flash
 Terminal=false
 Categories=GTK;Application;
