@@ -1,0 +1,5 @@
+# Default for /etc/init.d/udev
+
+# Uncomment this to enable device cache
+#DEVCACHE="/etc/udev-cache.tar.gz"
+PROBE_PLATFORM_BUS="yes"
