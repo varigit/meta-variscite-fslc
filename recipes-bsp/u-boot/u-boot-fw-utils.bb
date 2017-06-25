@@ -7,7 +7,7 @@ DEPENDS = "mtd-utils"
 SRCBRANCH = "imx_v2015.04_4.1.15_1.1.0_ga_var03"
 UBOOT_SRC = "git://github.com/varigit/uboot-imx.git;protocol=git"
 SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH}"
-SRCREV = "0351feb6765d1f060a0c62253bc51421b90b0e3c"
+SRCREV = "9e8825dede8bd2045fbeb9695126e08f5acc9cf8"
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 S = "${WORKDIR}/git"
