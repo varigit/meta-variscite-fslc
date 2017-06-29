@@ -20,7 +20,7 @@ S = "${WORKDIR}"
 
 do_install() {
 	install -d -p ${D}/lib/firmware/ti-connectivity
-	install -m 0755 bt/initscripts/*.bts ${D}/lib/firmware/ti-connectivity
+	install -m 0755 bt/initscripts/TIInit_*.bts ${D}/lib/firmware/ti-connectivity
 	install -m 0755 wlan/*.bin ${D}/lib/firmware/ti-connectivity
 	install -m 0644 wlan/LICENCE ${D}/lib/firmware/ti-connectivity
 }
