@@ -14,6 +14,7 @@ BRANCH_bt = "master"
 SRC_URI = " \
 	   git://git.ti.com/wilink8-wlan/wl18xx_fw.git;protocol=git;branch=${BRANCH_wlan};destsuffix=wlan;name=wlan \
 	   git://git.ti.com/ti-bt/service-packs.git;protocol=git;branch=${BRANCH_bt};destsuffix=bt;name=bt \
+	   file://wl1271-nvs.bin \
 	   "
 
 S = "${WORKDIR}"
@@ -23,6 +24,7 @@ do_install() {
 	install -m 0755 bt/initscripts/TIInit_*.bts ${D}/lib/firmware/ti-connectivity
 	install -m 0755 wlan/*.bin ${D}/lib/firmware/ti-connectivity
 	install -m 0644 wlan/LICENCE ${D}/lib/firmware/ti-connectivity
+	install -m 0755 ${S}/wl1271-nvs.bin ${D}/lib/firmware/ti-connectivity
 }
 
 FILES_${PN} = "/lib/firmware/ti-connectivity/*"
