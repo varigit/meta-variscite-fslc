@@ -3,7 +3,7 @@ set -e
 
 #### Script version ####
 SCRIPT_NAME=${0##*/}
-readonly SCRIPT_VERSION="0.6"
+readonly SCRIPT_VERSION="0.7"
 
 #### Exports Variables ####
 #### global variables ####
@@ -12,7 +12,18 @@ readonly ABSOLUTE_DIRECTORY=`dirname ${ABSOLUTE_FILENAME}`
 readonly SCRIPT_POINT=${ABSOLUTE_DIRECTORY}
 
 readonly YOCTO_ROOT="${SCRIPT_POINT}/../../../../"
-readonly YOCTO_BUILD=${YOCTO_ROOT}/build_x11
+
+if [[ -e ${YOCTO_ROOT}b2qt-init-build-env ]] ; then
+	readonly BSP_TYPE="B2QT"
+	readonly YOCTO_BUILD=${YOCTO_ROOT}/build-${MACHINE}
+	readonly YOCTO_DEFAULT_IMAGE=b2qt-embedded-qt5-image
+else
+	readonly BSP_TYPE="YOCTO"
+	readonly YOCTO_BUILD=${YOCTO_ROOT}/build_x11
+	readonly YOCTO_DEFAULT_IMAGE=fsl-image-gui
+fi
+echo "BSP type: ${BSP_TYPE}"
+
 readonly YOCTO_SCRIPTS_PATH=${SCRIPT_POINT}/variscite_scripts
 readonly YOCTO_IMGS_PATH=${YOCTO_BUILD}/tmp/deploy/images/${MACHINE}
 
@@ -64,7 +75,6 @@ function check_device()
 }
 
 YOCTO_RECOVERY_ROOTFS_PATH=${YOCTO_IMGS_PATH}
-YOCTO_DEFAULT_IMAGE=fsl-image-gui
 YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME=${YOCTO_DEFAULT_IMAGE}-${MACHINE}
 
 echo "=============================================="
