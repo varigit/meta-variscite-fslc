@@ -18,12 +18,8 @@ SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
 
 DEFAULT_PREFERENCE = "1"
 
-KERNEL_DEFCONFIG_var-som-mx6 = "imx_v7_var_defconfig"
-KERNEL_DEFCONFIG_imx6ul-var-dart = "imx6ul-var-dart_defconfig"
-KERNEL_DEFCONFIG_imx7-var-som = "imx7-var-som_defconfig"
-
-do_preconfigure_prepend() {
-   cp ${S}/arch/arm/configs/${KERNEL_DEFCONFIG} ${WORKDIR}/defconfig
-}
+KERNEL_DEFCONFIG_var-som-mx6 = "${S}/arch/${ARCH}/configs/imx_v7_var_defconfig"
+KERNEL_DEFCONFIG_imx6ul-var-dart = "${S}/arch/${ARCH}/configs/imx6ul-var-dart_defconfig"
+KERNEL_DEFCONFIG_imx7-var-som = "${S}/arch/${ARCH}/configs/imx7-var-som_defconfig"
 
 COMPATIBLE_MACHINE = "(var-som-mx6|imx6ul-var-dart|imx7-var-som)"

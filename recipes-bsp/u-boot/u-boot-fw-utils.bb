@@ -6,14 +6,20 @@ DEPENDS = "mtd-utils"
 
 SRCBRANCH = "imx_v2015.04_4.1.15_1.1.0_ga_var03"
 UBOOT_SRC = "git://github.com/varigit/uboot-imx.git;protocol=git"
-SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH}"
+SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH} \
+           file://default-gcc.patch \
+           file://0001-Revert-Fix-the-compile-issue-under-gcc6.patch \
+           file://0001-compiler-.h-sync-include-linux-compiler-.h-with-Linu.patch \
+"
+
 SRCREV = "cd1971cf177e97282a922d85046f83a2e706e306"
+
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 S = "${WORKDIR}/git"
 
 INSANE_SKIP_${PN} = "already-stripped"
-EXTRA_OEMAKE_class-target = 'CROSS_COMPILE=${TARGET_PREFIX} CC="${CC} ${CFLAGS} ${LDFLAGS}" V=1'
+EXTRA_OEMAKE_class-target = 'CROSS_COMPILE=${TARGET_PREFIX} CC="${CC} ${CFLAGS} ${LDFLAGS}" HOSTCC="${BUILD_CC} ${BUILD_CFLAGS} ${BUILD_LDFLAGS}" V=1'
 EXTRA_OEMAKE_class-cross = 'ARCH=${TARGET_ARCH} CC="${CC} ${CFLAGS} ${LDFLAGS}" V=1'
 
 inherit uboot-config
