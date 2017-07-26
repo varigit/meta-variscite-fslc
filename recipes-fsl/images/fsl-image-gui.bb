@@ -47,7 +47,7 @@ CORE_IMAGE_EXTRA_INSTALL += " \
 	git \
 	m4 \
 	make \
-	iperf \
+	iperf3 \
 	libtool \
 	python-compiler \
 	strace \
