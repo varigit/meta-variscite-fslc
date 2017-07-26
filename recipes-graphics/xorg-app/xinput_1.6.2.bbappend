@@ -7,6 +7,8 @@ SRC_URI_append_var-som-mx6 = " \
 
 FILES_${PN} += "${systemd_unitdir}/system/*"
 
+DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES','systemd','','update-rc.d-native',d)}"
+
 do_install_append_var-som-mx6() {
 
 	if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)}; then
