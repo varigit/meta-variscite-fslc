@@ -23,6 +23,8 @@ SRC_URI_append = " \
 # Required by obexd
 RDEPENDS_${PN} += "glibc-gconv-utf-16"
 
+DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES','systemd','','update-rc.d-native',d)}"
+
 do_install_append() {
 	install -d ${D}${sysconfdir}/bluetooth
 	install -d ${D}${sysconfdir}/dbus-1/system.d
