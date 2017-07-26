@@ -36,7 +36,7 @@ do_install () {
 do_install_class-cross () {
 	install -d ${D}${bindir_cross}
 	install -m 755 ${S}/tools/env/fw_printenv ${D}${bindir_cross}/fw_printenv
-	ln -s ${base_sbindir}/fw_printenv ${D}${bindir_cross}/fw_setenv
+	ln -s ${bindir_cross}/fw_printenv ${D}${bindir_cross}/fw_setenv
 }
 
 SYSROOT_PREPROCESS_FUNCS_class-cross = "uboot_fw_utils_cross"
