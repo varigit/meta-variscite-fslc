@@ -9,14 +9,14 @@ LIC_FILES_CHKSUM = "file://../backports/COPYING;md5=d7810fab7487fb0aad327b76f1be
 
 RDEPENDS_${PN} = "wireless-tools"
 
-PV = "R8.6_SP1"
+PV = "R8.7_SP2"
 inherit module
 
-# Tags: R8.6_SP1
-SRCREV_wl18xx = "4d167bf2478da4e995f789e982a33b5c36a9bb49"
-BRANCH_wl18xx = "upstream_41"
-SRCREV_backports = "4677dc3f5d23242060a8ddc33e38838b2430ff61"
-BRANCH_backports = "upstream_41"
+# Tags: R8.7_SP2
+SRCREV_wl18xx = "5c94cc59baf694fb0aa5c5af6c6ae2a9b2d0e8fb"
+BRANCH_wl18xx = "upstream_44"
+SRCREV_backports = "d4777ef8ac84a855b7e385b01a6690874460f536"
+BRANCH_backports = "upstream_44"
 
 SRCREV_FORMAT = "wl18xx"
 
@@ -24,7 +24,6 @@ S = "${WORKDIR}/compat-wireless"
 
 SRC_URI = "git://git.ti.com/wilink8-wlan/wl18xx.git;branch=${BRANCH_wl18xx};destsuffix=wl18xx;name=wl18xx \
            git://git.ti.com/wilink8-wlan/backports.git;branch=${BRANCH_backports};destsuffix=backports;name=backports \
-           file://0001-header_add_possible_write_read_pnet_on_kernel_4.1.patch;patchdir=../backports \
 "
 
 export KLIB_BUILD="${STAGING_KERNEL_BUILDDIR}"
@@ -37,10 +36,6 @@ do_configure() {
     python ./gentree.py --clean  "${WORKDIR}/wl18xx" "${WORKDIR}/compat-wireless"
 
     cd ${S}
-
-    # Now generate the sourceipk with the properly configured sources
-#    sourceipk_do_create_srcipk
-
     make defconfig-wl18xx
 }
 
