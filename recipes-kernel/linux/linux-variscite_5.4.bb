@@ -15,6 +15,9 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"
 
 DEPENDS += "lzop-native bc-native"
 
+# Do not copy the kernel image to the rootfs by default
+RDEPENDS_${KERNEL_PACKAGE_NAME}-base = ""
+
 DEFAULT_PREFERENCE = "1"
 
 LOCALVERSION_var-som-mx6 = "-imx6ul"
