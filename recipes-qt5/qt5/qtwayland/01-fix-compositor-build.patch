@@ -1,0 +1,12 @@
+diff --git a/src/hardwareintegration/compositor/wayland-egl/wayland-egl.pri b/src/hardwareintegration/compositor/wayland-egl/wayland-egl.pri
+index df3aead..e20c680 100644
+--- a/src/hardwareintegration/compositor/wayland-egl/wayland-egl.pri
++++ b/src/hardwareintegration/compositor/wayland-egl/wayland-egl.pri
+@@ -1,6 +1,6 @@
+ INCLUDEPATH += $$PWD
+ 
+-QMAKE_USE_PRIVATE += wayland-server wayland-egl
++QMAKE_USE_PRIVATE += egl wayland-server wayland-egl
+ 
+ QT += egl_support-private
+ 
