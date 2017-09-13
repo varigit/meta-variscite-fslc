@@ -25,12 +25,19 @@ do_compile_imx7-var-som () {
 	oe_runmake env
 }
 
+def checkdir(d):
+    for moverride in reversed((d.getVar('MACHINEOVERRIDES', True)).split(':')):
+        if os.path.exists(os.path.join(d.getVar('THISDIR', True),  d.getVar('PN', True), moverride)):
+            return moverride
+
+MODIR = "${@checkdir(d)}"
+
 do_install () {
 	install -d ${D}${base_sbindir}
 	install -d ${D}${sysconfdir}
 	install -m 755 ${S}/tools/env/fw_printenv ${D}${base_sbindir}/fw_printenv
 	ln -s ${base_sbindir}/fw_printenv ${D}${base_sbindir}/fw_setenv
-	install -m 0644 ${THISDIR}/${PN}/${MACHINE}/fw_env.config ${D}${sysconfdir}/fw_env.config
+	install -m 0644 ${THISDIR}/${PN}/${MODIR}/fw_env.config ${D}${sysconfdir}/fw_env.config
 }
 
 do_install_class-cross () {
