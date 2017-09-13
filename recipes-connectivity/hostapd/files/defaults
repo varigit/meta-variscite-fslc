@@ -1,0 +1,6 @@
+# defaults file for hostapd daemon
+
+# start hostapd from init.d script?
+#  only allowed values are "true" and "false"
+ENABLE_HOSTAPD=false
+
