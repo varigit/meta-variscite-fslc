@@ -1,6 +1,6 @@
 SUMMARY = "U-Boot for Variscite's i.MX boards"
-require u-boot-common.inc
 require recipes-bsp/u-boot/u-boot.inc
+require u-boot-common.inc
 
 inherit fsl-u-boot-localversion
 
