@@ -64,18 +64,6 @@ function mount_parts
 	mount ${node}${part}2  ${P2_MOUNT_DIR}
 }
 
-#### WARNING ####
-# current uboot branch used by yocto does not support i.MX6QP: next function
-# and related calls must be removed as soon as support will be integrated
-YOCTO_IMGS_PATH=${ANDROID_BUILD_ROOT}/device/variscite/common/firmware/Yocto
-function update_yocto_bootloader
-{
-	echo "Updating Yocto bootloader"
-	dd if=${YOCTO_IMGS_PATH}/SPL-sd of=${node} bs=1K seek=1; sync
-	dd if=${YOCTO_IMGS_PATH}/u-boot.img-sd of=${node} bs=1K seek=69; sync
-	cp ${YOCTO_IMGS_PATH}/* ${P2_MOUNT_DIR}/opt/images/Yocto/; sync
-}
-
 function unmount_parts
 {
 	umount ${P1_MOUNT_DIR}
@@ -117,7 +105,6 @@ function copy_android_scripts
 }
 
 mount_parts
-update_yocto_bootloader
 copy_android
 copy_android_scripts
 
