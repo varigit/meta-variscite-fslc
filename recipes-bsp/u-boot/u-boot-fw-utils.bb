@@ -13,16 +13,25 @@ EXTRA_OEMAKE_class-cross = 'ARCH=${TARGET_ARCH} CC="${CC} ${CFLAGS} ${LDFLAGS}" 
 inherit uboot-config
 
 do_compile_var-som-mx6 () {
+	oe_runmake mx6var_som_sd_defconfig
+	oe_runmake env
+	mv tools/env/fw_printenv tools/env/fw_printenv-mmc
 	oe_runmake mx6var_som_nand_defconfig
 	oe_runmake env
 }
 
 do_compile_imx6ul-var-dart () {
+	oe_runmake mx6ul_var_dart_mmc_defconfig
+	oe_runmake env
+	mv tools/env/fw_printenv tools/env/fw_printenv-mmc
 	oe_runmake mx6ul_var_dart_nand_defconfig
 	oe_runmake env
 }
 
 do_compile_imx7-var-som () {
+	oe_runmake mx7dvar_som_defconfig
+	oe_runmake env
+	mv tools/env/fw_printenv tools/env/fw_printenv-mmc
 	oe_runmake mx7dvar_som_nand_defconfig
 	oe_runmake env
 }
@@ -30,7 +39,9 @@ do_compile_imx7-var-som () {
 do_install () {
 	install -d ${D}${base_sbindir}
 	install -d ${D}${sysconfdir}
-	install -m 755 ${S}/tools/env/fw_printenv ${D}${base_sbindir}/fw_printenv
+	install -m 755 ${S}/tools/env/fw_printenv-mmc ${D}${base_sbindir}/fw_printenv-mmc
+	install -m 755 ${S}/tools/env/fw_printenv ${D}${base_sbindir}/fw_printenv-nand
+	ln -s ${base_sbindir}/fw_printenv-nand ${D}${base_sbindir}/fw_printenv
 	ln -s ${base_sbindir}/fw_printenv ${D}${base_sbindir}/fw_setenv
 	install -m 0644 ${WORKDIR}/fw_env.config ${D}${sysconfdir}/fw_env.config
 }

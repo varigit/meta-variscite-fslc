@@ -140,6 +140,15 @@ function install_rootfs
 		x=$((x+1))
 		echo -en "$x files extracted\r"
 	done
+
+	if [[ $is_dart == true ]] ; then
+		# Adjust u-boot-fw-utils for eMMC
+		rm ${mountdir_prefix}${rootfspart}/sbin/fw_printenv-nand
+		mv ${mountdir_prefix}${rootfspart}/sbin/fw_printenv-mmc ${mountdir_prefix}${rootfspart}/sbin/fw_printenv
+		sed -i "/mtd/s/^/#/" ${mountdir_prefix}${rootfspart}/etc/fw_env.config
+		sed -i "s/#\/dev\/mmcblk./\/dev\/${block}/" ${mountdir_prefix}${rootfspart}/etc/fw_env.config
+	fi
+
 	echo
 	sync
 	umount ${node}${part}${rootfspart}
