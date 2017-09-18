@@ -185,6 +185,7 @@ usage()
 	echo " -b <mx6ul|mx6ull|mx7>	Board model (DART-6UL/DART-6ULL/VAR-SOM-MX7) - mandartory parameter."
 	echo " -r <nand|emmc>		stoRage device (NAND flash/eMMC) - mandartory parameter."
 	echo " -v <wifi|sd>		DART-6UL Variant (WiFi/SD card) - mandatory in case of DART-6UL with NAND flash; ignored otherwise."
+	echo " -m			optional Cortex-M4 support for VAR-SOM-MX7 with NAND flash; ignored otherwise."
 	echo
 }
 
@@ -199,7 +200,8 @@ finish()
 blue_underlined_bold_echo "*** Variscite MX6UL/MX6ULL/MX7 Yocto eMMC/NAND Recovery ***"
 echo
 
-while getopts :b:r:v: OPTION;
+VARSOMMX7_VARIANT=""
+while getopts :b:r:v:m OPTION;
 do
 	case $OPTION in
 	b)
@@ -210,6 +212,9 @@ do
 		;;
 	v)
 		DART6UL_VARIANT=$OPTARG
+		;;
+	m)
+		VARSOMMX7_VARIANT=-m4
 		;;
 	*)
 		usage
@@ -286,7 +291,7 @@ if [[ $STORAGE_DEV == "nand" ]] ; then
 		fi
 	elif [[ $BOARD == "mx7" ]] ; then
 		UBOOT_IMAGE=u-boot.imx-nand
-		KERNEL_DTB=imx7d-var-som-nand.dtb
+		KERNEL_DTB=imx7d-var-som-nand${VARSOMMX7_VARIANT}.dtb
 	fi
 
 	printf "Installing Device Tree file: "
@@ -319,7 +324,7 @@ elif [[ $STORAGE_DEV == "emmc" ]] ; then
 	elif [[ $BOARD == "mx7" ]] ; then
 		block=mmcblk2
 		UBOOT_IMAGE=u-boot.imx-sd
-		KERNEL_DTBS=imx7d-var-som-emmc.dtb
+		KERNEL_DTBS=imx7d-var-som-emmc*.dtb
 		FAT_VOLNAME=BOOT-VARMX7
 	fi
 	node=/dev/${block}
