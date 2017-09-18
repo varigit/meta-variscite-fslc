@@ -130,7 +130,7 @@ while [ "$moreoptions" = 1 -a $# -gt 0 ]; do
 	    -s) cal_only=1 ;;
 	    -a) AUTO_FILL_SD=1 ;;
 	    -r) shift;
-			YOCTO_RECOVERY_ROOTFS_MASK_PATH=`readlink -e "${1}.tar.bz2"`;
+			YOCTO_RECOVERY_ROOTFS_MASK_PATH=`readlink -e "${1}.tar.gz"`;
 			YOCTO_RECOVERY_ROOTFS_PATH=`dirname ${YOCTO_RECOVERY_ROOTFS_MASK_PATH}`
 			YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME=`basename ${1}`
 	    ;;
@@ -272,7 +272,7 @@ function install_yocto
 
 	echo
 	echo "Installing Yocto Root File System"
-	pv ${YOCTO_IMGS_PATH}/${YOCTO_DEFAULT_IMAGE}-${MACHINE}.tar.bz2 | tar -xj -C ${P2_MOUNT_DIR}/
+	pv ${YOCTO_IMGS_PATH}/${YOCTO_DEFAULT_IMAGE}-${MACHINE}.tar.gz | tar -xz -C ${P2_MOUNT_DIR}/
 }
 
 function copy_images
@@ -287,10 +287,10 @@ function copy_images
 	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/?Image				${P2_MOUNT_DIR}/opt/images/Yocto/
 
 	# Copy image for eMMC
-	if [ -f ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}.tar.bz2 ]; then
-		pv ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}.tar.bz2 > ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.tar.bz2
+	if [ -f ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}.tar.gz ]; then
+		pv ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}.tar.gz > ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.tar.gz
 	else
-		echo "W:rootfs.tar.bz2 file is not present. Installation on \"eMMC\" will not be supported!"
+		echo "W:rootfs.tar.gz file is not present. Installation on \"eMMC\" will not be supported!"
 	fi
 
 	# Copy image for NAND flash
@@ -326,7 +326,7 @@ function copy_scripts
 		cp ${YOCTO_SCRIPTS_PATH}/${MACHINE}*.desktop		${P2_MOUNT_DIR}/usr/share/applications/
 
 		# Remove inactive icons
-		if [ ! -f ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.tar.bz2 ]; then
+		if [ ! -f ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.tar.gz ]; then
 			rm -rf ${P2_MOUNT_DIR}/usr/share/applications/${MACHINE}_yocto_*_emmc.desktop
 		fi
 

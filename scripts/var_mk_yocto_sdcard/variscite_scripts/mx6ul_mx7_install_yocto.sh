@@ -269,7 +269,7 @@ if [[ $STORAGE_DEV == "nand" ]] ; then
 	ROOTFS_IMAGE=rootfs.ubi
 elif [[ $STORAGE_DEV == "emmc" ]] ; then
 	STR="eMMC"
-	ROOTFS_IMAGE=rootfs.tar.bz2
+	ROOTFS_IMAGE=rootfs.tar.gz
 else
 	usage
 	exit 1
