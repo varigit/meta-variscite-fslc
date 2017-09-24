@@ -77,9 +77,9 @@ function check_device()
 YOCTO_RECOVERY_ROOTFS_PATH=${YOCTO_IMGS_PATH}
 YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME=${YOCTO_DEFAULT_IMAGE}-${MACHINE}
 
-echo "=============================================="
-echo "= Variscite recovery SD card creation script ="
-echo "=============================================="
+echo "================================================"
+echo "=  Variscite recovery SD card creation script  ="
+echo "================================================"
 
 help() {
 	bn=`basename $0`
@@ -148,8 +148,12 @@ if [[ $node == *mmcblk* ]] || [[ $node == *loop* ]] ; then
 fi
 
 # allow only removable/loopback devices, to protect host PC
+echo "MACHINE=${MACHINE}"
+echo "SD card rootfs:  ${YOCTO_DEFAULT_IMAGE}-${MACHINE}"
+echo "Recovery rootfs: ${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}"
+echo "================================================"
 check_device $node
-echo "==============================================="
+echo "================================================"
 read -p "Press Enter to continue"
 
 # Call sfdisk to get total card size
@@ -226,7 +230,7 @@ EOF
 function format_parts
 {
 	echo
-	echo "Formating Yocto partitions"
+	echo "Formatting partitions"
 	mkfs.vfat ${node}${part}1 -n ${FAT_VOLNAME}
 	mkfs.ext4 ${node}${part}2 -L rootfs
 	sync; sleep 1
@@ -290,14 +294,14 @@ function copy_images
 	if [ -f ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}.tar.gz ]; then
 		pv ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}.tar.gz > ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.tar.gz
 	else
-		echo "W:rootfs.tar.gz file is not present. Installation on \"eMMC\" will not be supported!"
+		echo "rootfs.tar.gz file is not present. Installation on \"eMMC\" will not be supported."
 	fi
 
 	# Copy image for NAND flash
 	if [ -f ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}.ubi ]; then
 		pv ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}.ubi > ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.ubi
 	else
-		echo "W:rootfs.ubi file is not present. Installation on \"NAND flash\" will not be supported!"
+		echo "rootfs.ubi file is not present. Installation on \"NAND flash\" will not be supported."
 	fi
 
 	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/u-boot.im?-nand			${P2_MOUNT_DIR}/opt/images/Yocto/
