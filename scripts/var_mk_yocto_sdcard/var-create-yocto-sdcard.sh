@@ -327,11 +327,11 @@ function copy_scripts
 
 		# Remove inactive icons
 		if [ ! -f ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.tar.gz ]; then
-			rm -rf ${P2_MOUNT_DIR}/usr/share/applications/${MACHINE}_yocto_*_emmc.desktop
+			rm -rf ${P2_MOUNT_DIR}/usr/share/applications/${MACHINE}*yocto*emmc*.desktop
 		fi
 
 		if [ ! -f ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.ubi ]; then
-			rm -rf ${P2_MOUNT_DIR}/usr/share/applications/${MACHINE}_yocto_*_nand.desktop
+			rm -rf ${P2_MOUNT_DIR}/usr/share/applications/${MACHINE}*yocto*nand*.desktop
 		fi
 
 		if [ ${RELEASE_NOTES_FILE} ] && [ -f ${RELEASE_NOTES_FILE} ]; then
