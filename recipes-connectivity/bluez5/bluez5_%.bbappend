@@ -1,11 +1,3 @@
-NOINST_TOOLS_READLINE_append = " \
-    tools/btmgmt \
-"
-
-NOINST_TOOLS_EXPERIMENTAL_remove = " \
-    tools/btmgmt \
-"
-
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 SRC_URI_append = " \
