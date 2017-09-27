@@ -341,6 +341,10 @@ function copy_scripts
 		if [ ${RELEASE_NOTES_FILE} ] && [ -f ${RELEASE_NOTES_FILE} ]; then
 			cp ${YOCTO_SCRIPTS_PATH}/release_notes.desktop		${P2_MOUNT_DIR}/usr/share/applications/
 		fi
+
+		if [[ ${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME} == var-image-swupdate* ]]; then
+			sed -i 's/install_yocto.sh/& -u/' ${P2_MOUNT_DIR}/usr/share/applications/${MACHINE}*yocto*emmc*.desktop
+		fi
 	fi
 
 	if [ ${RELEASE_NOTES_FILE} ] && [ -f ${RELEASE_NOTES_FILE} ]; then

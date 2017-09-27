@@ -12,6 +12,15 @@ KERNEL_DTB=""
 ROOTFS_IMAGE=rootfs.ubi
 ROOTFS_DEV=""
 
+set_fw_utils_to_nand()
+{
+	# Adjust u-boot-fw-utils for NAND flash on the SD card
+	if [[ `readlink /sbin/fw_printenv` != "/sbin/fw_printenv-nand" ]]; then
+		ln -sf /sbin/fw_printenv-nand /sbin/fw_printenv
+	fi
+	sed -i "/mmcblk/ s/^#*/#/" /etc/fw_env.config
+	sed -i "s/#*\/dev\/mtd/\/dev\/mtd/" /etc/fw_env.config
+}
 
 install_bootloader()
 {
@@ -33,6 +42,19 @@ install_bootloader()
 
 	flash_erase /dev/mtd1 0 0 2> /dev/null
 	nandwrite -p /dev/mtd1 $MEDIA/$UBOOT_IMAGE
+
+	if [[ $ROOTFS_DEV == "emmc" ]] ; then
+		echo
+		echo "Setting U-Boot enviroment variables"
+		set_fw_utils_to_nand
+		fw_setenv rootfs_device emmc  2> /dev/null
+
+		if [[ $swupdate == 1 ]] ; then
+			fw_setenv mmcrootpart 1
+			fw_setenv boot_device emmc
+			fw_setenv bootdir /boot
+		fi
+	fi
 }
 
 install_kernel()
@@ -64,11 +86,7 @@ install_rootfs()
 	if [[ $ROOTFS_DEV != "emmc" ]] ; then
 		install_rootfs_to_nand
 	else
-		/usr/bin/install_yocto_emmc.sh
-		echo
-		blue_underlined_bold_echo "Setting rootfs device to emmc in the U-Boot enviroment"
-		fw_setenv rootfs_device emmc  2> /dev/null
-		echo Done.
+		/usr/bin/install_yocto_emmc.sh ${EMMC_EXTRA_ARGS}
 	fi
 }
 
@@ -83,6 +101,7 @@ usage()
 	echo " -b <mx6cb|scb|dart>	carrier Board model (MX6CustomBoard/SOLOCustomBoard/DART-MX6) - mandartory parameter."
 	echo " -t <cap|res>		Touchscreen model (capacitive/resistive) - mandatory in case of MX6CustomBoard; ignored otherwise."
 	echo " -r <nand|emmc>		Rootfs device (NAND/eMMC) - mandatory in case of MX6CustomBoard/SOLOCustomBoard; ignored in case of DART-MX6."
+	echo " -u			create two rootfs partitions (for swUpdate double-copy) - ignored in case of NAND rootfs device."
 	echo
 }
 
@@ -98,7 +117,7 @@ finish()
 blue_underlined_bold_echo "*** Variscite MX6 Yocto eMMC/NAND Recovery ***"
 echo
 
-while getopts :b:t:r: OPTION;
+while getopts :b:t:r:u OPTION;
 do
 	case $OPTION in
 	b)
@@ -109,6 +128,10 @@ do
 		;;
 	r)
 		ROOTFS_DEV=$OPTARG
+		;;
+	u)
+		swupdate=1
+		EMMC_EXTRA_ARGS="-u"
 		;;
 	*)
 		usage
@@ -134,7 +157,10 @@ printf "Carrier board: "
 blue_bold_echo $STR
 
 if [[ $BOARD == "dart" ]] ; then
-	/usr/bin/install_yocto_emmc.sh -b dart
+	if [[ $swupdate == 1 ]] ; then
+		blue_bold_echo "Creating two rootfs partitions"
+	fi
+	/usr/bin/install_yocto_emmc.sh -b dart ${EMMC_EXTRA_ARGS}
 	finish
 fi
 
@@ -162,7 +188,6 @@ fi
 
 printf "Installing rootfs to: "
 blue_bold_echo $STR
-
 
 CPUS=`cat /proc/cpuinfo | grep -c processor`
 
@@ -205,8 +230,16 @@ fi
 printf "Installing Device Tree file: "
 blue_bold_echo $KERNEL_DTB
 
+if [[ $ROOTFS_DEV == "emmc" ]] && [[ $swupdate == 1 ]] ; then
+	blue_bold_echo "Creating two rootfs partitions"
+fi
+
 install_bootloader
-install_kernel
+
+if [[ $ROOTFS_DEV != "emmc" ]] || [[ $swupdate != 1 ]] ; then
+	install_kernel
+fi
+
 install_rootfs
 
 finish

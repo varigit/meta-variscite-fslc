@@ -1,0 +1,26 @@
+software =
+{
+	version = "0.1.0";
+
+	var-som-mx6 = {
+		hardware-compatibility: [ "1.0" ];
+
+		files: (
+			{
+				filename = "var-image-swupdate-var-som-mx6.tar.gz";
+				type = "archive";
+				compressed = true;
+				device = "/dev/update";
+				filesystem = "ext4";
+				path = "/";
+			}
+		);
+
+		scripts: (
+			{
+				filename = "update.sh";
+				type = "shellscript";
+			}
+		);
+	};
+}
