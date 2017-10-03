@@ -198,12 +198,19 @@ install_bootloader_to_emmc()
 		dd if=${IMGS_PATH}/${UBOOT_IMAGE} of=${node} bs=1K seek=1; sync
 	fi
 
-	if [[ $swupdate == 1 ]] ; then
+	if [[ $VARSOMMX7_VARIANT == "-m4" || $swupdate == 1 ]] ; then
 		echo
 		echo "Setting U-Boot enviroment variables"
 		set_fw_utils_to_emmc
-		fw_setenv mmcrootpart 1  2> /dev/null
-		fw_setenv bootdir /boot
+
+		if [[ $VARSOMMX7_VARIANT == "-m4" ]] ; then
+			fw_setenv use_m4 yes  2> /dev/null
+		fi
+
+		if [[ $swupdate == 1 ]] ; then
+			fw_setenv mmcrootpart 1  2> /dev/null
+			fw_setenv bootdir /boot
+		fi
 	fi
 }
 
@@ -257,7 +264,7 @@ usage()
 	echo " -b <mx6ul|mx6ull|mx7>	Board model (DART-6UL/DART-6ULL/VAR-SOM-MX7) - mandartory parameter."
 	echo " -r <nand|emmc>		stoRage device (NAND flash/eMMC) - mandartory parameter."
 	echo " -v <wifi|sd>		DART-6UL Variant (WiFi/SD card) - mandatory in case of DART-6UL with NAND flash; ignored otherwise."
-	echo " -m			optional Cortex-M4 support for VAR-SOM-MX7 with NAND flash; ignored otherwise."
+	echo " -m			VAR-SOM-MX7 optional Cortex-M4 support; ignored in case of DART-6UL."
 	echo " -u			create two rootfs partitions (for swUpdate double-copy) - ignored in case of NAND storage device."
 	echo
 }
