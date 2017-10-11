@@ -64,7 +64,7 @@ do_start() {
 
 		cd /home/root
 		echo "Starting $DESC ..."
-		exec $DAEMON -v -H ${hardware}:1.0 -f /etc/swupdate.cfg -u "$EXTRA_ARGS" -w "" &
+		exec $DAEMON -v -H ${hardware}:1.0 -f /etc/swupdate.cfg $SWUPDATE_EXTRA_ARGS -u "$EXTRA_ARGS" -w "" &
 		exit 0
 		;;
 	esac
