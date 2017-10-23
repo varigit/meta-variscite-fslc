@@ -9,8 +9,10 @@
 # In order to enable or disable this script just change the execution
 # bits.
 
-WIFI_MMC_DTS_DIR="/proc/device-tree/soc/aips-bus@02100000/usdhc@02190000"
-WIFI_MMC_DTS_FILE="${WIFI_MMC_DTS_DIR}/no-1-8-v"
+SOC_ID_FILE=/sys/bus/soc/devices/soc0/soc_id
+IMX7_WIFI_SDIO_ID_FILE=/sys/bus/mmc/devices/mmc1:0001/mmc1:0001:1/device
+IMX6UL_WIFI_SDIO_ID_FILE=/sys/bus/mmc/devices/mmc0:0001/mmc0:0001:1/device
+WIFI_5G_SDIO_ID=0x4339
 
 # Load board-specific configuration settings
 . /etc/bluetooth/variscite-bt.conf
@@ -52,10 +54,32 @@ get_bt_macaddr() {
   echo $bt_addr | sed 's/\(..\)/\1:/g;s/:$//'
 }
 
-# Detect SOM with LWB5 WIFI/BT chip
-som_has_lwb5()
+# Detect DART-6UL SOM
+soc_is_imx6ul() {
+  if cat ${SOC_ID_FILE} | grep -q "i.MX6UL"; then
+    return 0
+  fi
+
+  return 1
+}
+
+# Detect VAR-SOM-MX7 SOM
+soc_is_imx7d() {
+  if cat ${SOC_ID_FILE} | grep -q "i.MX7D"; then
+    return 0
+  fi
+
+  return 1
+}
+
+# Detect SOM with 5G WIFI chip
+som_has_5g_wifi()
 {
-  if [ -d ${WIFI_MMC_DTS_DIR} -a ! -f ${WIFI_MMC_DTS_FILE} ]; then
+  if soc_is_imx6ul && [ "`cat ${IMX6UL_WIFI_SDIO_ID_FILE}`" = "${WIFI_5G_SDIO_ID}" ]; then
+    return 0
+  fi
+
+  if soc_is_imx7d &&  [ "`cat ${IMX7_WIFI_SDIO_ID_FILE}`" = "${WIFI_5G_SDIO_ID}" ]; then
     return 0
   fi
 
@@ -81,8 +105,8 @@ else
   # Get BT MAC address
   BT_MACADDR=$(get_bt_macaddr)
 
-  # On SOMs with LWB5 WIFI chip use different firmware binary
-  if som_has_lwb5; then
+  # On SOMs with 5G WIFI use different firmware binary
+  if som_has_5g_wifi; then
     . /etc/bluetooth/variscite-bt-lwb5.conf
   fi
 
