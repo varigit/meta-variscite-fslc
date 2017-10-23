@@ -56,3 +56,11 @@ SRC_URI_append_imx6ul-var-dart = " \
 do_install_append_imx6ul-var-dart() {
 	install -m 0644 ${WORKDIR}/variscite-bt-lwb5.conf ${D}${sysconfdir}/bluetooth
 }
+
+SRC_URI_append_imx7-var-som = " \
+	file://variscite-bt-lwb5.conf \
+"
+
+do_install_append_imx7-var-som() {
+	install -m 0644 ${WORKDIR}/variscite-bt-lwb5.conf ${D}${sysconfdir}/bluetooth
+}
