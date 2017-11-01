@@ -1,0 +1,13 @@
+diff --git a/tests/auto/compositor/compositor/compositor.pro b/tests/auto/compositor/compositor/compositor.pro
+index f0cdaf3..4e3f3c5 100644
+--- a/tests/auto/compositor/compositor/compositor.pro
++++ b/tests/auto/compositor/compositor/compositor.pro
+@@ -7,7 +7,7 @@ QT += core-private gui-private waylandcompositor waylandcompositor-private
+ 
+ QMAKE_USE += wayland-client wayland-server
+ 
+-qtConfig(xkbcommon-evdev)
++qtConfig(xkbcommon-evdev): \
+     QMAKE_USE += xkbcommon_evdev
+ 
+ WAYLANDCLIENTSOURCES += \
