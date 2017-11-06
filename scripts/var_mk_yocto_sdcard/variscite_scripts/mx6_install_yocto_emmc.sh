@@ -220,10 +220,14 @@ function install_rootfs
 
 	if [[ $is_dart == true ]] ; then
 		# Adjust u-boot-fw-utils for eMMC on the installed rootfs
-		rm ${mountdir_prefix}${rootfspart}/sbin/fw_printenv-nand
-		mv ${mountdir_prefix}${rootfspart}/sbin/fw_printenv-mmc ${mountdir_prefix}${rootfspart}/sbin/fw_printenv
-		sed -i "/mtd/ s/^#*/#/" ${mountdir_prefix}${rootfspart}/etc/fw_env.config
-		sed -i "s/#*\/dev\/mmcblk./\/dev\/${block}/" ${mountdir_prefix}${rootfspart}/etc/fw_env.config
+		if [[ -e ${mountdir_prefix}${rootfspart}/sbin/fw_printenv-nand && \
+		      -e ${mountdir_prefix}${rootfspart}/sbin/fw_printenv-mmc && \
+		      -e ${mountdir_prefix}${rootfspart}/etc/fw_env.config ]] ; then
+			rm ${mountdir_prefix}${rootfspart}/sbin/fw_printenv-nand
+			mv ${mountdir_prefix}${rootfspart}/sbin/fw_printenv-mmc ${mountdir_prefix}${rootfspart}/sbin/fw_printenv
+			sed -i "/mtd/ s/^#*/#/" ${mountdir_prefix}${rootfspart}/etc/fw_env.config
+			sed -i "s/#*\/dev\/mmcblk./\/dev\/${block}/" ${mountdir_prefix}${rootfspart}/etc/fw_env.config
+		fi
 	fi
 
 	echo
