@@ -26,6 +26,7 @@ PREFERRED_PROVIDER_wpa-supplicant-passphrase = "wpa-supplicant"
 PREFERRED_PROVIDER_wpa-supplicant = "wpa-supplicant"
 
 MACHINE_EXTRA_RDEPENDS += " \
+			   crda \
 			   bridge-utils \
 			   connman \
 			   hostapd \
