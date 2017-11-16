@@ -4,10 +4,10 @@ LIC_FILES_CHKSUM = "file://wlan/LICENCE;md5=4977a0fe767ee17765ae63c435a32a9e"
 
 inherit allarch
 
-PV = "R8.7_SP2"
+PV = "R8.7_SP3"
 
-# Tag: R8.7 SP2
-SRCREV_wlan = "c0a99bffe1364fb5b31fca6fbf5bbb4460b971d4"
+# Tag: R8.7 SP3
+SRCREV_wlan = "f659be25473e4bde8dc790bff703ecacde6e21da"
 BRANCH_wlan = "master"
 SRCREV_bt = "0ee619b598d023fffc77679f099bc2a4815510e4"
 BRANCH_bt = "master"
