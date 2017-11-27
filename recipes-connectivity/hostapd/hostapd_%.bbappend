@@ -3,6 +3,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 SRC_URI_append = " \
 	file://init \
 	file://defaults \
+	file://key-replay-cve-multiple.patch \
 "
 
 do_install_append() {
