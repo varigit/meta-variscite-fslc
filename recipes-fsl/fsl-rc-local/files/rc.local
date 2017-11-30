@@ -10,8 +10,8 @@
 # bits.
 #
 
-# Disable runtime power management to avoid possible deadlock
-echo "0 1" > /sys/devices/platform/soc/soc:busfreq/enable
+# Disable runtime power management to avoid deadlock
+echo 0 > /sys/devices/soc0/soc/soc:busfreq/enable
 
 exit 0
 
