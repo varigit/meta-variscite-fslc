@@ -262,8 +262,8 @@ usage()
 	echo " Usage: $0 OPTIONS"
 	echo
 	echo " OPTIONS:"
-	echo " -b <mx6ul|mx6ul5g|mx6ull|mx6ull5g|mx7>	Board model (DART-6UL/DART-6UL-5G/DART-6ULL/DART-6ULL-5G/VAR-SOM-MX7) - mandatory parameter."
-	echo " -r <nand|emmc>		storage device (NAND flash/eMMC) - mandatory parameter."
+	echo " -b <mx6ul|mx6ul5g|mx6ull|mx6ull5g|mx7>	Board model (DART-6UL/DART-6UL-5G/DART-6ULL/DART-6ULL-5G/VAR-SOM-MX7) - optional, autodetected if not provided."
+	echo " -r <nand|emmc>		storage device (NAND flash/eMMC) - optional, autodetected if not provided."
 	echo " -v <wifi|sd>		DART-6UL Variant (WiFi/SD card) - mandatory in case of DART-6UL with NAND flash; ignored otherwise."
 	echo " -m			VAR-SOM-MX7 optional Cortex-M4 support; ignored in case of DART-6UL."
 	echo " -u			create two rootfs partitions (for swUpdate double-copy) - ignored in case of NAND storage device."
@@ -283,6 +283,32 @@ echo
 
 VARSOMMX7_VARIANT=""
 swupdate=0
+
+SOC=`cat /sys/bus/soc/devices/soc0/soc_id`
+if [[ $SOC == i.MX6UL* ]] ; then
+	BOARD=mx6ul
+	if [[ $SOC == i.MX6ULL ]] ; then
+		BOARD+=l
+	fi
+	SOM_INFO=`i2cget -y 1 0x51 0xfd`
+	if [[ $(($(($SOM_INFO >> 3)) & 0x3)) == 1 ]] ; then
+		BOARD+=5g
+	fi
+
+	if [[ -d /sys/bus/platform/devices/1806000.gpmi-nand ]] ; then
+		STORAGE_DEV=nand
+	else
+		STORAGE_DEV=emmc
+	fi
+elif [[ $SOC == i.MX7D ]] ; then
+	BOARD=mx7
+
+	if [[ -d /sys/bus/platform/devices/33002000.gpmi-nand ]] ; then
+		STORAGE_DEV=nand
+	else
+		STORAGE_DEV=emmc
+	fi
+fi
 
 while getopts :b:r:v:mu OPTION;
 do
@@ -312,16 +338,16 @@ done
 STR=""
 
 if [[ $BOARD == "mx6ul" ]] ; then
-	STR="DART-6UL"
+	STR="DART-6UL (i.MX6UL)"
 	IS_SPL=true
 elif [[ $BOARD == "mx6ull" ]] ; then
-	STR="DART-6ULL"
+	STR="DART-6UL (i.MX6ULL)"
 	IS_SPL=true
 elif [[ $BOARD == "mx6ul5g" ]] ; then
-	STR="DART-6UL-5G"
+	STR="DART-6UL-5G (i.MX6UL)"
 	IS_SPL=true
 elif [[ $BOARD == "mx6ull5g" ]] ; then
-	STR="DART-6ULL-5G"
+	STR="DART-6UL-5G (i.MX6ULL)"
 	IS_SPL=true
 elif [[ $BOARD == "mx7" ]] ; then
 	STR="VAR-SOM-MX7"
@@ -333,21 +359,6 @@ fi
 
 printf "Board: "
 blue_bold_echo $STR
-
-if [[ $BOARD == mx6ul* ]] ; then
-	if [[ $STORAGE_DEV == "nand" ]] ; then
-		if [[ $DART6UL_VARIANT == "wifi" ]] ; then
-			STR="WiFi (no SD card)"
-		elif [[ $DART6UL_VARIANT == "sd" ]] ; then
-			STR="SD card (no WiFi)"
-		else
-			usage
-			exit 1
-		fi
-		printf "With:  "
-		blue_bold_echo "$STR"
-	fi
-fi
 
 if [[ $STORAGE_DEV == "nand" ]] ; then
 	STR="NAND"
@@ -362,6 +373,21 @@ fi
 
 printf "Installing to internal storage device: "
 blue_bold_echo $STR
+
+if [[ $BOARD == mx6ul* ]] ; then
+	if [[ $STORAGE_DEV == "nand" ]] ; then
+		if [[ $DART6UL_VARIANT == "wifi" ]] ; then
+			STR="WiFi (no SD card)"
+		elif [[ $DART6UL_VARIANT == "sd" ]] ; then
+			STR="SD card (no WiFi)"
+		else
+			usage
+			exit 1
+		fi
+		printf "With support for:  "
+		blue_bold_echo "$STR"
+	fi
+fi
 
 if [[ $STORAGE_DEV == "nand" ]] ; then
 	if [[ $BOARD == mx6ul* ]] ; then
