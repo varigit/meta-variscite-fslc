@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Yocto->NAND
-Comment=iMX6ULL, SD card
-Exec=/usr/bin/xterm -e "/usr/bin/install_yocto.sh -b mx6ull -r nand -v sd; read"
-Icon=media-flash
-Terminal=false
-Categories=GTK;Application;
-StartupNotify=true
