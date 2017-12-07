@@ -4,6 +4,7 @@ SRC_URI += "\
 	file://head_bg.gif \
 	file://swupdate.cfg \
 	file://swupdate.default \
+	file://suid.patch \
 "
 
 do_install_append () {
