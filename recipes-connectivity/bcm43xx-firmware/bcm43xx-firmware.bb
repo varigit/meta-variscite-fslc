@@ -1,13 +1,13 @@
-DESCRIPTION = "Firmware files for use with BCM4343w WIFI and Bluetooth"
+DESCRIPTION = "Firmware files for use with BCM43XX WIFI and Bluetooth"
 S = "${WORKDIR}/git"
 
 LICENSE = "Proprietary"
 LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=8cba1397cda6386db37210439a0da3eb"
 
-PV = "0.43"
+PV = "3.5.5.18"
 PR = "r1"
 
-PROVIDES += "bcm4343w-fw"
+PROVIDES += "bcm43xx-firmware"
 
 BRANCH = "3.5.5.18"
 
