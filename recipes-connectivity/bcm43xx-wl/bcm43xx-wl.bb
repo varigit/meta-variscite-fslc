@@ -3,7 +3,7 @@ DESCRIPTION = "Configuration tool for WIFI adapters based on Broadcom/Cypress bc
 LICENSE = "Proprietary"
 LIC_FILES_CHKSUM = "file://LICENCE;md5=3160c14df7228891b868060e1951dfbc"
  
-RDEPENDS_${PN} = "libnl libnl-nf libnl-route"
+RDEPENDS_${PN} = "libnl libnl-genl libnl-nf libnl-route"
 
 S = "${WORKDIR}"
 
