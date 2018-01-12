@@ -37,6 +37,8 @@ MACHINE_EXTRA_RDEPENDS += " \
 			   packagegroup-tools-bluetooth \
 			   pm-utils \
 			   rng-tools \
+			   hdparm \
+			   gptfdisk \
 			   tslib-calibrate \
 			   tslib-tests \
 			   u-boot-fw-utils \
