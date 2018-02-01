@@ -14,6 +14,12 @@
 
 # Check if WIFI+BT combo chip is available
 bt_found() {
+
+  # Use different ID file on DART-MX6
+  if [ "${BT_CHIP}" = "wl18xx" ] && grep -q DART /sys/devices/soc0/machine; then
+     WIFI_SDIO_ID_FILE=${WIFI_SDIO_ID_FILE_DART}
+  fi
+
   if [ -f ${WIFI_SDIO_ID_FILE} ]; then
     echo "BT found"
     return 0
@@ -84,7 +90,9 @@ else
 
   # Load BT firmware and set MAC address
   brcm_patchram_plus --patchram ${BT_FIRMWARE} \
-		     --enable_hci --bd_addr ${BT_MACADDR} --no2bytes \
+		     --enable_hci \
+		     --bd_addr ${BT_MACADDR} \
+		     --no2bytes \
 		     --baudrate 3000000 \
 		     --scopcm=1,0,0,0,0,0,0,0,0,0 \
 		     --tosleep 1000 ${BT_TTY_DEV} &
