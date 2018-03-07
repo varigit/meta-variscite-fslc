@@ -8,8 +8,6 @@ LOCALVERSION_var-som-mx6 = "-mx6"
 LOCALVERSION_imx6ul-var-dart = "-mx6ul"
 LOCALVERSION_imx7-var-som = "-mx7"
 
-DEPENDS_append_imx7-var-som = " dtc-native"
-
 PROVIDES += "u-boot"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
