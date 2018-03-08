@@ -84,7 +84,6 @@ function copy_android
 	cp ${ANDROID_IMGS_PATH}/u-boot-var-imx6-sd.img		${P2_MOUNT_DIR}/opt/images/Android/u-boot-var-imx6-mmc.img
 	cp ${ANDROID_IMGS_PATH}/SPL-var-imx6-nand		${P2_MOUNT_DIR}/opt/images/Android/SPL-nand
 	cp ${ANDROID_IMGS_PATH}/SPL-var-imx6-sd			${P2_MOUNT_DIR}/opt/images/Android/SPL-mmc
-	cp ${ANDROID_IMGS_PATH}/partition-*.img                 ${P2_MOUNT_DIR}/opt/images/Android/
 
 	echo "Creating system raw image"
 	${ANDROID_BUILD_ROOT}/out/host/linux-x86/bin/simg2img	${ANDROID_IMGS_PATH}/system.img ${ANDROID_IMGS_PATH}/system_raw.img

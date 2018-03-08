@@ -1,9 +1,21 @@
 #!/bin/bash
 # Meant to be called by install_android.sh
-# Added GPT feature for Android 7.1.2_r9
 set -e
 
 . /usr/bin/echos.sh
+
+# Partition sizes in MiB
+BOOTLOAD_RESERVE=8
+BOOT_ROM_SIZE=32
+RECOVERY_ROM_SIZE=32
+SYSTEM_ROM_SIZE=1536
+CACHE_SIZE=512
+DEVICE_SIZE=8
+MISC_SIZE=4
+DATAFOOTER_SIZE=2
+METADATA_SIZE=2
+PRESISTDATA_SIZE=1
+FBMISC_SIZE=1
 
 help() {
 
@@ -12,6 +24,7 @@ help() {
 	echo
 	echo " options:"
 	echo " -h			displays this help message"
+	echo " -s			only get partition size"
 	echo " -f soc_name		flash android image."
 }
 
@@ -24,6 +37,7 @@ cal_only=0
 while [ "$moreoptions" = 1 -a $# -gt 0 ]; do
 	case $1 in
 	    -h) help; exit ;;
+	    -s) cal_only=1 ;;
 	    -f) soc_name=$2; shift;;
 	    *)  moreoptions=0; block=$1; is_dart=$2 ;;
 	esac
@@ -34,7 +48,6 @@ done
 systemimage_file="system_raw.img"
 bootimage_file="boot-${soc_name}.img"
 recoveryimage_file="recovery-${soc_name}.img"
-partition_file="partition-table.img"
 imagesdir=/opt/images/Android
 node=/dev/${block}
 part=""
@@ -42,15 +55,47 @@ if [[ $block == mmcblk* ]] ; then
 	part="p"
 fi
 
+
+if [[ $is_dart != true ]] ; then
+	BOOTLOAD_RESERVE=0
+fi
+
+# Get total device size
+seprate=100
+total_size=`sfdisk -s ${node}`
+total_size=`expr ${total_size} \/ 1024`
+boot_rom_sizeb=`expr ${BOOT_ROM_SIZE} + ${BOOTLOAD_RESERVE}`
+extend_size=`expr ${SYSTEM_ROM_SIZE} + ${CACHE_SIZE} + ${DEVICE_SIZE} + ${MISC_SIZE} + ${FBMISC_SIZE} + ${PRESISTDATA_SIZE} + ${DATAFOOTER_SIZE} + ${METADATA_SIZE} + ${seprate}`
+data_size=`expr ${total_size} - ${boot_rom_sizeb} - ${RECOVERY_ROM_SIZE} - ${extend_size}`
+
+# Echo partitions
+cat << EOF
+TOTAL            : ${total_size} MiB
+U-BOOT (on eMMC) : ${BOOTLOAD_RESERVE} MiB
+BOOT             : ${BOOT_ROM_SIZE} MiB
+RECOVERY         : ${RECOVERY_ROM_SIZE} MiB
+SYSTEM           : ${SYSTEM_ROM_SIZE} MiB
+CACHE            : ${CACHE_SIZE} MiB
+DEVICE           : ${DEVICE_SIZE} MiB
+MISC             : ${MISC_SIZE} MiB
+DATAFOOTER       : ${DATAFOOTER_SIZE} MiB
+METADATA         : ${METADATA_SIZE} MiB
+PRESISTDATA      : ${PRESISTDATA_SIZE} MiB
+USERDATA         : ${data_size} MiB
+FBMISC           : ${FBMISC_SIZE} MiB
+EOF
+
+echo
+
+if [[ $cal_only == 1 ]] ; then
+exit 0
+fi
+
 function check_images
 {
 	if [[ ! -b $node ]] ; then
 		red_bold_echo "ERROR: \"$node\" is not a block device"
 		exit 1
-	fi
-	if [[ ! -f ${imagesdir}/${partition_file} ]] ; then
-			red_bold_echo "ERROR: Partition image does not exist"
-			exit 1
 	fi
 
 	if [[ $is_dart == true ]] ; then
@@ -106,8 +151,10 @@ function delete_device
 	((echo d; echo 1; echo d; echo 2; echo d; echo 3; echo d; echo w) | fdisk $node &> /dev/null) || true
 	sync
 
+	sgdisk -Z $node
+	sync
+
 	dd if=/dev/zero of=$node bs=1M count=4
-	fdisk -u -l ${node}
 	sync; sleep 1
 }
 
@@ -115,7 +162,27 @@ function create_parts
 {
 	echo
 	blue_underlined_bold_echo "Creating Android partitions"
-	dd if=${imagesdir}/${partition_file} of=${node} conv=fsync
+
+	sgdisk -n 1:${BOOTLOAD_RESERVE}M:+${BOOT_ROM_SIZE}M -c 1:"boot"        -t 1:8300  $node
+	sgdisk -n 2:0:+${RECOVERY_ROM_SIZE}M                -c 2:"recovery"    -t 2:8300  $node
+	sgdisk -n 3:0:+${SYSTEM_ROM_SIZE}M                  -c 3:"system"      -t 3:8300  $node
+	sgdisk -n 4:0:+${CACHE_SIZE}M                       -c 4:"cache"       -t 4:8300  $node
+	sgdisk -n 5:0:+${DEVICE_SIZE}M                      -c 5:"device"      -t 5:8300  $node
+	sgdisk -n 6:0:+${MISC_SIZE}M                        -c 6:"misc"        -t 6:8300  $node
+	sgdisk -n 7:0:+${DATAFOOTER_SIZE}M                  -c 7:"datafooter"  -t 7:8300  $node
+	sgdisk -n 8:0:+${METADATA_SIZE}M                    -c 8:"metadata"    -t 8:8300  $node
+	sgdisk -n 9:0:+${PRESISTDATA_SIZE}M                 -c 9:"presistdata" -t 9:8300  $node
+	sgdisk -n 10:0:+${data_size}M                       -c 10:"userdata"   -t 10:8300 $node
+	sgdisk -n 11:0:+${FBMISC_SIZE}M                     -c 11:"fbmisc"     -t 11:0700 $node
+
+	sync; sleep 2
+
+	for i in `cat /proc/mounts | grep "${node}" | awk '{print $2}'`; do umount $i; done
+	hdparm -z $node
+	# backup the GPT table to last LBA.
+	echo -e 'r\ne\nY\nw\nY\nY' |  gdisk $node
+	sync; sleep 1
+	sgdisk -p $node
 }
 
 function install_bootloader
@@ -123,11 +190,10 @@ function install_bootloader
 	echo
 	blue_underlined_bold_echo "Installing booloader"
 
-	fdisk -u -l $node
 	if [[ $is_dart == true ]] ; then
-		dd if=${imagesdir}/SPL-mmc of=$node bs=1k seek=1 conv=fsync ; sync
+		dd if=${imagesdir}/SPL-mmc of=$node bs=1k seek=1; sync
 
-		dd if=${imagesdir}/u-boot-var-imx6-mmc.img of=$node bs=1k seek=69 conv=fsync; sync
+		dd if=${imagesdir}/u-boot-var-imx6-mmc.img of=$node bs=1k seek=69; sync
 	else
 		flash_erase /dev/mtd0 0 0 2> /dev/null
 		kobs-ng init -x ${imagesdir}/SPL-nand --search_exponent=1 -v > /dev/null
@@ -141,14 +207,13 @@ function install_bootloader
 
 function format_android
 {
-	fdisk -u -l $node
-	umount ${node}${part}*  2> /dev/null || true
 	echo
 	blue_underlined_bold_echo "Formating Android partitions"
-	mkfs.ext4 -F ${node}${part}10 -Ldata
 	mkfs.ext4 -F ${node}${part}3 -Lsystem
 	mkfs.ext4 -F ${node}${part}4 -Lcache
 	mkfs.ext4 -F ${node}${part}5 -Ldevice
+	mkfs.ext4 -F ${node}${part}10 -Ldata
+	sync; sleep 1
 }
 
 function install_android
@@ -173,19 +238,17 @@ check_images
 
 umount ${node}${part}*  2> /dev/null || true
 
-/etc/init.d/udev stop #Stop Udev for block devices while partitioning in progress
+#Stop Udev for block devices while partitioning in progress
+/etc/init.d/udev stop
+
 delete_device
 create_parts
-sleep 3
-for i in `cat /proc/mounts | grep "${node}" | awk '{print $2}'`; do umount $i; done
-hdparm -z ${node}
-
-# backup the GPT table to last LBA.
-echo -e 'r\ne\nY\nw\nY\nY' |  gdisk ${node}
-
 install_bootloader
 format_android
 install_android
 
-/etc/init.d/udev start #Start Udev back before exit
+echo
+#Start Udev back before exit
+/etc/init.d/udev start
+
 exit 0
