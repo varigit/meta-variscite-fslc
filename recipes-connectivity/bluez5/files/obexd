@@ -1,0 +1,40 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides: obexd
+# Default-Start:  5
+# Default-Stop:   016
+# Short-Description: run bluez5-obex daemon
+# Description: Linux Bluetooth stack V5 userland components..
+### END INIT INFO
+
+PATH=/usr/bin:/bin:/usr/sbin:/sbin
+export DBUS_SESSION_BUS_ADDRESS=unix:path=/var/run/dbus/system_bus_socket
+DAEMON=/usr/libexec/bluetooth/obexd
+DAEMON_ARGS="-a -l -r /tmp/bluetooth-inbox"
+DESC="Bluetooth file transfer daemon"
+NAME="obexd"
+
+test -x $DAEMON || exit 0
+
+case "$1" in
+    start)
+        echo "Starting ${DESC}: $NAME"
+        mkdir -p /tmp/bluetooth-inbox
+        start-stop-daemon --start --quiet --background --exec $DAEMON -- $DAEMON_ARGS
+        ;;
+    stop)
+        echo "Stopping ${DESC}: $NAME"
+        start-stop-daemon --stop --quiet --retry TERM/20/KILL/5 --exec $DAEMON
+        ;;
+    restart)
+        $0 stop
+        $0 start
+        ;;
+    *)
+        echo "Usage: /etc/init.d/obexd {start|stop|restart}"
+        exit 1
+        ;;
+esac
+
+exit 0
+

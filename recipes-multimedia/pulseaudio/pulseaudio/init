@@ -1,0 +1,45 @@
+#!/bin/sh
+
+DAEMON=/usr/bin/pulseaudio
+PIDDIR=/var/run/pulse
+PIDFILE=$PIDDIR/pid
+DAEMONUSER=pulse
+
+pulseaudio_start() {
+
+	if [ ! -d ${PIDDIR} ]; then
+		mkdir -p ${PIDDIR}
+		chown ${DAEMONUSER}:${DAEMONUSER} ${PIDDIR}
+	fi
+
+	start-stop-daemon -x ${DAEMON} -p ${PIDFILE} --start -- \
+		--system --disallow-exit --disable-shm --exit-idle-time=-1 \
+		--daemonize --log-target=syslog
+}
+
+pulseaudio_stop() {
+	start-stop-daemon -p ${PIDFILE} --stop --retry 5 || echo -n "...which is not running"
+}
+
+case "$1" in
+	start|stop)
+		pulseaudio_${1}
+		;;
+	restart|force-reload)
+		if [ -s ${PIDFILE} ] && kill -0 $(cat ${PIDFILE}) >/dev/null 2>&1; then
+			pulseaudio_stop
+			pulseaudio_start
+		fi
+		;;
+	force-stop)
+		pulseaudio_stop
+		killall pulseaudio || true
+		sleep 2
+		killall -9 pulseaudio || true
+		;;
+	*)
+		echo "Usage: /etc/init.d/pulseaudio {start|stop|force-stop|restart|force-reload}"
+		exit 1
+		;;
+esac
+
