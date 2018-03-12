@@ -60,12 +60,13 @@ max() {
 
 # Get BT MAC address
 get_bt_macaddr() {
-  eth1_addr=0
   eth0_addr=$(cat /sys/class/net/eth0/address | sed 's/\://g')
   if ! soc_is_dart_imx8m; then
     eth1_addr=$(cat /sys/class/net/eth1/address | sed 's/\://g')
+    bt_addr=$(max $eth0_addr $eth1_addr)
+  else
+    bt_addr=$eth0_addr
   fi
-  bt_addr=$(max $eth0_addr $eth1_addr)
   bt_addr=$((0x$bt_addr+1))
   bt_addr=$(printf '%012X' $bt_addr)
 
