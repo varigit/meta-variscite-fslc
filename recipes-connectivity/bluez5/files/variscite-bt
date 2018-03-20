@@ -31,8 +31,10 @@ bt_found() {
 
 # Enable BT via GPIO
 enable_bt() {
-  echo ${BT_GPIO} >/sys/class/gpio/export
-  echo "out" > /sys/class/gpio/gpio${BT_GPIO}/direction
+  if [ ! -d /sys/class/gpio/gpio${BT_GPIO} ]; then
+    echo ${BT_GPIO} >/sys/class/gpio/export
+    echo "out" > /sys/class/gpio/gpio${BT_GPIO}/direction
+  fi
   echo 0 > /sys/class/gpio/gpio${BT_GPIO}/value
   sleep 1
   echo 1 > /sys/class/gpio/gpio${BT_GPIO}/value
@@ -89,6 +91,7 @@ else
   fi
 
   # Load BT firmware and set MAC address
+  pidof brcm_patchram_plus > /dev/null && killall -9 brcm_patchram_plus
   brcm_patchram_plus --patchram ${BT_FIRMWARE} \
 		     --enable_hci \
 		     --bd_addr ${BT_MACADDR} \
