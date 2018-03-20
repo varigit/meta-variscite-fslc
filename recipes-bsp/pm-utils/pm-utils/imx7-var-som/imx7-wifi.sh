@@ -1,34 +1,21 @@
 #!/bin/sh
 
-WIFI_MMC_HOST=30b50000.usdhc
-WIFI_SDIO_ID_FILE=/sys/bus/mmc/devices/mmc1:0001/mmc1:0001:1/device
-WIFI_5G_SDIO_ID=0x4339
+. /etc/wifi/variscite-wifi.conf
+. /etc/wifi/variscite-wifi-common.sh
 
-som_is_var_som_mx7_5g()
+wifi_suspend()
 {
-   if [ ! -f ${WIFI_SDIO_ID_FILE} ]; then
-     return 1
-   fi
-
-   WIFI_SDIO_ID=`cat ${WIFI_SDIO_ID_FILE}`
-   if [ "${WIFI_SDIO_ID}" != "${WIFI_5G_SDIO_ID}"  ]; then
-     return 1
-   fi
-
-   return 0
+   wifi_down
 }
 
-wifi_suspend() {
-   if ! som_is_var_som_mx7_5g; then
-     exit 0
-   fi
-
-   echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
+wifi_resume()
+{
+   wifi_up
+   sleep 5
+   /etc/bluetooth/variscite-bt
 }
 
-wifi_resume() {
-   echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/bind
-}
+som_is_mx7_5g || exit 0
 
 case $1 in
 
