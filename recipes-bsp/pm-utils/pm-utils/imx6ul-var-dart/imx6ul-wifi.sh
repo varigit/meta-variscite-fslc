@@ -1,29 +1,27 @@
 #!/bin/sh
 
-WIFI_MMC_HOST=2190000.usdhc
-WIFI_MMC_DTS_DIR="/proc/device-tree/soc/aips-bus@02100000/usdhc@02190000"
-WIFI_MMC_DTS_FILE="${WIFI_MMC_DTS_DIR}/no-1-8-v"
+. /etc/wifi/variscite-wifi.conf
+. /etc/wifi/variscite-wifi-common.sh
 
-wifi_suspend() {
-   echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
-}
-
-wifi_resume() {
-   echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/bind
-}
-
-som_is_dart_6ul_5g()
+wifi_suspend()
 {
-  if [ -d ${WIFI_MMC_DTS_DIR} -a ! -f ${WIFI_MMC_DTS_FILE} ]; then
-    return 0
-  fi
-
-  return 1
+   wifi_down
 }
 
-# Do nothing on DART-6UL
+wifi_resume()
+{
+   wifi_up
+   sleep 5
+   /etc/bluetooth/variscite-bt
+}
+
+
+#################################################
+#              Execution starts here            #
+#################################################
+
 if ! som_is_dart_6ul_5g; then
-  exit 0
+	exit 0
 fi
 
 case $1 in
@@ -36,3 +34,4 @@ case $1 in
         ;;
 esac
 
+exit 0
