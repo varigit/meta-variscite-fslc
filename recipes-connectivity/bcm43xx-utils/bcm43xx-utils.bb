@@ -17,6 +17,7 @@ FILES_${PN} = " \
 	/etc/init.d/* \
 	/etc/rcS.d/* \
 	/lib/systemd/system/* \
+	/etc/systemd/system/* \
 "
 RDEPENDS_${PN} = "bash"
 
@@ -30,11 +31,11 @@ do_install() {
 
 	if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)}; then
 		install -d ${D}${systemd_unitdir}/system
-		install -d ${D}${sysconfdir}/systemd/system/network-online.target.wants
+		install -d ${D}${sysconfdir}/systemd/system/multi-user.target.wants
 		install -m 0644 ${WORKDIR}/variscite-wifi.service ${D}/${systemd_unitdir}/system
  
 		ln -sf ${systemd_unitdir}/system/variscite-wifi.service \
-			${D}${sysconfdir}/systemd/system/network-online.target.wants/variscite-wifi.service
+			${D}${sysconfdir}/systemd/system/multi-user.target.wants/variscite-wifi.service
 	else
 		install -d ${D}${sysconfdir}/init.d
 		ln -s ${sysconfdir}/wifi/variscite-wifi ${D}${sysconfdir}/init.d/variscite-wifi

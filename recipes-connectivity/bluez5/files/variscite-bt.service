@@ -1,6 +1,6 @@
 [Unit]
 Description=Variscite Bluetooth setup service
-Before=bluetooth.target
+After=network.target
 
 [Service]
 Type=forking

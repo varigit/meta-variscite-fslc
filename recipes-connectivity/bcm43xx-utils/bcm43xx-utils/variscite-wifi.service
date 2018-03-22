@@ -1,9 +1,11 @@
 [Unit]
 Description=Variscite WIFI setup service
+Before=network.target
+After=sysinit.target
 
 [Service]
 Type=forking
 ExecStart=/etc/wifi/variscite-wifi
 
 [Install]
-WantedBy=network-online.target
+WantedBy=muti-user.target
