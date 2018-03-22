@@ -9,8 +9,10 @@ PR = "r1"
 
 PROVIDES += "bcm4343w-fw"
 
-SRC_URI = "git://github.com/varigit/bcm_4343w_fw.git;protocol=git;branch=imx-rel_imx_4.1.15_2.0.1_ga-var01"
-SRCREV = "a434c692b489b8a451a653fe5e3dd925eb3bc5e5"
+BRANCH = "3.5.5.18"
+
+SRC_URI = "git://github.com/varigit/bcm_4343w_fw.git;protocol=git;branch=${BRANCH}"
+SRCREV = "423be46b06b5629e45a4943f98a3053c819091ce"
 
 do_install() {
 	install -d ${D}/lib/firmware/brcm
