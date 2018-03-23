@@ -114,6 +114,9 @@ do_install () {
     install -d ${D}${includedir}
     install -d ${D}${bindir}
 
+    install -d ${D}${sysconfdir}/profile.d/
+    install -m 0755 ${WORKDIR}/gpu.sh ${D}${sysconfdir}/profile.d/gpu.sh
+
     cp -P ${S}/gpu-core/usr/lib/*.so* ${D}${libdir}
     cp -r ${S}/gpu-core/usr/include/* ${D}${includedir}
     cp -r ${S}/gpu-demos/opt ${D}

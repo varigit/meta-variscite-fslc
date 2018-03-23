@@ -2,9 +2,14 @@
 # Copyright 2017 NXP
 # Released under the MIT license (see COPYING.MIT for the terms)
 
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+
 require imx-gpu-viv-v6.inc
 
-SRC_URI = "${FSL_MIRROR}/${PN}-${PV}.bin;fsl-eula=true"
+SRC_URI = " \
+	${FSL_MIRROR}/${PN}-${PV}.bin;fsl-eula=true \
+	file://gpu.sh \
+"
 
 S="${WORKDIR}/${PN}-${PV}"
 
