@@ -43,4 +43,4 @@ do_install() {
 	fi
 }
 
-
+COMPATIBLE_MACHINE = "(imx6ul-var-dart|imx7-var-som)"
