@@ -19,7 +19,9 @@ FILES_${PN} = " \
 	/lib/systemd/system/* \
 	/etc/systemd/system/* \
 "
-RDEPENDS_${PN} = "bash"
+
+RDEPENDS_${PN}_imx6ul-var-dart = "i2c-tools"
+RDEPENDS_${PN}_append = " bash"
 
 S = "${WORKDIR}"
 
