@@ -245,9 +245,12 @@ install_kernel_to_emmc()
 
 	mkdir -p ${mountdir_prefix}${bootpart}
 	mount ${node}${part}${bootpart}		${mountdir_prefix}${bootpart}
+	if [[ $BOARD = "mx8m" ]]; then
+           rm -f ${mountdir_prefix}${bootpart}/${bootdir}/*
+	fi
 	cd ${IMGS_PATH}
-	cp -v ${KERNEL_DTBS}	${mountdir_prefix}${bootpart}/${bootdir}
-	cp -v ${KERNEL_IMAGE}	${mountdir_prefix}${bootpart}/${bootdir}
+	cp -av ${KERNEL_DTBS}	${mountdir_prefix}${bootpart}/${bootdir}
+	cp -av ${KERNEL_IMAGE}	${mountdir_prefix}${bootpart}/${bootdir}
 	cd - >/dev/null
 	sync
 	umount ${node}${part}${bootpart}
@@ -272,6 +275,10 @@ install_rootfs_to_emmc()
 		mv ${mountdir_prefix}${rootfspart}/sbin/fw_printenv-mmc ${mountdir_prefix}${rootfspart}/sbin/fw_printenv
 		sed -i "/mtd/ s/^#*/#/" ${mountdir_prefix}${rootfspart}/etc/fw_env.config
 		sed -i "s/#*\/dev\/mmcblk./\/dev\/${block}/" ${mountdir_prefix}${rootfspart}/etc/fw_env.config
+	fi
+
+	if [[ $BOARD = "mx8m" ]]; then
+		cp ${mountdir_prefix}${rootfspart}/etc/wifi/blacklist.conf ${mountdir_prefix}${rootfspart}/etc/modprobe.d
 	fi
 
 	echo
@@ -495,7 +502,7 @@ elif [[ $STORAGE_DEV == "emmc" ]] ; then
 	elif [[ $BOARD == "mx8m" ]] ; then
 		block=mmcblk0
 		UBOOT_IMAGE=imx-boot-sd.bin
-		KERNEL_IMAGE=Image
+		KERNEL_IMAGE=Image.gz
 		KERNEL_DTBS=imx8m-var-dart*.dtb
 	fi
 	node=/dev/${block}
