@@ -1,3 +1,5 @@
-SRCREV = "82d4cfbfd7db172c377046709543b47b880068b0"
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
-
+SRC_URI += " \
+	file://atf_disable_ddr_setup.patch \
+"
