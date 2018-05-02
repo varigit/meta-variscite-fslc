@@ -264,9 +264,9 @@ function format_parts
 	echo "Formatting partitions"
 	if [[ $MACHINE != "imx8m-var-dart" ]] ; then
 		mkfs.vfat ${node}${part}1 -n ${FAT_VOLNAME}
-		mkfs.ext4 -O ^64bit ${node}${part}2 -L rootfs
+		mkfs.ext4 ${node}${part}2 -L rootfs
 	else
-		mkfs.ext4 -O ^64bit ${node}${part}1 -L rootfs
+		mkfs.ext4 ${node}${part}1 -L rootfs
 	fi
 
 	sync; sleep 1
@@ -316,24 +316,24 @@ function unmount_parts
 function install_yocto
 {
 	echo
-	echo "Installing Yocto Boot partition"
-	if [[ $MACHINE != "imx8m-var-dart" ]]; then
-		cp ${YOCTO_IMGS_PATH}/?Image-imx*.dtb		${P1_MOUNT_DIR}/
-		rename 's/.Image-//' ${P1_MOUNT_DIR}/?Image-*
-		pv ${YOCTO_IMGS_PATH}/?Image >			${P1_MOUNT_DIR}/`cd ${YOCTO_IMGS_PATH}; ls ?Image`
-	else
-		mkdir -p 					${P2_MOUNT_DIR}/boot
-		cp ${YOCTO_IMGS_PATH}/Image			${P2_MOUNT_DIR}/boot/Image
-		cp ${YOCTO_IMGS_PATH}/Image-imx8*.dtb		${P2_MOUNT_DIR}/boot
-		rename 's/Image-//' ${P2_MOUNT_DIR}/boot/Image-*
-		pv ${YOCTO_IMGS_PATH}/Image >			${P2_MOUNT_DIR}/boot`cd ${YOCTO_IMGS_PATH}; ls Image`
-	fi
-
+	echo "Installing Yocto Root File System"
+	pv ${YOCTO_IMGS_PATH}/${YOCTO_DEFAULT_IMAGE}-${MACHINE}.tar.gz | tar -xz -C ${P2_MOUNT_DIR}/
 	sync
 
 	echo
-	echo "Installing Yocto Root File System"
-	pv ${YOCTO_IMGS_PATH}/${YOCTO_DEFAULT_IMAGE}-${MACHINE}.tar.gz | tar -xz -C ${P2_MOUNT_DIR}/
+	echo "Installing Yocto Boot partition"
+	if [[ $MACHINE != "imx8m-var-dart" ]]; then
+		cp ${YOCTO_IMGS_PATH}/?Image-imx*.dtb		${P1_MOUNT_DIR}/
+		rename 's/.Image-//' 				${P1_MOUNT_DIR}/?Image-*
+		pv ${YOCTO_IMGS_PATH}/?Image >			${P1_MOUNT_DIR}/`cd ${YOCTO_IMGS_PATH}; ls ?Image`
+	else
+		rm -f						${P2_MOUNT_DIR}/boot/*
+		cp ${YOCTO_IMGS_PATH}/Image.gz			${P2_MOUNT_DIR}/boot/
+		cp ${YOCTO_IMGS_PATH}/Image.gz-imx*.dtb		${P2_MOUNT_DIR}/boot/
+		rename 's/Image.gz-//' 				${P2_MOUNT_DIR}/boot/Image.gz-*
+		pv ${YOCTO_IMGS_PATH}/Image.gz >		${P2_MOUNT_DIR}/boot/`cd ${YOCTO_IMGS_PATH}; ls Image.gz`
+		(cd ${P2_MOUNT_DIR}/boot; ln -s ${MACHINE}-sd-emmc-dcss-lvds.dtb ${MACHINE}.dtb)
+	fi
 }
 
 function copy_images
@@ -346,13 +346,16 @@ function copy_images
 		cp ${YOCTO_RECOVERY_ROOTFS_PATH}/?Image-imx*.dtb		${P2_MOUNT_DIR}/opt/images/Yocto/
 		rename 's/.Image-//' ${P2_MOUNT_DIR}/opt/images/Yocto/?Image-*
 	else
-		cp ${YOCTO_RECOVERY_ROOTFS_PATH}/Image-imx8m-var-dart-emmc-wifi.dtb	${P2_MOUNT_DIR}/opt/images/Yocto/imx8m-var-dart.dtb
+		cp ${YOCTO_RECOVERY_ROOTFS_PATH}/Image.gz-imx8m-var-dart-emmc-wifi*.dtb	${P2_MOUNT_DIR}/opt/images/Yocto
+		rename 's/Image.gz-//' 	${P2_MOUNT_DIR}/opt/images/Yocto/Image.gz-*
+		(cd ${P2_MOUNT_DIR}/opt/images/Yocto; ln -s ${MACHINE}-emmc-wifi-dcss-lvds.dtb ${MACHINE}.dtb)
+		
 	fi
 
 	if [[ $MACHINE != "imx8m-var-dart" ]]; then
 		cp ${YOCTO_RECOVERY_ROOTFS_PATH}/?Image			${P2_MOUNT_DIR}/opt/images/Yocto/
 	else
-		cp ${YOCTO_RECOVERY_ROOTFS_PATH}/Image			${P2_MOUNT_DIR}/opt/images/Yocto/
+		cp ${YOCTO_RECOVERY_ROOTFS_PATH}/Image.gz		${P2_MOUNT_DIR}/opt/images/Yocto/
 	fi
 
 	# Copy image for eMMC
