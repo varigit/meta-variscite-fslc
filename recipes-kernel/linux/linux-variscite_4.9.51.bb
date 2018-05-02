@@ -20,14 +20,14 @@ DO_CONFIG_V7_COPY_mx6 = "yes"
 DO_CONFIG_V7_COPY_mx7 = "yes"
 DO_CONFIG_V7_COPY_mx8 = "no"
 
-SRCBRANCH = "imx_4.9.51_imx8m_beta_var01"
+SRCBRANCH = "imx_4.9.51_imx8m_ga_var01"
 
 LOCALVERSION = "-${SRCBRANCH}"
 DEFCONFIG_mx8 = "imx8m_var_dart_defconfig"
 
 KERNEL_SRC ?= "git://github.com/varigit/linux-imx;protocol=git"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
-SRCREV = "973019f392a45a72f31f6d6d8b4768f027225ba2"
+SRCREV = "81c9707eb4f4a7d8106d54bdf5a292d266ffbe75"
 
 S = "${WORKDIR}/git"
 
