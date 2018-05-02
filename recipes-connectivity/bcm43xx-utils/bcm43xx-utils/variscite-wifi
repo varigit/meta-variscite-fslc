@@ -1,0 +1,87 @@
+#!/bin/bash
+
+. /etc/wifi/variscite-wifi.conf
+. /etc/wifi/variscite-wifi-common.sh
+
+WIFI_SLEEP=5
+
+wifi_setup()
+{
+	if [ ! -f /sys/class/gpio/gpio${WIFI_VSEL_GPIO}/direction ]; then
+		echo ${WIFI_VSEL_GPIO} > /sys/class/gpio/export
+		echo out > /sys/class/gpio/gpio${WIFI_VSEL_GPIO}/direction
+	fi
+
+	if [ ! -f /sys/class/gpio/gpio${WIFI_PWR_GPIO}/direction ]; then
+		echo ${WIFI_PWR_GPIO} > /sys/class/gpio/export
+		echo out > /sys/class/gpio/gpio${WIFI_PWR_GPIO}/direction
+	fi
+
+	if [ ! -f /sys/class/gpio/gpio${WIFI_EN_GPIO}/direction ]; then
+		echo ${WIFI_EN_GPIO} > /sys/class/gpio/export
+		echo out > /sys/class/gpio/gpio${WIFI_EN_GPIO}/direction
+	fi
+
+	if [ ! -f /sys/class/gpio/gpio${BT_BUF_GPIO}/direction ]; then
+		echo ${BT_BUF_GPIO} > /sys/class/gpio/export
+		echo out > /sys/class/gpio/gpio${BT_BUF_GPIO}/direction
+	fi
+
+	if [ ! -f /sys/class/gpio/gpio${BT_EN_GPIO}/direction ]; then
+		echo ${BT_EN_GPIO} > /sys/class/gpio/export
+		echo out > /sys/class/gpio/gpio${BT_EN_GPIO}/direction
+	fi
+
+	# WIFI_VSEL up
+	echo 1 > /sys/class/gpio/gpio${WIFI_VSEL_GPIO}/value
+	usleep 10000
+}
+
+wifi_is_up()
+{
+	for i in `seq 1 20`; do
+		[ -d /sys/class/net/wlan0 ] && return 0
+		sleep 1
+	done
+
+	return 1
+}
+
+#################################################
+#              Execution starts here            #
+#################################################
+
+# Exit if booting from SD on DART-IMX8M
+if grep -q MX8M /sys/devices/soc0/soc_id && \
+   grep -q mmcblk1 /proc/cmdline; then
+   exit 0
+fi
+
+
+# Run initial setup sequence
+wifi_setup
+
+for i in `seq 1 3`; do
+
+	# Down WIFI
+	wifi_down
+
+	# Wait enough time for discharge
+	sleep ${WIFI_SLEEP}
+
+	# Up WIFI
+	wifi_up
+
+	# Check that WIFI interface is up
+	if wifi_is_up; then
+		echo "WIFI startup success"
+		exit 0
+	fi
+done
+
+echo "WIFI startup failed"
+
+exit 1
+
+
+
