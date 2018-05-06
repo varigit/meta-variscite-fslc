@@ -7,27 +7,27 @@ WIFI_SLEEP=5
 
 wifi_setup()
 {
-	if [ ! -f /sys/class/gpio/gpio${WIFI_VSEL_GPIO}/direction ]; then
+	if [ ! -d /sys/class/gpio/gpio${WIFI_VSEL_GPIO} ]; then
 		echo ${WIFI_VSEL_GPIO} > /sys/class/gpio/export
 		echo out > /sys/class/gpio/gpio${WIFI_VSEL_GPIO}/direction
 	fi
 
-	if [ ! -f /sys/class/gpio/gpio${WIFI_PWR_GPIO}/direction ]; then
+	if [ ! -d /sys/class/gpio/gpio${WIFI_PWR_GPIO} ]; then
 		echo ${WIFI_PWR_GPIO} > /sys/class/gpio/export
 		echo out > /sys/class/gpio/gpio${WIFI_PWR_GPIO}/direction
 	fi
 
-	if [ ! -f /sys/class/gpio/gpio${WIFI_EN_GPIO}/direction ]; then
+	if [ ! -d /sys/class/gpio/gpio${WIFI_EN_GPIO} ]; then
 		echo ${WIFI_EN_GPIO} > /sys/class/gpio/export
 		echo out > /sys/class/gpio/gpio${WIFI_EN_GPIO}/direction
 	fi
 
-	if [ ! -f /sys/class/gpio/gpio${BT_BUF_GPIO}/direction ]; then
+	if [ ! -d /sys/class/gpio/gpio${BT_BUF_GPIO} ]; then
 		echo ${BT_BUF_GPIO} > /sys/class/gpio/export
 		echo out > /sys/class/gpio/gpio${BT_BUF_GPIO}/direction
 	fi
 
-	if [ ! -f /sys/class/gpio/gpio${BT_EN_GPIO}/direction ]; then
+	if [ ! -d /sys/class/gpio/gpio${BT_EN_GPIO} ]; then
 		echo ${BT_EN_GPIO} > /sys/class/gpio/export
 		echo out > /sys/class/gpio/gpio${BT_EN_GPIO}/direction
 	fi
