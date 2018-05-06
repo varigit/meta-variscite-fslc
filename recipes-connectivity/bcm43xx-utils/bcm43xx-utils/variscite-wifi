@@ -57,6 +57,14 @@ if grep -q MX8M /sys/devices/soc0/soc_id && \
    exit 0
 fi
 
+# Enable ethernet and exit if booting from eMMC without WIFI
+if grep -q MX8M /sys/devices/soc0/soc_id && \
+   ! grep -q WIFI /sys/devices/soc0/machine ; then
+   modprobe fec
+   exit 0
+fi
+
+
 
 # Run initial setup sequence
 wifi_setup
