@@ -1,22 +1,15 @@
 #!/bin/sh
 
-WIFI_MMC_HOST=30b50000.usdhc
-
-wifi_suspend() {
-   echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
-}
-
-wifi_resume() {
-   echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/bind
-}
+. /etc/wifi/variscite-wifi.conf
+. /etc/wifi/variscite-wifi-common.sh
 
 case $1 in
 
 "suspend")
-        wifi_suspend
+        wifi_down
         ;;
 "resume")
-        wifi_resume
+        wifi_up
         ;;
 esac
 
