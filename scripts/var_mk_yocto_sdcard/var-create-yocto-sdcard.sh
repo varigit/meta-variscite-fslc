@@ -346,10 +346,9 @@ function copy_images
 		cp ${YOCTO_RECOVERY_ROOTFS_PATH}/?Image-imx*.dtb		${P2_MOUNT_DIR}/opt/images/Yocto/
 		rename 's/.Image-//' ${P2_MOUNT_DIR}/opt/images/Yocto/?Image-*
 	else
-		cp ${YOCTO_RECOVERY_ROOTFS_PATH}/Image.gz-imx8m-var-dart-emmc-wifi*.dtb	${P2_MOUNT_DIR}/opt/images/Yocto
+		cp ${YOCTO_RECOVERY_ROOTFS_PATH}/Image.gz-imx8m-var-dart-*.dtb	${P2_MOUNT_DIR}/opt/images/Yocto
 		rename 's/Image.gz-//' 	${P2_MOUNT_DIR}/opt/images/Yocto/Image.gz-*
-		(cd ${P2_MOUNT_DIR}/opt/images/Yocto; ln -s ${MACHINE}-emmc-wifi-dcss-lvds.dtb ${MACHINE}.dtb)
-		
+
 	fi
 
 	if [[ $MACHINE != "imx8m-var-dart" ]]; then
