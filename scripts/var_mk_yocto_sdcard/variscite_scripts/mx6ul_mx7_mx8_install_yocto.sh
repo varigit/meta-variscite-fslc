@@ -253,6 +253,10 @@ install_kernel_to_emmc()
 	cp -av ${KERNEL_IMAGE}	${mountdir_prefix}${bootpart}/${bootdir}
 	cd - >/dev/null
 	sync
+	if [[ $BOARD = "mx8m" ]]; then
+		(cd ${mountdir_prefix}${bootpart}/${bootdir}; ln -fs imx8m-var-dart-emmc-wifi-${MX8M_DISPLAY}.dtb imx8m-var-dart.dtb)
+	fi
+
 	umount ${node}${part}${bootpart}
 }
 
@@ -299,6 +303,7 @@ usage()
 	echo " -v <wifi|sd>		DART-6UL Variant (WiFi/SD card) - mandatory in case of DART-6UL with NAND flash; ignored otherwise."
 	echo " -m			VAR-SOM-MX7 optional Cortex-M4 support; ignored in case of DART-6UL."
 	echo " -u			create two rootfs partitions (for swUpdate double-copy) - ignored in case of NAND storage device."
+	echo " -d <hdmi|dcss-lvds>	display type for DART-MX8M - optional, defaults to dcss-lvds if not provided"
 	echo
 }
 
@@ -315,6 +320,7 @@ echo
 
 VARSOMMX7_VARIANT=""
 swupdate=0
+MX8M_DISPLAY="hdmi"
 
 SOC=`cat /sys/bus/soc/devices/soc0/soc_id`
 if [[ $SOC == i.MX6UL* ]] ; then
@@ -345,7 +351,7 @@ elif [[ $SOC == i.MX8M* ]] ; then
 	STORAGE_DEV=emmc
 fi
 
-while getopts :b:r:v:mu OPTION;
+while getopts :b:d:r:v:mu OPTION;
 do
 	case $OPTION in
 	b)
@@ -362,6 +368,9 @@ do
 		;;
 	u)
 		swupdate=1
+		;;
+	d)
+		MX8M_DISPLAY=$OPTARG
 		;;
 	*)
 		usage
@@ -390,6 +399,14 @@ elif [[ $BOARD == "mx7" ]] ; then
 elif [[ $BOARD == "mx8m" ]] ; then
 	STR="DART-MX8M"
 	IS_SPL=false
+	if [[ $swupdate == "1" ]]; then
+		echo "swupdate is currently not supported on DART-MX8M"
+		exit 1
+	fi
+	if [[ $MX8M_DISPLAY != "hdmi" ]] && [[ $MX8M_DISPLAY != "dcss-lvds" ]]; then
+		echo "Invalid display, should be hdmi or dcss-lvds"
+		exit 1
+	fi
 else
 	usage
 	exit 1
