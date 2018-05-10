@@ -267,11 +267,9 @@ install_rootfs_to_emmc()
 
 	mkdir -p ${mountdir_prefix}${rootfspart}
 	mount ${node}${part}${rootfspart} ${mountdir_prefix}${rootfspart}
-	tar xvpf ${IMGS_PATH}/${ROOTFS_IMAGE} -C ${mountdir_prefix}${rootfspart} |
-	while read line; do
-		x=$((x+1))
-		echo -en "$x files extracted\r"
-	done
+
+	printf "Extracting files"
+	tar --warning=no-timestamp -xpf ${IMGS_PATH}/${ROOTFS_IMAGE} -C ${mountdir_prefix}${rootfspart} --checkpoint=.1200
 
 	# Adjust u-boot-fw-utils for eMMC on the installed rootfs
 	if [[ $BOARD != "mx8m" ]]; then
