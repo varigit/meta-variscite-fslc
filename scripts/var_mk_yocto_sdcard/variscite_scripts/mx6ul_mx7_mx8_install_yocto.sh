@@ -320,7 +320,7 @@ echo
 
 VARSOMMX7_VARIANT=""
 swupdate=0
-MX8M_DISPLAY="hdmi"
+MX8M_DISPLAY="dcss-lvds"
 
 SOC=`cat /sys/bus/soc/devices/soc0/soc_id`
 if [[ $SOC == i.MX6UL* ]] ; then
