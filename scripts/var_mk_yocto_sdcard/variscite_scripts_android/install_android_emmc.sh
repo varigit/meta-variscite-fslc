@@ -10,7 +10,7 @@ BOOT_ROM_SIZE=32
 RECOVERY_ROM_SIZE=32
 SYSTEM_ROM_SIZE=1536
 CACHE_SIZE=512
-DEVICE_SIZE=8
+VENDOR_SIZE=112
 MISC_SIZE=4
 DATAFOOTER_SIZE=2
 METADATA_SIZE=2
@@ -46,6 +46,7 @@ while [ "$moreoptions" = 1 -a $# -gt 0 ]; do
 done
 
 systemimage_file="system_raw.img"
+vendorimage_file="vendor_raw.img"
 bootimage_file="boot-${soc_name}.img"
 recoveryimage_file="recovery-${soc_name}.img"
 imagesdir=/opt/images/Android
@@ -65,7 +66,7 @@ seprate=100
 total_size=`sfdisk -s ${node}`
 total_size=`expr ${total_size} \/ 1024`
 boot_rom_sizeb=`expr ${BOOT_ROM_SIZE} + ${BOOTLOAD_RESERVE}`
-extend_size=`expr ${SYSTEM_ROM_SIZE} + ${CACHE_SIZE} + ${DEVICE_SIZE} + ${MISC_SIZE} + ${FBMISC_SIZE} + ${PRESISTDATA_SIZE} + ${DATAFOOTER_SIZE} + ${METADATA_SIZE} + ${seprate}`
+extend_size=`expr ${SYSTEM_ROM_SIZE} + ${CACHE_SIZE} + ${VENDOR_SIZE} + ${MISC_SIZE} + ${FBMISC_SIZE} + ${PRESISTDATA_SIZE} + ${DATAFOOTER_SIZE} + ${METADATA_SIZE} + ${seprate}`
 data_size=`expr ${total_size} - ${boot_rom_sizeb} - ${RECOVERY_ROM_SIZE} - ${extend_size}`
 
 # Echo partitions
@@ -76,11 +77,11 @@ BOOT             : ${BOOT_ROM_SIZE} MiB
 RECOVERY         : ${RECOVERY_ROM_SIZE} MiB
 SYSTEM           : ${SYSTEM_ROM_SIZE} MiB
 CACHE            : ${CACHE_SIZE} MiB
-DEVICE           : ${DEVICE_SIZE} MiB
 MISC             : ${MISC_SIZE} MiB
 DATAFOOTER       : ${DATAFOOTER_SIZE} MiB
 METADATA         : ${METADATA_SIZE} MiB
 PRESISTDATA      : ${PRESISTDATA_SIZE} MiB
+VENDOR		 : ${VENDOR_SIZE} MiB
 USERDATA         : ${data_size} MiB
 FBMISC           : ${FBMISC_SIZE} MiB
 EOF
@@ -134,6 +135,10 @@ function check_images
 		red_bold_echo "ERROR: system image does not exist"
 		exit 1
 	fi
+	if [[ ! -f ${imagesdir}/${vendorimage_file} ]] ; then
+		red_bold_echo "ERROR: vendor image does not exist"
+		exit 1
+	fi
 }
 
 function delete_device
@@ -167,11 +172,11 @@ function create_parts
 	sgdisk -n 2:0:+${RECOVERY_ROM_SIZE}M                -c 2:"recovery"    -t 2:8300  $node
 	sgdisk -n 3:0:+${SYSTEM_ROM_SIZE}M                  -c 3:"system"      -t 3:8300  $node
 	sgdisk -n 4:0:+${CACHE_SIZE}M                       -c 4:"cache"       -t 4:8300  $node
-	sgdisk -n 5:0:+${DEVICE_SIZE}M                      -c 5:"device"      -t 5:8300  $node
-	sgdisk -n 6:0:+${MISC_SIZE}M                        -c 6:"misc"        -t 6:8300  $node
-	sgdisk -n 7:0:+${DATAFOOTER_SIZE}M                  -c 7:"datafooter"  -t 7:8300  $node
-	sgdisk -n 8:0:+${METADATA_SIZE}M                    -c 8:"metadata"    -t 8:8300  $node
-	sgdisk -n 9:0:+${PRESISTDATA_SIZE}M                 -c 9:"presistdata" -t 9:8300  $node
+	sgdisk -n 5:0:+${MISC_SIZE}M                        -c 5:"misc"        -t 5:8300  $node
+	sgdisk -n 6:0:+${DATAFOOTER_SIZE}M                  -c 6:"datafooter"  -t 6:8300  $node
+	sgdisk -n 7:0:+${METADATA_SIZE}M                    -c 7:"metadata"    -t 7:8300  $node
+	sgdisk -n 8:0:+${PRESISTDATA_SIZE}M                 -c 8:"presistdata" -t 8:8300  $node
+	sgdisk -n 9:0:+${VENDOR_SIZE}M			    -c 9:"vendor"      -t 9:8300  $node
 	sgdisk -n 10:0:+${data_size}M                       -c 10:"userdata"   -t 10:8300 $node
 	sgdisk -n 11:0:+${FBMISC_SIZE}M                     -c 11:"fbmisc"     -t 11:0700 $node
 
@@ -211,7 +216,7 @@ function format_android
 	blue_underlined_bold_echo "Formating Android partitions"
 	mkfs.ext4 -F ${node}${part}3 -Lsystem
 	mkfs.ext4 -F ${node}${part}4 -Lcache
-	mkfs.ext4 -F ${node}${part}5 -Ldevice
+	mkfs.ext4 -F ${node}${part}9 -Lvendor
 	mkfs.ext4 -F ${node}${part}10 -Ldata
 	sync; sleep 1
 }
@@ -231,6 +236,11 @@ function install_android
 	echo
 	blue_underlined_bold_echo "Installing Android system image: $systemimage_file"
 	dd if=${imagesdir}/${systemimage_file} of=${node}${part}3
+	sync; sleep 1
+
+	echo
+	blue_underlined_bold_echo "Installing Android vendor image: $vendorimage_file"
+	dd if=${imagesdir}/${vendorimage_file} of=${node}${part}9
 	sync; sleep 1
 }
 

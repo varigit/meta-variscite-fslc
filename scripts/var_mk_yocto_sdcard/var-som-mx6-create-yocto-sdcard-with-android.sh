@@ -11,7 +11,7 @@ readonly ABSOLUTE_FILENAME=`readlink -e "$0"`
 readonly ABSOLUTE_DIRECTORY=`dirname ${ABSOLUTE_FILENAME}`
 readonly SCRIPT_POINT=${ABSOLUTE_DIRECTORY}
 
-ANDROID_BUILD_ROOT=~/var_n_712_200/n_712_200_build
+ANDROID_BUILD_ROOT=~/var_o_800_100/imx-o8.0.0_1.0.0_ga/android_build
 ANDROID_IMGS_PATH=${ANDROID_BUILD_ROOT}/out/target/product/var_mx6
 ANDROID_SCRIPTS_PATH=${SCRIPT_POINT}/variscite_scripts_android
 
@@ -88,11 +88,19 @@ function copy_android
 	echo "Creating system raw image"
 	${ANDROID_BUILD_ROOT}/out/host/linux-x86/bin/simg2img	${ANDROID_IMGS_PATH}/system.img ${ANDROID_IMGS_PATH}/system_raw.img
 	sync | pv -t
+	echo "Creating vendor raw image"
+	${ANDROID_BUILD_ROOT}/out/host/linux-x86/bin/simg2img	${ANDROID_IMGS_PATH}/vendor.img ${ANDROID_IMGS_PATH}/vendor_raw.img
+	sync | pv -t
 	echo "Copying system raw image to /opt/images/"
 	pv ${ANDROID_IMGS_PATH}/system_raw.img >		${P2_MOUNT_DIR}/opt/images/Android/system_raw.img
 	sync | pv -t
+	echo "Copying vendor raw image to /opt/images/"
+	pv ${ANDROID_IMGS_PATH}/vendor_raw.img >		${P2_MOUNT_DIR}/opt/images/Android/vendor_raw.img
+	sync | pv -t
 	echo "Removing system raw image"
 	rm ${ANDROID_IMGS_PATH}/system_raw.img
+	echo "Removing vendor raw image"
+	rm ${ANDROID_IMGS_PATH}/vendor_raw.img
 }
 
 function copy_android_scripts
