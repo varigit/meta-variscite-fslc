@@ -9,6 +9,8 @@ IMGS_PATH=/opt/images/Yocto
 KERNEL_IMAGE=zImage
 KERNEL_DTB=""
 STORAGE_DEV=""
+BOOTLOAD_RESERVE_SIZE=4
+PART1_SIZE=8
 
 if [[ $EUID != 0 ]] ; then
 	red_bold_echo "This script must be run with super-user privileges"
@@ -118,7 +120,8 @@ delete_emmc()
 	((echo d; echo 1; echo d; echo 2; echo d; echo 3; echo d; echo w) | fdisk $node &> /dev/null) || true
 	sync
 
-	dd if=/dev/zero of=$node bs=1M count=4
+	dd if=/dev/zero of=$node bs=1M count=${BOOTLOAD_RESERVE_SIZE}
+
 	sync; sleep 1
 }
 
@@ -126,14 +129,6 @@ create_emmc_parts()
 {
 	echo
 	blue_underlined_bold_echo "Creating new partitions"
-
-	BOOTLOAD_RESERVE_SIZE=4
-	PART1_SIZE=8
-
-	if [[ $BOARD == "mx8m" ]]; then
-		BOOTLOAD_RESERVE_SIZE=8
-		PART1_SIZE=32
-	fi
 
 	if [[ $BOARD != "mx8m" ]]; then
 		SECT_SIZE_BYTES=`cat /sys/block/${block}/queue/hw_sector_size`
@@ -163,8 +158,6 @@ create_emmc_swupdate_parts()
 	blue_underlined_bold_echo "Creating new partitions"
 	TOTAL_SECTORS=`cat /sys/class/block/${block}/size`
 	SECT_SIZE_BYTES=`cat /sys/block/${block}/queue/hw_sector_size`
-
-	BOOTLOAD_RESERVE_SIZE=4
 
 	BOOTLOAD_RESERVE_SIZE_BYTES=$((BOOTLOAD_RESERVE_SIZE * 1024 * 1024))
 	DATA_SIZE_BYTES=$((DATA_SIZE * 1024 * 1024))
@@ -313,7 +306,7 @@ finish()
 }
 
 
-blue_underlined_bold_echo "*** Variscite MX6UL/MX6ULL/MX7 Yocto eMMC/NAND Recovery ***"
+blue_underlined_bold_echo "*** Variscite MX6UL/MX6ULL/MX7/MX8M Yocto eMMC/NAND Recovery ***"
 echo
 
 VARSOMMX7_VARIANT=""
@@ -347,6 +340,7 @@ elif [[ $SOC == i.MX7D ]] ; then
 elif [[ $SOC == i.MX8M* ]] ; then
 	BOARD=mx8m
 	STORAGE_DEV=emmc
+	BOOTLOAD_RESERVE_SIZE=8
 fi
 
 while getopts :b:d:r:v:mu OPTION;
