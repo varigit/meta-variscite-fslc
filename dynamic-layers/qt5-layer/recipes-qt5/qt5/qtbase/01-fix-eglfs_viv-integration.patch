@@ -1,0 +1,47 @@
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_viv/qeglfsvivintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_viv/qeglfsvivintegration.cpp
+index 763a4a4..f2aebd3 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_viv/qeglfsvivintegration.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_viv/qeglfsvivintegration.cpp
+@@ -63,9 +63,9 @@ void QEglFSVivIntegration::platformInit()
+ 
+ #ifdef Q_OS_INTEGRITY
+     VivanteInit();
+-    mNativeDisplay = fbGetDisplay();
++    mNativeDisplay = (EGLNativeDisplayType)fbGetDisplay();
+ #else
+-    mNativeDisplay = fbGetDisplayByIndex(framebufferIndex());
++    mNativeDisplay = (EGLNativeDisplayType)fbGetDisplayByIndex(framebufferIndex());
+ #endif
+ 
+     fbGetDisplayGeometry(mNativeDisplay, &width, &height);
+@@ -88,7 +88,7 @@ EGLNativeWindowType QEglFSVivIntegration::createNativeWindow(QPlatformWindow *wi
+     Q_UNUSED(window)
+     Q_UNUSED(format)
+ 
+-    EGLNativeWindowType eglWindow = fbCreateWindow(mNativeDisplay, 0, 0, size.width(), size.height());
++    EGLNativeWindowType eglWindow = (EGLNativeWindowType)fbCreateWindow(mNativeDisplay, 0, 0, size.width(), size.height());
+     return eglWindow;
+ }
+ 
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_viv_wl/qeglfsvivwlintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_viv_wl/qeglfsvivwlintegration.cpp
+index 61e2f17..04e7a4d 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_viv_wl/qeglfsvivwlintegration.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_viv_wl/qeglfsvivwlintegration.cpp
+@@ -60,7 +60,7 @@ void QEglFSVivWaylandIntegration::platformInit()
+     }
+ 
+     mWaylandDisplay = wl_display_create();
+-    mNativeDisplay = fbGetDisplay(mWaylandDisplay);
++    mNativeDisplay = (EGLNativeDisplayType)fbGetDisplay(mWaylandDisplay);
+     fbGetDisplayGeometry(mNativeDisplay, &width, &height);
+     mScreenSize.setHeight(height);
+     mScreenSize.setWidth(width);
+@@ -81,7 +81,7 @@ EGLNativeWindowType QEglFSVivWaylandIntegration::createNativeWindow(QPlatformWin
+     Q_UNUSED(window)
+     Q_UNUSED(format)
+ 
+-    EGLNativeWindowType eglWindow = fbCreateWindow(mNativeDisplay, 0, 0, size.width(), size.height());
++    EGLNativeWindowType eglWindow = (EGLNativeWindowType)fbCreateWindow(mNativeDisplay, 0, 0, size.width(), size.height());
+     return eglWindow;
+ }
+ 
