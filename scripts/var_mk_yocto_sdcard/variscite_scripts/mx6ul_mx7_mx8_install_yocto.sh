@@ -268,6 +268,8 @@ install_rootfs_to_emmc()
 		mv ${mountdir_prefix}${rootfspart}/sbin/fw_printenv-mmc ${mountdir_prefix}${rootfspart}/sbin/fw_printenv
 		sed -i "/mtd/ s/^#*/#/" ${mountdir_prefix}${rootfspart}/etc/fw_env.config
 		sed -i "s/#*\/dev\/mmcblk./\/dev\/${block}/" ${mountdir_prefix}${rootfspart}/etc/fw_env.config
+	else
+		sed -i "s/\/dev\/mmcblk./\/dev\/${block}/" ${mountdir_prefix}${rootfspart}/etc/fw_env.config
 	fi
 
 	if [[ $BOARD = "mx8m" ]]; then
