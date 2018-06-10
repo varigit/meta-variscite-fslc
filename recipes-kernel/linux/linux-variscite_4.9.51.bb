@@ -9,7 +9,6 @@ i.MX Family Reference Boards. It includes support for many IPs such as GPU, VPU 
 
 require recipes-kernel/linux/linux-imx.inc
 require recipes-kernel/linux/linux-dtb.inc
-#require recipes-kernel/linux/linux-imx_${PV}.inc
 
 DEPENDS += "lzop-native bc-native"
 
@@ -45,6 +44,11 @@ do_copy_defconfig () {
         cp ${S}/arch/arm64/configs/${DEFCONFIG_mx8} ${B}/.config
         cp ${S}/arch/arm64/configs/${DEFCONFIG_mx8} ${B}/../defconfig
     fi
+}
+
+pkg_postinst_kernel-devicetree_append () {
+	cd $D/boot
+	ln -s ${MACHINE}-sd-emmc-dcss-lvds.dtb ${MACHINE}.dtb
 }
 
 COMPATIBLE_MACHINE = "(mx6|mx7|mx8)"

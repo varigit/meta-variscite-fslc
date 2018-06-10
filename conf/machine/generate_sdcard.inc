@@ -9,7 +9,5 @@ generate_imx_sdcard_mx8 () {
 
         # Burn root partition
         dd if=${SDCARD_ROOTFS} of=${SDCARD} conv=notrunc,fsync seek=1 bs=$(expr ${IMAGE_ROOTFS_ALIGNMENT} \* 1024)
-
-	rm -f ${SDCARD_ROOTFS}
 }
 

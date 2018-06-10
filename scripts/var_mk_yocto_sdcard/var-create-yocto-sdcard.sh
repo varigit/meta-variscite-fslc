@@ -320,19 +320,12 @@ function install_yocto
 	pv ${YOCTO_IMGS_PATH}/${YOCTO_DEFAULT_IMAGE}-${MACHINE}.tar.gz | tar -xz -C ${P2_MOUNT_DIR}/
 	sync
 
-	echo
-	echo "Installing Yocto Boot partition"
 	if [[ $MACHINE != "imx8m-var-dart" ]]; then
+		echo
+		echo "Installing Yocto Boot partition"
 		cp ${YOCTO_IMGS_PATH}/?Image-imx*.dtb		${P1_MOUNT_DIR}/
 		rename 's/.Image-//' 				${P1_MOUNT_DIR}/?Image-*
 		pv ${YOCTO_IMGS_PATH}/?Image >			${P1_MOUNT_DIR}/`cd ${YOCTO_IMGS_PATH}; ls ?Image`
-	else
-		rm -f						${P2_MOUNT_DIR}/boot/*
-		cp ${YOCTO_IMGS_PATH}/Image.gz			${P2_MOUNT_DIR}/boot/
-		cp ${YOCTO_IMGS_PATH}/Image.gz-imx*.dtb		${P2_MOUNT_DIR}/boot/
-		rename 's/Image.gz-//' 				${P2_MOUNT_DIR}/boot/Image.gz-*
-		pv ${YOCTO_IMGS_PATH}/Image.gz >		${P2_MOUNT_DIR}/boot/`cd ${YOCTO_IMGS_PATH}; ls Image.gz`
-		(cd ${P2_MOUNT_DIR}/boot; ln -s ${MACHINE}-sd-emmc-dcss-lvds.dtb ${MACHINE}.dtb)
 	fi
 }
 
@@ -345,16 +338,7 @@ function copy_images
 	if [[ $MACHINE != "imx8m-var-dart" ]]; then
 		cp ${YOCTO_RECOVERY_ROOTFS_PATH}/?Image-imx*.dtb		${P2_MOUNT_DIR}/opt/images/Yocto/
 		rename 's/.Image-//' ${P2_MOUNT_DIR}/opt/images/Yocto/?Image-*
-	else
-		cp ${YOCTO_RECOVERY_ROOTFS_PATH}/Image.gz-imx8m-var-dart-*.dtb	${P2_MOUNT_DIR}/opt/images/Yocto
-		rename 's/Image.gz-//' 	${P2_MOUNT_DIR}/opt/images/Yocto/Image.gz-*
-
-	fi
-
-	if [[ $MACHINE != "imx8m-var-dart" ]]; then
 		cp ${YOCTO_RECOVERY_ROOTFS_PATH}/?Image			${P2_MOUNT_DIR}/opt/images/Yocto/
-	else
-		cp ${YOCTO_RECOVERY_ROOTFS_PATH}/Image.gz		${P2_MOUNT_DIR}/opt/images/Yocto/
 	fi
 
 	# Copy image for eMMC
@@ -368,7 +352,9 @@ function copy_images
 	if [ -f ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}.ubi ]; then
 		pv ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}.ubi > ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.ubi
 	else
-		echo "rootfs.ubi file is not present. Installation on \"NAND flash\" will not be supported."
+		if [[ $MACHINE != "imx8m-var-dart" ]]; then
+		  echo "rootfs.ubi file is not present. Installation on \"NAND flash\" will not be supported."
+		fi
 	fi
 
 	if [[ $MACHINE != "imx8m-var-dart" ]]; then

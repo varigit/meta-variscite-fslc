@@ -29,7 +29,7 @@ check_images()
 		exit 1
 	fi
 
-	if [[ ! -f $IMGS_PATH/$KERNEL_IMAGE ]] ; then
+	if [[ $BOARD != "mx8m" && ! -f $IMGS_PATH/$KERNEL_IMAGE ]] ; then
 		red_bold_echo "ERROR: \"$IMGS_PATH/$KERNEL_IMAGE\" does not exist"
 		exit 1
 	fi
@@ -238,18 +238,16 @@ install_kernel_to_emmc()
 
 	mkdir -p ${mountdir_prefix}${bootpart}
 	mount ${node}${part}${bootpart}		${mountdir_prefix}${bootpart}
-	if [[ $BOARD = "mx8m" ]]; then
-           rm -f ${mountdir_prefix}${bootpart}/${bootdir}/*
+	if [[ $BOARD != "mx8m" ]]; then
+		cd ${IMGS_PATH}
+		cp -av ${KERNEL_DTBS}	${mountdir_prefix}${bootpart}/${bootdir}
+		cp -av ${KERNEL_IMAGE}	${mountdir_prefix}${bootpart}/${bootdir}
+		cd - >/dev/null
+	else
+		(cd ${mountdir_prefix}${bootpart}/${bootdir}; \
+		 ln -fs imx8m-var-dart-emmc-wifi-${MX8M_DISPLAY}.dtb imx8m-var-dart.dtb)
 	fi
-	cd ${IMGS_PATH}
-	cp -av ${KERNEL_DTBS}	${mountdir_prefix}${bootpart}/${bootdir}
-	cp -av ${KERNEL_IMAGE}	${mountdir_prefix}${bootpart}/${bootdir}
-	cd - >/dev/null
 	sync
-	if [[ $BOARD = "mx8m" ]]; then
-		(cd ${mountdir_prefix}${bootpart}/${bootdir}; ln -fs imx8m-var-dart-emmc-wifi-${MX8M_DISPLAY}.dtb imx8m-var-dart.dtb)
-	fi
-
 	umount ${node}${part}${bootpart}
 }
 
