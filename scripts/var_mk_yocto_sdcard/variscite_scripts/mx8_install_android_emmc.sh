@@ -31,13 +31,14 @@ moreoptions=1
 node="na"
 soc_name=""
 cal_only=0
+block="mmcblk0"
 
 while [ "$moreoptions" = 1 -a $# -gt 0 ]; do
 	case $1 in
 		-h) help; exit ;;
 		-s) cal_only=1 ;;
 		-f) soc_name=$2; shift;;
-		*)  moreoptions=0; block=$1 ;;
+		*)  moreoptions=0 ;;
 	esac
 	[ "$moreoptions" = 0 ] && [ $# -gt 2 ] && help && exit
 	[ "$moreoptions" = 1 ] && shift
@@ -159,7 +160,7 @@ function delete_device
 	sgdisk -Z $node
 	sync
 
-	dd if=/dev/zero of=$node bs=1M count=4
+	dd if=/dev/zero of=$node bs=1M count=8
 	sync; sleep 1
 }
 
