@@ -3,50 +3,6 @@
 . /etc/wifi/variscite-wifi.conf
 . /etc/wifi/variscite-wifi-common.sh
 
-WIFI_SLEEP=5
-
-wifi_setup()
-{
-	if [ ! -d /sys/class/gpio/gpio${WIFI_VSEL_GPIO} ]; then
-		echo ${WIFI_VSEL_GPIO} > /sys/class/gpio/export
-		echo out > /sys/class/gpio/gpio${WIFI_VSEL_GPIO}/direction
-	fi
-
-	if [ ! -d /sys/class/gpio/gpio${WIFI_PWR_GPIO} ]; then
-		echo ${WIFI_PWR_GPIO} > /sys/class/gpio/export
-		echo out > /sys/class/gpio/gpio${WIFI_PWR_GPIO}/direction
-	fi
-
-	if [ ! -d /sys/class/gpio/gpio${WIFI_EN_GPIO} ]; then
-		echo ${WIFI_EN_GPIO} > /sys/class/gpio/export
-		echo out > /sys/class/gpio/gpio${WIFI_EN_GPIO}/direction
-	fi
-
-	if [ ! -d /sys/class/gpio/gpio${BT_BUF_GPIO} ]; then
-		echo ${BT_BUF_GPIO} > /sys/class/gpio/export
-		echo out > /sys/class/gpio/gpio${BT_BUF_GPIO}/direction
-	fi
-
-	if [ ! -d /sys/class/gpio/gpio${BT_EN_GPIO} ]; then
-		echo ${BT_EN_GPIO} > /sys/class/gpio/export
-		echo out > /sys/class/gpio/gpio${BT_EN_GPIO}/direction
-	fi
-
-	# WIFI_VSEL up
-	echo 1 > /sys/class/gpio/gpio${WIFI_VSEL_GPIO}/value
-	usleep 10000
-}
-
-wifi_is_up()
-{
-	for i in `seq 1 20`; do
-		[ -d /sys/class/net/wlan0 ] && return 0
-		sleep 1
-	done
-
-	return 1
-}
-
 #################################################
 #              Execution starts here            #
 #################################################
@@ -54,28 +10,25 @@ wifi_is_up()
 # Exit if booting from SD on DART-IMX8M
 if grep -q MX8M /sys/devices/soc0/soc_id && \
    grep -q mmcblk1 /proc/cmdline; then
-   exit 0
+	exit 0
 fi
 
 # Enable ethernet and exit if booting from eMMC without WIFI
 if grep -q MX8M /sys/devices/soc0/soc_id && \
    ! grep -q WIFI /sys/devices/soc0/machine ; then
-   modprobe fec
-   exit 0
+	modprobe fec
+	exit 0
 fi
 
-
+# Exit if WIFI is already up
+if [ -d /sys/class/net/wlan0 ]; then
+	exit 0
+fi
 
 # Run initial setup sequence
 wifi_setup
 
-for i in `seq 1 3`; do
-
-	# Down WIFI
-	wifi_down
-
-	# Wait enough time for discharge
-	sleep ${WIFI_SLEEP}
+for i in $(seq 1 3); do
 
 	# Up WIFI
 	wifi_up
@@ -85,6 +38,12 @@ for i in `seq 1 3`; do
 		echo "WIFI startup success"
 		exit 0
 	fi
+
+	# Down WIFI
+	wifi_down
+
+	# Wait enough time for discharge
+	sleep 5
 done
 
 echo "WIFI startup failed"
