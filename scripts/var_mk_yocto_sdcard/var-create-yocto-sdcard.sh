@@ -208,7 +208,7 @@ function delete_device
 	((echo d; echo 1; echo d; echo 2; echo d; echo 3; echo d; echo w) | fdisk $node &> /dev/null) || true
 	sync
 
-	dd if=/dev/zero of=$node bs=1M count=4
+	dd if=/dev/zero of=$node bs=1M count=${BOOTLOAD_RESERVE_SIZE}
 	sync; sleep 1
 }
 
@@ -381,8 +381,10 @@ function copy_scripts
 	if [[ $MACHINE == var-som-mx6 ]] ; then
 		cp ${YOCTO_SCRIPTS_PATH}/mx6_install_yocto.sh		${P2_MOUNT_DIR}/usr/bin/install_yocto.sh
 		cp ${YOCTO_SCRIPTS_PATH}/mx6_install_yocto_emmc.sh	${P2_MOUNT_DIR}/usr/bin/install_yocto_emmc.sh
+	elif [[ $MACHINE != imx8m-var-dart ]] ; then
+		cp ${YOCTO_SCRIPTS_PATH}/mx6ul_mx7_install_yocto.sh	${P2_MOUNT_DIR}/usr/bin/install_yocto.sh
 	else
-		cp ${YOCTO_SCRIPTS_PATH}/mx6ul_mx7_mx8_install_yocto.sh	${P2_MOUNT_DIR}/usr/bin/install_yocto.sh
+		cp ${YOCTO_SCRIPTS_PATH}/mx8_install_yocto.sh		${P2_MOUNT_DIR}/usr/bin/install_yocto.sh
 	fi
 
 	if [[ $MACHINE = "imx8m-var-dart" ]]; then
