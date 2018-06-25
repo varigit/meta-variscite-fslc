@@ -29,7 +29,7 @@ help() {
 # Parse command line
 moreoptions=1
 node="na"
-soc_name=""
+soc_name="showoptions"
 cal_only=0
 block="mmcblk0"
 
@@ -45,6 +45,39 @@ while [ "$moreoptions" = 1 -a $# -gt 0 ]; do
 done
 
 imagesdir="/opt/images/Android"
+
+img_prefix="boot-"
+img_search_str="ls ${imagesdir}/${img_prefix}*"
+img_list=()
+
+# generate options list
+for img in $(eval $img_search_str)
+do
+	img=$(basename $img .img)
+	img=${img#${img_prefix}}
+	img_list+=($img)
+done
+
+# check for dtb
+if [[ $soc_name != "showoptions" ]] && [[ ! ${img_list[@]} =~ $soc_name ]] ; then
+	echo; echo invalid dtb $soc_name
+	soc_name=showoptions
+fi
+
+if [[ $soc_name == "showoptions" ]] ; then
+	PS3='Please choose your configuration: '
+	select opt in "${img_list[@]}"
+	do
+		if [[ -z "$opt" ]] ; then
+			echo invalid option
+			continue
+		else
+			soc_name=$opt
+			break
+		fi
+	done
+fi
+
 bootimage_file="boot-${soc_name}.img"
 vbmeta_file="vbmeta-${soc_name}.img"
 systemimage_raw_file="system_raw.img"
