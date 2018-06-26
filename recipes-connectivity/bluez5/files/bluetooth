@@ -8,7 +8,7 @@ DAEMON=/usr/libexec/bluetooth/bluetoothd
 # If you want ignore error of "org.freedesktop.hostname1",
 # please enable NOPLUGIN_OPTION.
 # NOPLUGIN_OPTION="--noplugin=hostname"
-NOPLUGIN_OPTION=""
+NOPLUGIN_OPTION="-C"
 SSD_OPTIONS="--oknodo --quiet --exec $DAEMON -- $NOPLUGIN_OPTION"
 
 test -f $DAEMON || exit 0
