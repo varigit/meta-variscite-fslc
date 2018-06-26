@@ -1,15 +1,7 @@
 From 57feabef01e603380f67fac8b5ba8b8b9771d76f Mon Sep 17 00:00:00 2001
 From: "Tom.zheng" <haidong.zheng@nxp.com>
 Date: Wed, 25 Apr 2018 13:50:11 +0800
-Subject: [PATCH] 1,add noc tuning smc case, lower cpu vpu memory access
- priority for this case; 2,enhance memory controller performance and QoS
- setting after memory from self-refresh;
-
----
- plat/freescale/common/include/fsl_sip.h     |  1 +
- plat/freescale/imx8mq/ddr/lpddr4_ddrc_cfg.c | 12 ++++++------
- plat/freescale/imx8mq/src.c                 |  7 +++++++
- 3 files changed, 14 insertions(+), 6 deletions(-)
+Subject: [PATCH] Add NOC tuning SMC case, lower cpu vpu memory access priority for this case
 
 diff --git a/plat/freescale/common/include/fsl_sip.h b/plat/freescale/common/include/fsl_sip.h
 index 24b8eb3..56aa91d 100644
@@ -22,36 +14,6 @@ index 24b8eb3..56aa91d 100644
 +#define FSL_SIP_NOC_TUNE		0x1
  
  #endif
-diff --git a/plat/freescale/imx8mq/ddr/lpddr4_ddrc_cfg.c b/plat/freescale/imx8mq/ddr/lpddr4_ddrc_cfg.c
-index a4d45bf..979717d 100644
---- a/plat/freescale/imx8mq/ddr/lpddr4_ddrc_cfg.c
-+++ b/plat/freescale/imx8mq/ddr/lpddr4_ddrc_cfg.c
-@@ -37,8 +37,8 @@ static inline void umctl2_perf(void)
- 	mmio_write_32(DDRC_SCHED(0), 0x29511505);
- 	mmio_write_32(DDRC_SCHED1(0), 0x0000002c);
- 	mmio_write_32(DDRC_PERFHPR1(0), 0x5900575b);
--	mmio_write_32(DDRC_PERFLPR1(0), 0x00000009);
--	mmio_write_32(DDRC_PERFWR1(0), 0x02005574);
-+	mmio_write_32(DDRC_PERFLPR1(0), 0x90000096);
-+	mmio_write_32(DDRC_PERFWR1(0), 0x1000012c);
- 	mmio_write_32(DDRC_DBG0(0), 0x00000016);
- 	mmio_write_32(DDRC_DBG1(0), 0x00000000);
- 	mmio_write_32(DDRC_DBGCMD(0), 0x00000000);
-@@ -48,10 +48,10 @@ static inline void umctl2_perf(void)
- 	mmio_write_32(DDRC_PCFGR_0(0), 0x000010f3);
- 	mmio_write_32(DDRC_PCFGW_0(0), 0x000072ff);
- 	mmio_write_32(DDRC_PCTRL_0(0), 0x00000001);
--	mmio_write_32(DDRC_PCFGQOS0_0(0), 0x01110d00);
--	mmio_write_32(DDRC_PCFGQOS1_0(0), 0x00620790);
--	mmio_write_32(DDRC_PCFGWQOS0_0(0), 0x00100001);
--	mmio_write_32(DDRC_PCFGWQOS1_0(0), 0x0000041f);
-+	mmio_write_32(DDRC_PCFGQOS0_0(0), 0x00000e00);
-+	mmio_write_32(DDRC_PCFGQOS1_0(0), 0x000007ff);
-+	mmio_write_32(DDRC_PCFGWQOS0_0(0), 0x00000e00);
-+	mmio_write_32(DDRC_PCFGWQOS1_0(0), 0x000007ff);
- 	mmio_write_32(DDRC_FREQ1_DERATEEN(0), 0x00000202);
- 	mmio_write_32(DDRC_FREQ1_DERATEINT(0), 0xec78f4b5);
- 	mmio_write_32(DDRC_FREQ1_RFSHCTL0(0), 0x00618040);
 diff --git a/plat/freescale/imx8mq/src.c b/plat/freescale/imx8mq/src.c
 index 11e30ee..90d2d16 100644
 --- a/plat/freescale/imx8mq/src.c
@@ -70,6 +32,4 @@ index 11e30ee..90d2d16 100644
  		break;
  	default:
  		return SMC_UNK;
--- 
-2.7.4
 
