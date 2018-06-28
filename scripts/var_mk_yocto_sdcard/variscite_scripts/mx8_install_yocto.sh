@@ -118,8 +118,8 @@ usage()
 	echo " Usage: $(basename $0) <option>"
 	echo
 	echo " options:"
-	echo " -h 				show help message"
-	echo " -d <hdmi|dcss-lvds|lcdif-lvds>	set display type for DART-MX8M, default is dcss-lvds"
+	echo " -h 					show help message"
+	echo " -d <hdmi|hdmi-4k|dcss-lvds|lcdif-lvds>	set display type, default is dcss-lvds"
 	echo
 }
 
@@ -155,8 +155,9 @@ do
 	esac
 done
 
-if [[ $DISPLAY != "hdmi" && $DISPLAY != "dcss-lvds" && $DISPLAY != "lcdif-lvds" ]]; then
-	echo "Invalid display, should be hdmi, dcss-lvds or lcdif-lvds"
+if [[ $DISPLAY != "hdmi" && $DISPLAY != "hdmi-4k" && \
+      $DISPLAY != "dcss-lvds" && $DISPLAY != "lcdif-lvds" ]]; then
+	echo "Invalid display, should be hdmi, hdmi-4k, dcss-lvds or lcdif-lvds"
 	exit 1
 fi
 
