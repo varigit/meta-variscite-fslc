@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Media Player
+Comment=Basic media player
+Icon=multimedia-player
+TryExec=gtk-play --display :0
+Exec=gtk-play --display :0
+StartupNotify=true
+Terminal=false
+Type=Application
+Categories=GTK;AudioVideo;
