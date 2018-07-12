@@ -38,7 +38,7 @@ delete_emmc()
 
 	umount ${NODE}${PART}* 2>/dev/null || true
 
-	for ((i=0; i<=15; i++)); do
+	for ((i=1; i<=16; i++)); do
 		if [[ -e ${NODE}${PART}${i} ]]; then
 			dd if=/dev/zero of=${NODE}${PART}${i} bs=1M count=1 2>/dev/null || true
 		fi
