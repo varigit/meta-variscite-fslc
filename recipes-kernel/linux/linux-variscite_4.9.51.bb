@@ -26,7 +26,7 @@ DEFCONFIG_mx8 = "imx8m_var_dart_defconfig"
 
 KERNEL_SRC ?= "git://github.com/varigit/linux-imx;protocol=git"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
-SRCREV = "817ee2d38a9d67f17cda82e2c81309d5d6383fbd"
+SRCREV = "f359c87f9bcb4aa8bcdb237def0af70ed7e18724"
 
 S = "${WORKDIR}/git"
 
