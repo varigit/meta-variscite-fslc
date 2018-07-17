@@ -17,7 +17,7 @@ NODE=/dev/${BLOCK}
 ROOTFSPART=1
 BOOTDIR=/boot
 MOUNTDIR=/run/media/${BLOCK}${PART}${ROOTFSPART}
-			
+
 check_images()
 {
 	if [[ ! -f $IMGS_PATH/$UBOOT_IMAGE ]] ; then
@@ -118,8 +118,8 @@ usage()
 	echo " Usage: $(basename $0) <option>"
 	echo
 	echo " options:"
-	echo " -h 					show help message"
-	echo " -d <hdmi|hdmi-4k|dcss-lvds|lcdif-lvds>	set display type, default is dcss-lvds"
+	echo " -h 						    show help message"
+	echo " -d <hdmi|hdmi-4k|dcss-lvds|lcdif-lvds|dual-display>  set display type, default is dcss-lvds"
 	echo
 }
 
@@ -147,7 +147,7 @@ do
 	h)
 		usage
 		exit 0
-		;;		
+		;;
 	*)
 		usage
 		exit 1
@@ -155,9 +155,9 @@ do
 	esac
 done
 
-if [[ $DISPLAY != "hdmi" && $DISPLAY != "hdmi-4k" && \
+if [[ $DISPLAY != "hdmi" && $DISPLAY != "hdmi-4k" && $DISPLAY != "dual-display" && \
       $DISPLAY != "dcss-lvds" && $DISPLAY != "lcdif-lvds" ]]; then
-	echo "Invalid display, should be hdmi, hdmi-4k, dcss-lvds or lcdif-lvds"
+	echo "Invalid display, should be hdmi, hdmi-4k, dcss-lvds, lcdif-lvds or dual-display"
 	exit 1
 fi
 
@@ -172,7 +172,7 @@ if [[ ! -b $NODE ]] ; then
 	red_bold_echo "Please verify you are using the correct options for your SOM."
 	exit 1
 fi
-	
+
 check_images
 delete_emmc
 create_emmc_parts
