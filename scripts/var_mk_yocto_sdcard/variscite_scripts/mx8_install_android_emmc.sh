@@ -279,6 +279,13 @@ function install_android
 	sleep 1
 }
 
+function finish
+{
+        echo
+        blue_bold_echo "Android installed successfully"
+        exit 0
+}
+
 check_images
 
 umount ${node}${part}*  2> /dev/null || true
@@ -291,9 +298,8 @@ create_parts
 install_bootloader
 format_android
 install_android
+finish
 
-echo
 #Start Udev back before exit
 #/etc/init.d/udev restart
 
-exit 0
