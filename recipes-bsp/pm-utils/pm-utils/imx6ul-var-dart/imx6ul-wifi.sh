@@ -20,7 +20,8 @@ wifi_resume()
 #              Execution starts here            #                
 #################################################
 
-if ! som_is_dart_6ul_5g; then
+if ! som_is_dart_6ul_5g ||
+   ! grep -q WIFI /sys/devices/soc0/machine; then
 	exit 0
 fi
 
