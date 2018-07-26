@@ -58,6 +58,11 @@ cache_mx7_5g()
 # Power up WIFI chip
 wifi_up()
 {
+	# Unbind WIFI device from MMC controller
+	if [ -e /sys/bus/platform/drivers/sdhci-esdhc-imx/${WIFI_MMC_HOST} ]; then
+		echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
+	fi
+
 	if som_is_dart_6ul_5g; then
 		# WIFI power up
 		echo 1 > /sys/class/gpio/gpio${WIFI_PWR_GPIO}/value
