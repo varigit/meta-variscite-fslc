@@ -168,14 +168,36 @@ function format_rootfs_part
 	sync; sleep 1
 }
 
-set_fw_utils_to_emmc()
+# $1 is the full path of the config file
+set_fw_env_config_to_emmc()
+{
+	sed -i "/mtd/ s/^#*/#/" $1
+	sed -i "s/#*\/dev\/mmcblk./\/dev\/${block}/" $1
+}
+
+set_fw_utils_to_emmc_on_sd_card()
 {
 	# Adjust u-boot-fw-utils for eMMC on the SD card
 	if [[ `readlink /sbin/fw_printenv` != "/sbin/fw_printenv-mmc" ]]; then
 		ln -sf /sbin/fw_printenv-mmc /sbin/fw_printenv
 	fi
-	sed -i "/mtd/ s/^#*/#/" /etc/fw_env.config
-	sed -i "s/#*\/dev\/mmcblk./\/dev\/${block}/" /etc/fw_env.config
+
+	if [[ -f /etc/fw_env.config ]]; then
+		set_fw_env_config_to_emmc /etc/fw_env.config
+	fi
+}
+
+set_fw_utils_to_emmc_on_emmc()
+{
+	# Adjust u-boot-fw-utils for eMMC on the installed rootfs
+	rm -f ${mountdir_prefix}${rootfspart}/sbin/fw_printenv-nand
+	if [[ -f ${mountdir_prefix}${rootfspart}/sbin/fw_printenv-mmc ]]; then
+		mv ${mountdir_prefix}${rootfspart}/sbin/fw_printenv-mmc ${mountdir_prefix}${rootfspart}/sbin/fw_printenv
+	fi
+
+	if [[ -f ${mountdir_prefix}${rootfspart}/etc/fw_env.config ]]; then
+		set_fw_env_config_to_emmc ${mountdir_prefix}${rootfspart}/etc/fw_env.config
+	fi
 }
 
 function install_bootloader
@@ -188,7 +210,7 @@ function install_bootloader
 	if [[ $swupdate == 1 ]] ; then
 		echo
 		echo "Setting U-Boot enviroment variables"
-		set_fw_utils_to_emmc
+		set_fw_utils_to_emmc_on_sd_card
 		fw_setenv mmcrootpart 1  2> /dev/null
 		fw_setenv bootdir /boot
 	fi
@@ -217,11 +239,7 @@ function install_rootfs
 	echo
 
 	if [[ $is_dart == true ]] ; then
-		# Adjust u-boot-fw-utils for eMMC on the installed rootfs
-		rm ${mountdir_prefix}${rootfspart}/sbin/fw_printenv-nand
-		mv ${mountdir_prefix}${rootfspart}/sbin/fw_printenv-mmc ${mountdir_prefix}${rootfspart}/sbin/fw_printenv
-		sed -i "/mtd/ s/^#*/#/" ${mountdir_prefix}${rootfspart}/etc/fw_env.config
-		sed -i "s/#*\/dev\/mmcblk./\/dev\/${block}/" ${mountdir_prefix}${rootfspart}/etc/fw_env.config
+		set_fw_utils_to_emmc_on_emmc
 	fi
 
 	echo

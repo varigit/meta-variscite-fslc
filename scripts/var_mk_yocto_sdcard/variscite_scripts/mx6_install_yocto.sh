@@ -9,17 +9,29 @@ SPL_IMAGE=SPL-nand
 UBOOT_IMAGE=u-boot.img-nand
 KERNEL_IMAGE=uImage
 KERNEL_DTB=""
-ROOTFS_IMAGE=rootfs.ubi
 ROOTFS_DEV=""
 
-set_fw_utils_to_nand()
+# $1 is the full path of the config file
+set_fw_env_config_to_nand()
+{
+	sed -i "/mmcblk/ s/^#*/#/" $1
+	sed -i "s/#*\/dev\/mtd/\/dev\/mtd/" $1
+
+	MTD_DEV=`grep /dev/mtd $1 | cut -f1 | sed "s/\/dev\/*//"`
+	MTD_ERASESIZE=$(printf 0x%x $(cat /sys/class/mtd/${MTD_DEV}/erasesize))
+	awk -i inplace -v n=4 -v ERASESIZE="${MTD_ERASESIZE}" '/\/dev\/mtd/{$(n)=ERASESIZE}1' $1
+}
+
+set_fw_utils_to_nand_on_sd_card()
 {
 	# Adjust u-boot-fw-utils for NAND flash on the SD card
 	if [[ `readlink /sbin/fw_printenv` != "/sbin/fw_printenv-nand" ]]; then
 		ln -sf /sbin/fw_printenv-nand /sbin/fw_printenv
 	fi
-	sed -i "/mmcblk/ s/^#*/#/" /etc/fw_env.config
-	sed -i "s/#*\/dev\/mtd/\/dev\/mtd/" /etc/fw_env.config
+
+	if [[ -f /etc/fw_env.config ]]; then
+		set_fw_env_config_to_nand /etc/fw_env.config
+	fi
 }
 
 install_bootloader()
@@ -46,7 +58,7 @@ install_bootloader()
 	if [[ $ROOTFS_DEV == "emmc" ]] ; then
 		echo
 		echo "Setting U-Boot enviroment variables"
-		set_fw_utils_to_nand
+		set_fw_utils_to_nand_on_sd_card
 		fw_setenv rootfs_device emmc  2> /dev/null
 
 		if [[ $swupdate == 1 ]] ; then
@@ -179,6 +191,12 @@ fi
 
 if [[ $ROOTFS_DEV == "nand" ]] ; then
 	STR="NAND"
+	MTD_ERASESIZE=`cat /sys/class/mtd/mtd3/erasesize`
+	if [[ $MTD_ERASESIZE == 131072 ]] ; then
+		ROOTFS_IMAGE=rootfs_128kbpeb.ubi
+	else
+		ROOTFS_IMAGE=rootfs_256kbpeb.ubi
+	fi
 elif [[ $ROOTFS_DEV == "emmc" ]] ; then
 	STR="eMMC"
 else
@@ -229,6 +247,11 @@ fi
 
 printf "Installing Device Tree file: "
 blue_bold_echo $KERNEL_DTB
+
+if [[ $ROOTFS_DEV == "nand" ]] ; then
+	printf "Installing rootfs image: "
+	blue_bold_echo $ROOTFS_IMAGE
+fi
 
 if [[ $ROOTFS_DEV == "emmc" ]] && [[ $swupdate == 1 ]] ; then
 	blue_bold_echo "Creating two rootfs partitions"

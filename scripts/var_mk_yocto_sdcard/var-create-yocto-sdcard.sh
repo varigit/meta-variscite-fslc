@@ -300,10 +300,15 @@ function copy_images
 	fi
 
 	# Copy image for NAND flash
-	if [ -f ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}.ubi ]; then
-		pv ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}.ubi > ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.ubi
+	for f in ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}_*.ubi; do
+		if [ -f "$f" ]; then
+			pv $f > ${P2_MOUNT_DIR}/opt/images/Yocto/`basename $f`
+		fi
+	done
+	if ls ${P2_MOUNT_DIR}/opt/images/Yocto/*.ubi &> /dev/null; then
+		STR=$YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME rename 's/\Q$ENV{STR}\E/rootfs/' ${P2_MOUNT_DIR}/opt/images/Yocto/*.ubi
 	else
-		echo "rootfs.ubi file is not present. Installation on \"NAND flash\" will not be supported."
+		echo "UBI rootfs images are not present. Installation on \"NAND flash\" will not be supported."
 	fi
 
 	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/SPL-nand				${P2_MOUNT_DIR}/opt/images/Yocto/
@@ -333,7 +338,7 @@ function copy_scripts
 			rm -rf ${P2_MOUNT_DIR}/usr/share/applications/${MACHINE}*yocto*emmc*.desktop
 		fi
 
-		if [ ! -f ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.ubi ]; then
+		if ! ls ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs*.ubi &> /dev/null; then
 			rm -rf ${P2_MOUNT_DIR}/usr/share/applications/${MACHINE}*yocto*nand*.desktop
 		fi
 

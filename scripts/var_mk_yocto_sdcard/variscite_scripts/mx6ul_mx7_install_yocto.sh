@@ -43,24 +43,59 @@ check_images()
 	fi
 }
 
-set_fw_utils_to_emmc()
+# $1 is the full path of the config file
+set_fw_env_config_to_emmc()
+{
+	sed -i "/mtd/ s/^#*/#/" $1
+	sed -i "s/#*\/dev\/mmcblk./\/dev\/${block}/" $1
+}
+
+set_fw_utils_to_emmc_on_sd_card()
 {
 	# Adjust u-boot-fw-utils for eMMC on the SD card
 	if [[ `readlink /sbin/fw_printenv` != "/sbin/fw_printenv-mmc" ]]; then
 		ln -sf /sbin/fw_printenv-mmc /sbin/fw_printenv
 	fi
-	sed -i "/mtd/ s/^#*/#/" /etc/fw_env.config
-	sed -i "s/#*\/dev\/mmcblk./\/dev\/${block}/" /etc/fw_env.config
+
+	if [[ -f /etc/fw_env.config ]]; then
+		set_fw_env_config_to_emmc /etc/fw_env.config
+	fi
 }
 
-set_fw_utils_to_nand()
+set_fw_utils_to_emmc_on_emmc()
+{
+	# Adjust u-boot-fw-utils for eMMC on the installed rootfs
+	rm -f ${mountdir_prefix}${rootfspart}/sbin/fw_printenv-nand
+	if [[ -f ${mountdir_prefix}${rootfspart}/sbin/fw_printenv-mmc ]]; then
+		mv ${mountdir_prefix}${rootfspart}/sbin/fw_printenv-mmc ${mountdir_prefix}${rootfspart}/sbin/fw_printenv
+	fi
+
+	if [[ -f ${mountdir_prefix}${rootfspart}/etc/fw_env.config ]]; then
+		set_fw_env_config_to_emmc ${mountdir_prefix}${rootfspart}/etc/fw_env.config
+	fi
+}
+
+# $1 is the full path of the config file
+set_fw_env_config_to_nand()
+{
+	sed -i "/mmcblk/ s/^#*/#/" $1
+	sed -i "s/#*\/dev\/mtd/\/dev\/mtd/" $1
+
+	MTD_DEV=`grep /dev/mtd $1 | cut -f1 | sed "s/\/dev\/*//"`
+	MTD_ERASESIZE=$(printf 0x%x $(cat /sys/class/mtd/${MTD_DEV}/erasesize))
+	awk -i inplace -v n=4 -v ERASESIZE="${MTD_ERASESIZE}" '/\/dev\/mtd/{$(n)=ERASESIZE}1' $1
+}
+
+set_fw_utils_to_nand_on_sd_card()
 {
 	# Adjust u-boot-fw-utils for NAND flash on the SD card
 	if [[ `readlink /sbin/fw_printenv` != "/sbin/fw_printenv-nand" ]]; then
 		ln -sf /sbin/fw_printenv-nand /sbin/fw_printenv
 	fi
-	sed -i "/mmcblk/ s/^#*/#/" /etc/fw_env.config
-	sed -i "s/#*\/dev\/mtd/\/dev\/mtd/" /etc/fw_env.config
+
+	if [[ -f /etc/fw_env.config ]]; then
+		set_fw_env_config_to_nand /etc/fw_env.config
+	fi
 }
 
 install_bootloader_to_nand()
@@ -194,7 +229,7 @@ install_bootloader_to_emmc()
 	if [[ $VARSOMMX7_VARIANT == "-m4" || $swupdate == 1 ]] ; then
 		echo
 		echo "Setting U-Boot enviroment variables"
-		set_fw_utils_to_emmc
+		set_fw_utils_to_emmc_on_sd_card
 
 		if [[ $VARSOMMX7_VARIANT == "-m4" ]] ; then
 			fw_setenv use_m4 yes  2> /dev/null
@@ -233,11 +268,7 @@ install_rootfs_to_emmc()
 	tar xpf ${IMGS_PATH}/${ROOTFS_IMAGE} -C ${mountdir_prefix}${rootfspart} --checkpoint=.1200
 	echo
 
-	# Adjust u-boot-fw-utils for eMMC on the installed rootfs
-	rm ${mountdir_prefix}${rootfspart}/sbin/fw_printenv-nand
-	mv ${mountdir_prefix}${rootfspart}/sbin/fw_printenv-mmc ${mountdir_prefix}${rootfspart}/sbin/fw_printenv
-	sed -i "/mtd/ s/^#*/#/" ${mountdir_prefix}${rootfspart}/etc/fw_env.config
-	sed -i "s/#*\/dev\/mmcblk./\/dev\/${block}/" ${mountdir_prefix}${rootfspart}/etc/fw_env.config
+	set_fw_utils_to_emmc_on_emmc
 
 	echo
 	sync
@@ -347,7 +378,12 @@ blue_bold_echo $STR
 
 if [[ $STORAGE_DEV == "nand" ]] ; then
 	STR="NAND"
-	ROOTFS_IMAGE=rootfs.ubi
+	MTD_ERASESIZE=`cat /sys/class/mtd/mtd4/erasesize`
+	if [[ $MTD_ERASESIZE == 131072 ]] ; then
+		ROOTFS_IMAGE=rootfs_128kbpeb.ubi
+	else
+		ROOTFS_IMAGE=rootfs_256kbpeb.ubi
+	fi
 elif [[ $STORAGE_DEV == "emmc" ]] ; then
 	STR="eMMC"
 	ROOTFS_IMAGE=rootfs.tar.gz
@@ -410,6 +446,9 @@ if [[ $STORAGE_DEV == "nand" ]] ; then
 
 	printf "Installing Device Tree file: "
 	blue_bold_echo $KERNEL_DTB
+
+	printf "Installing rootfs image: "
+	blue_bold_echo $ROOTFS_IMAGE
 
 	if [[ ! -e /dev/mtd0 ]] ; then
 		red_bold_echo "ERROR: Can't find NAND flash device."
