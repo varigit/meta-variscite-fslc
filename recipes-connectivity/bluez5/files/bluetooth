@@ -9,7 +9,8 @@ DAEMON=/usr/libexec/bluetooth/bluetoothd
 # please enable NOPLUGIN_OPTION.
 # NOPLUGIN_OPTION="--noplugin=hostname"
 NOPLUGIN_OPTION=""
-SSD_OPTIONS="--oknodo --quiet --exec $DAEMON -- $NOPLUGIN_OPTION"
+OPTIONS="-C"
+SSD_OPTIONS="--oknodo --quiet --exec $DAEMON -- $NOPLUGIN_OPTION $OPTIONS"
 
 test -f $DAEMON || exit 0
 

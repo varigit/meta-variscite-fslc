@@ -10,6 +10,7 @@ SRC_URI_append = " \
 	file://obexd \
 	file://obexd.conf \
 	file://obex.service \
+	file://bluetooth.service \
 "
 
 # Required by obexd
@@ -32,6 +33,7 @@ do_install_append() {
 		install -d ${D}${sysconfdir}/systemd/system/multi-user.target.wants
 		install -m 0644 ${WORKDIR}/variscite-bt.service ${D}${systemd_unitdir}/system
 		install -m 0644 ${WORKDIR}/obex.service ${D}${systemd_unitdir}/system
+		install -m 0644 ${WORKDIR}/bluetooth.service ${D}${systemd_unitdir}/system
 
 		ln -sf ${systemd_unitdir}/system/variscite-bt.service \
 			${D}${sysconfdir}/systemd/system/multi-user.target.wants/variscite-bt.service
