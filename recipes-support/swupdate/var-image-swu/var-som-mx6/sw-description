@@ -13,6 +13,7 @@ software =
 				device = "/dev/update";
 				filesystem = "ext4";
 				path = "/";
+				preserve-attributes = true;
 			}
 		);
 

@@ -12,6 +12,7 @@ software =
 				compressed = true;
 				device = "/dev/update";
 				filesystem = "ext4";
+				preserve-attributes = true;
 				path = "/";
 			}
 		);
