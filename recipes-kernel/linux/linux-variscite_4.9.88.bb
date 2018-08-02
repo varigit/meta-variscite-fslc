@@ -7,14 +7,14 @@ require recipes-kernel/linux/linux-imx.inc
 DEPENDS += "lzop-native bc-native"
 
 # Do not copy the kernel image to the rootfs by default
-RDEPENDS_kernel-base = ""
+RDEPENDS_${KERNEL_PACKAGE_NAME}-base = ""
 
 LOCALVERSION_var-som-mx6 = "-mx6"
 LOCALVERSION_imx6ul-var-dart = "-mx6ul"
 LOCALVERSION_imx7-var-som = "-mx7"
 
-SRCBRANCH = "imx_4.9.11_1.0.0_ga-var01"
-SRCREV = "b200f6d3eed2d9b371e64e9e80c99e3ae182a7a9"
+SRCBRANCH = "imx_4.9.88_2.0.0_ga-var01"
+SRCREV = "4757707e0c300fd2de7c09b842f909c4a3fec052"
 KERNEL_SRC ?= "git://github.com/varigit/linux-imx.git;protocol=git"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
 
