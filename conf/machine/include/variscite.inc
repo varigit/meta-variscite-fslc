@@ -63,7 +63,8 @@ IMAGE_INSTALL_append = " \
 BBMASK_prepend = "fsl-image-mfgtool-initramfs "
 BBMASK += "meta-freescale/dynamic-layers/browser-layer/recipes-browser/chromium"
 
-IMAGE_FSTYPES = "tar.gz ext4 sdcard multiubi"
+WKS_FILE = "imx-uboot-spl-bootpart.wks"
+IMAGE_FSTYPES += "tar.gz multiubi"
 
 # do multiubi last
 IMAGE_TYPEDEP_multiubi += "${IMAGE_FSTYPES}"
