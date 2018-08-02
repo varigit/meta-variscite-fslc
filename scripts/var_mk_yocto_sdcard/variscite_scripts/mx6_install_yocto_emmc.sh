@@ -250,6 +250,7 @@ function install_rootfs
 check_images
 
 umount ${node}${part}*  2> /dev/null || true
+/etc/init.d/udev stop
 
 delete_device
 if [[ $swupdate == 1 ]] ; then
@@ -267,5 +268,6 @@ if [[ $is_dart == true ]] ; then
 		install_kernel
 	fi
 fi
+/etc/init.d/udev start
 
 exit 0

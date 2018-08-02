@@ -509,6 +509,7 @@ elif [[ $STORAGE_DEV == "emmc" ]] ; then
 
 	check_images
 	umount ${node}${part}*  2> /dev/null || true
+	/etc/init.d/udev stop
 	delete_emmc
 	if [[ $swupdate == 0 ]] ; then
 		create_emmc_parts
@@ -522,6 +523,7 @@ elif [[ $STORAGE_DEV == "emmc" ]] ; then
 	if [[ $swupdate == 0 ]] ; then
 		install_kernel_to_emmc
 	fi
+	/etc/init.d/udev start
 fi
 
 finish
