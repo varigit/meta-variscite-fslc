@@ -98,11 +98,17 @@ wifi_up()
 
 	# If found MX7-5G remember it
 	cache_mx7_5g
+
+	# Load WIFI driver
+	modprobe brcmfmac
 }
 
 # Power down WIFI chip
 wifi_down()
 {
+	# Unload WIFI driver
+	modprobe -r brcmfmac
+
 	# Unbind WIFI device from MMC controller
 	echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
 

@@ -10,6 +10,7 @@ SRC_URI = " \
 	file://variscite-wifi-common.sh \
 	file://variscite-wifi.service \
 	file://variscite-wifi.conf \
+	file://brcmfmac.conf \
 "
 
 FILES_${PN} = " \ 
@@ -18,6 +19,7 @@ FILES_${PN} = " \
 	/etc/rcS.d/* \
 	/lib/systemd/system/* \
 	/etc/systemd/system/* \
+	/etc/modprobe.d/* \
 "
 
 RDEPENDS_${PN}_imx6ul-var-dart = "i2c-tools"
@@ -27,9 +29,11 @@ S = "${WORKDIR}"
 
 do_install() {
 	install -d ${D}${sysconfdir}/wifi
+	install -d ${D}${sysconfdir}/modprobe.d
 	install -m 0644 ${WORKDIR}/variscite-wifi.conf ${D}${sysconfdir}/wifi
 	install -m 0644 ${WORKDIR}/variscite-wifi-common.sh ${D}/${sysconfdir}/wifi
 	install -m 0755 ${WORKDIR}/variscite-wifi ${D}/${sysconfdir}/wifi
+	install -m 0755 ${WORKDIR}/brcmfmac.conf ${D}/${sysconfdir}/modprobe.d
 
 	if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)}; then
 		install -d ${D}${systemd_unitdir}/system
