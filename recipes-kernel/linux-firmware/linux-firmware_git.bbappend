@@ -4,8 +4,8 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 SRCREV_FORMAT = "linux-firmware"
 
-# TI Tags: R8.7 SP3
-SRCREV_tiwlan = "f659be25473e4bde8dc790bff703ecacde6e21da"
+# TI WiFi FW 8.9.0.0.79
+SRCREV_tiwlan = "d153edae2a75393937da43159b7e6251c2cd01b6"
 BRANCH_tiwlan = "master"
 SRCREV_tibt = "0ee619b598d023fffc77679f099bc2a4815510e4"
 BRANCH_tibt = "master"
