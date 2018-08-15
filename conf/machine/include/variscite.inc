@@ -34,6 +34,9 @@ PREFERRED_PROVIDER_wpa-supplicant-cli = "wpa-supplicant"
 PREFERRED_PROVIDER_wpa-supplicant-passphrase = "wpa-supplicant"
 PREFERRED_PROVIDER_wpa-supplicant = "wpa-supplicant"
 
+PREFERRED_RPROVIDER_ptpd = "ptpd"
+PREFERRED_RPROVIDER_ptpd-dev = "ptpd"
+
 MACHINE_EXTRA_RDEPENDS += " \
 			   crda \
 			   bridge-utils \
