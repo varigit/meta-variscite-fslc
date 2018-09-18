@@ -31,6 +31,7 @@ CORE_IMAGE_EXTRA_INSTALL += " \
 	packagegroup-core-full-cmdline \
 	packagegroup-tools-bluetooth \
 	packagegroup-imx-tools-audio \
+	packagegroup-fsl-tools-gpu \
 	packagegroup-fsl-tools-gpu-external \
 	packagegroup-fsl-tools-testapps \
 	packagegroup-fsl-tools-benchmark \
