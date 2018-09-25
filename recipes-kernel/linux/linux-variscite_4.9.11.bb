@@ -14,7 +14,7 @@ LOCALVERSION_imx6ul-var-dart = "-mx6ul"
 LOCALVERSION_imx7-var-som = "-mx7"
 
 SRCBRANCH = "imx_4.9.11_1.0.0_ga-var01"
-SRCREV = "86c54d808ad9f1b39f8641d2da2e6da4bfff9f30"
+SRCREV = "a264544324c3088d9085d826aa99fa7173bb1e0a"
 KERNEL_SRC ?= "git://github.com/varigit/linux-imx.git;protocol=git"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
 
