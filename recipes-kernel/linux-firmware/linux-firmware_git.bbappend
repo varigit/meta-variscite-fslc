@@ -7,7 +7,7 @@ SRCREV_FORMAT = "linux-firmware"
 # TI WiFi FW 8.9.0.0.79
 SRCREV_tiwlan = "d153edae2a75393937da43159b7e6251c2cd01b6"
 BRANCH_tiwlan = "master"
-SRCREV_tibt = "0ee619b598d023fffc77679f099bc2a4815510e4"
+SRCREV_tibt = "31a43dc1248a6c19bb886006f8c167e2fd21cb78"
 BRANCH_tibt = "master"
 SRCREV_brcm = "423be46b06b5629e45a4943f98a3053c819091ce"
 BRANCH_brcm = "3.5.5.18"
