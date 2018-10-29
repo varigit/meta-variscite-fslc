@@ -247,10 +247,41 @@ function install_rootfs
 	umount ${node}${part}${rootfspart}
 }
 
-check_images
+# Stop udev daemon to prevent automatic mounting
+# of newly created eMMC partitions
+stop_udev()
+{
+	# SystemV init
+	if [ -x /etc/init.d/udev ]; then
+		/etc/init.d/udev stop
+		return
+	fi
 
+	# Systemd
+	if [ -f /lib/systemd/system/systemd-udevd.service ]; then
+		systemctl mask --runtime systemd-udevd
+		systemctl stop systemd-udevd
+	fi
+}
+
+start_udev()
+{
+	# SystemV init
+	if [ -x /etc/init.d/udev ]; then
+		/etc/init.d/udev start
+		return
+	fi
+
+	# Systemd
+	if [ -f /lib/systemd/system/systemd-udevd.service ]; then
+		systemctl unmask --runtime systemd-udevd
+		systemctl start systemd-udevd
+	fi
+}
+
+check_images
+stop_udev
 umount ${node}${part}*  2> /dev/null || true
-[ -x /etc/init.d/udev ] && /etc/init.d/udev stop
 
 delete_device
 if [[ $swupdate == 1 ]] ; then
@@ -268,6 +299,6 @@ if [[ $is_dart == true ]] ; then
 		install_kernel
 	fi
 fi
-[ -x /etc/init.d/udev ] && /etc/init.d/udev start
+start_udev
 
 exit 0

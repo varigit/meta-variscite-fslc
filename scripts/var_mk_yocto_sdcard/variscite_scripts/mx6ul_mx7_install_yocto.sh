@@ -298,6 +298,37 @@ finish()
 	exit 0
 }
 
+# Stop udev daemon to prevent automatic mounting
+# of newly created eMMC partitions
+stop_udev()
+{
+	# SystemV init
+	if [ -x /etc/init.d/udev ]; then
+		/etc/init.d/udev stop
+		return
+	fi
+
+	# Systemd
+	if [ -f /lib/systemd/system/systemd-udevd.service ]; then
+		systemctl mask --runtime systemd-udevd
+		systemctl stop systemd-udevd
+	fi
+}
+
+start_udev()
+{
+	# SystemV init
+	if [ -x /etc/init.d/udev ]; then
+		/etc/init.d/udev start
+		return
+	fi
+
+	# Systemd
+	if [ -f /lib/systemd/system/systemd-udevd.service ]; then
+		systemctl unmask --runtime systemd-udevd
+		systemctl start systemd-udevd
+	fi
+}
 
 blue_underlined_bold_echo "*** Variscite MX6UL/MX6ULL/MX7 Yocto eMMC/NAND Recovery ***"
 echo
@@ -508,8 +539,8 @@ elif [[ $STORAGE_DEV == "emmc" ]] ; then
 	fi
 
 	check_images
+	stop_udev
 	umount ${node}${part}*  2> /dev/null || true
-	[ -x /etc/init.d/udev ] && /etc/init.d/udev stop
 	delete_emmc
 	if [[ $swupdate == 0 ]] ; then
 		create_emmc_parts
@@ -523,7 +554,7 @@ elif [[ $STORAGE_DEV == "emmc" ]] ; then
 	if [[ $swupdate == 0 ]] ; then
 		install_kernel_to_emmc
 	fi
-	[ -x /etc/init.d/udev ] && /etc/init.d/udev start
+	start_udev
 fi
 
 finish
