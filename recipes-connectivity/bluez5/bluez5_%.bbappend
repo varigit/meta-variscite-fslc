@@ -11,6 +11,7 @@ SRC_URI_append = " \
 	file://obexd.conf \
 	file://obex.service \
 	file://bluetooth.service \
+	file://0001-core-Fixes-order-InterfaceAdded.patch \
 "
 
 # Required by obexd
