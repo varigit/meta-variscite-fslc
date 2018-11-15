@@ -244,12 +244,44 @@ function install_android
 	sync; sleep 1
 }
 
+# Stop udev daemon to prevent automatic mounting
+# of newly created eMMC partitions
+stop_udev()
+{
+	# SystemV init
+	if [ -x /etc/init.d/udev ]; then
+		/etc/init.d/udev stop
+		return
+	fi
+
+	# Systemd
+	if [ -f /lib/systemd/system/systemd-udevd.service ]; then
+		systemctl mask --runtime systemd-udevd
+		systemctl stop systemd-udevd
+	fi
+}
+
+start_udev()
+{
+	# SystemV init
+	if [ -x /etc/init.d/udev ]; then
+		/etc/init.d/udev start
+		return
+	fi
+
+	# Systemd
+	if [ -f /lib/systemd/system/systemd-udevd.service ]; then
+		systemctl unmask --runtime systemd-udevd
+		systemctl start systemd-udevd
+	fi
+}
+
 check_images
 
-umount ${node}${part}*  2> /dev/null || true
-
 #Stop Udev for block devices while partitioning in progress
-/etc/init.d/udev stop
+stop_udev
+
+umount ${node}${part}*  2> /dev/null || true
 
 delete_device
 create_parts
@@ -259,6 +291,6 @@ install_android
 
 echo
 #Start Udev back before exit
-/etc/init.d/udev start
+start_udev
 
 exit 0
