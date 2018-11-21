@@ -5805,7 +5805,7 @@ state.amixaudiosai {
 		}
 	}
 }
-state.imxwm8904 {
+state.wm8904audio {
 	control.1 {
 		iface MIXER
 		name 'EQ1 Volume'
