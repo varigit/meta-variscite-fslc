@@ -4,18 +4,18 @@
 require wpa-supplicant.inc
 
 LICENSE = "GPLv2 | BSD"
-LIC_FILES_CHKSUM = "file://../COPYING;md5=36b27801447e0662ee0138d17fe93880 \
-                    file://../README;md5=7f393579f8b109fe91f3b9765d26c7d3 \
-                    file://wpa_supplicant.c;beginline=1;endline=17;md5=8a3131126465e08eb6b8d17ea880e162"
+LIC_FILES_CHKSUM = "file://../COPYING;md5=292eece3f2ebbaa25608eed8464018a3 \
+                    file://../README;md5=3f01d778be8f953962388307ee38ed2b \
+                    file://wpa_supplicant.c;beginline=1;endline=17;md5=35e6d71fea6b15f61a9fac935bcf410f"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/wpa-supplicant:"
 
-# Tag: R8.6_SP1
-SRCREV = "dfb9d310814f0b7449c25fad87a8f1fa7ba8313e"
-BRANCH = "upstream_24"
+# Tag: R8.7_SP3
+SRCREV = "ee8fbdb840d95e048f58fb62bf3b5472041b5417"
+BRANCH = "upstream_25_rebase"
 
-# Add ti to the PV to indicate that this is a TI modify version of wpa-supplicant.
-PV = "R8.6_SP1-ti"
+# Add ti to the PV to indicate that this is a TI modified version of wpa-supplicant.
+PV = "R8.7_SP3-ti"
 
 PROVIDES += "wpa-supplicant"
 RPROVIDES_${PN}  += "wpa-supplicant"
