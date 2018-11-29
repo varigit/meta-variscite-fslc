@@ -10,6 +10,8 @@ LICENSE = "GPLv2 | BSD"
 DEPENDS = "gnutls dbus libnl openssl libgcrypt"
 RRECOMMENDS_${PN} = "wpa-supplicant-passphrase wpa-supplicant-cli"
 
+inherit pkgconfig
+
 # To prevent users from accidently picking up this customized version of
 # wpa-supplicant the DEFAULT_PREFERENCE will be set to -1.
 DEFAULT_PREFERENCE = "-1"
