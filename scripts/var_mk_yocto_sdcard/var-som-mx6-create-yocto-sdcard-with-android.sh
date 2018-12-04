@@ -91,16 +91,18 @@ function copy_android
 	echo "Creating vendor raw image"
 	${ANDROID_BUILD_ROOT}/out/host/linux-x86/bin/simg2img	${ANDROID_IMGS_PATH}/vendor.img ${ANDROID_IMGS_PATH}/vendor_raw.img
 	sync | pv -t
+	gzip -9 ${ANDROID_IMGS_PATH}/system_raw.img
+	gzip -9 ${ANDROID_IMGS_PATH}/vendor_raw.img
 	echo "Copying system raw image to /opt/images/"
-	pv ${ANDROID_IMGS_PATH}/system_raw.img >		${P2_MOUNT_DIR}/opt/images/Android/system_raw.img
+	pv ${ANDROID_IMGS_PATH}/system_raw.img.gz >		${P2_MOUNT_DIR}/opt/images/Android/system_raw.img.gz
 	sync | pv -t
 	echo "Copying vendor raw image to /opt/images/"
-	pv ${ANDROID_IMGS_PATH}/vendor_raw.img >		${P2_MOUNT_DIR}/opt/images/Android/vendor_raw.img
+	pv ${ANDROID_IMGS_PATH}/vendor_raw.img.gz >		${P2_MOUNT_DIR}/opt/images/Android/vendor_raw.img.gz
 	sync | pv -t
 	echo "Removing system raw image"
-	rm ${ANDROID_IMGS_PATH}/system_raw.img
+	rm ${ANDROID_IMGS_PATH}/system_raw.img.gz
 	echo "Removing vendor raw image"
-	rm ${ANDROID_IMGS_PATH}/vendor_raw.img
+	rm ${ANDROID_IMGS_PATH}/vendor_raw.img.gz
 }
 
 function copy_android_scripts
