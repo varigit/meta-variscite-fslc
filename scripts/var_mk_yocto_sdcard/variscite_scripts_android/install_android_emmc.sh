@@ -45,8 +45,8 @@ while [ "$moreoptions" = 1 -a $# -gt 0 ]; do
 	[ "$moreoptions" = 1 ] && shift
 done
 
-systemimage_file="system_raw.img"
-vendorimage_file="vendor_raw.img"
+systemimage_file="system_raw.img.gz"
+vendorimage_file="vendor_raw.img.gz"
 bootimage_file="boot-${soc_name}.img"
 recoveryimage_file="recovery-${soc_name}.img"
 imagesdir=/opt/images/Android
@@ -235,12 +235,12 @@ function install_android
 
 	echo
 	blue_underlined_bold_echo "Installing Android system image: $systemimage_file"
-	dd if=${imagesdir}/${systemimage_file} of=${node}${part}3
+	zcat ${imagesdir}/${systemimage_file} | dd of=${node}${part}3
 	sync; sleep 1
 
 	echo
 	blue_underlined_bold_echo "Installing Android vendor image: $vendorimage_file"
-	dd if=${imagesdir}/${vendorimage_file} of=${node}${part}9
+	zcat ${imagesdir}/${vendorimage_file} | dd of=${node}${part}9
 	sync; sleep 1
 }
 
