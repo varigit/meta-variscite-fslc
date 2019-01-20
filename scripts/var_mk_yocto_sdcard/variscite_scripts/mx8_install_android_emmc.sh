@@ -311,16 +311,9 @@ check_images
 
 umount ${node}${part}*  2> /dev/null || true
 
-#Stop Udev for block devices while partitioning in progress
-#/etc/init.d/udev stop
-
 delete_device
 create_parts
 install_bootloader
 format_android
 install_android
 finish
-
-#Start Udev back before exit
-#/etc/init.d/udev restart
-

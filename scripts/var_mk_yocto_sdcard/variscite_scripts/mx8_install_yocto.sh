@@ -3,7 +3,6 @@
 . /usr/bin/echos.sh
 
 IMGS_PATH=/opt/images/Yocto
-KERNEL_IMAGE=Image.gz
 UBOOT_IMAGE=imx-boot-sd.bin
 ROOTFS_IMAGE=rootfs.tar.gz
 BOARD=imx8m-var-dart
@@ -180,4 +179,3 @@ format_emmc_parts
 install_bootloader_to_emmc
 install_rootfs_to_emmc
 finish
-
