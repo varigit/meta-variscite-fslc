@@ -270,10 +270,13 @@ function install_yocto
 {
 	echo
 	echo "Installing Yocto Boot partition"
-	cp ${YOCTO_IMGS_PATH}/?Image-imx*.dtb		${P1_MOUNT_DIR}/
-	rename 's/.Image-//' ${P1_MOUNT_DIR}/?Image-*
+	for f in ${YOCTO_IMGS_PATH}/*.dtb; do
+		if [[ -L $f ]] && [[ $f != *${MACHINE}.dtb ]]; then
+			cp $f	${P1_MOUNT_DIR}/
+		fi
+	done
 
-	pv ${YOCTO_IMGS_PATH}/?Image >			${P1_MOUNT_DIR}/`cd ${YOCTO_IMGS_PATH}; ls ?Image`
+	pv ${YOCTO_IMGS_PATH}/?Image >	${P1_MOUNT_DIR}/`cd ${YOCTO_IMGS_PATH}; ls ?Image`
 	sync
 
 	echo
@@ -287,10 +290,13 @@ function copy_images
 	echo "Copying Yocto images to /opt/images/"
 	mkdir -p ${P2_MOUNT_DIR}/opt/images/Yocto
 
-	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/?Image-imx*.dtb		${P2_MOUNT_DIR}/opt/images/Yocto/
-	rename 's/.Image-//' ${P2_MOUNT_DIR}/opt/images/Yocto/?Image-*
+	for f in ${YOCTO_RECOVERY_ROOTFS_PATH}/*.dtb; do
+		if [[ -L $f ]] && [[ $f != *${MACHINE}.dtb ]]; then
+			cp $f	${P2_MOUNT_DIR}/opt/images/Yocto/
+		fi
+	done
 
-	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/?Image				${P2_MOUNT_DIR}/opt/images/Yocto/
+	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/?Image		${P2_MOUNT_DIR}/opt/images/Yocto/
 
 	# Copy image for eMMC
 	if [ -f ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}.tar.gz ]; then
