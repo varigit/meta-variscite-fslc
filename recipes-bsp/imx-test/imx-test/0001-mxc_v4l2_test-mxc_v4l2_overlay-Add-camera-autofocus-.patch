@@ -1,19 +1,20 @@
-From b0f12b0b05a7b32ee955f414b785c9169de9166a Mon Sep 17 00:00:00 2001
+From e40b50d6ae4683a77651ebdae3952640b299e77d Mon Sep 17 00:00:00 2001
 From: Harshesh Valera <harshesh.v@variscite.com>
 Date: Fri, 18 Jan 2019 10:26:28 -0800
-Subject: [PATCH] imx-test: mxc_v4l2_overlay: add autofocus support
+Subject: [PATCH] mxc_v4l2_test: mxc_v4l2_overlay: Add camera autofocus support
 
-Add -af switch to control autofocus support
--af <autofocus enable>
-0 - Autofocus Disabled
-1 - Autofocus Enabled (Default)
+Add camera autofocus support (enabled by default),
+and a command line parameter "-af" to explicitly
+enable/disable it.
+
 Signed-off-by: Harshesh Valera <harshesh.v@variscite.com>
+Signed-off-by: Eran Matityahu <eran.m@variscite.com>
 ---
- test/mxc_v4l2_test/mxc_v4l2_overlay.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ test/mxc_v4l2_test/mxc_v4l2_overlay.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
 diff --git a/test/mxc_v4l2_test/mxc_v4l2_overlay.c b/test/mxc_v4l2_test/mxc_v4l2_overlay.c
-index a1adbe6..f89824c 100644
+index a1adbe6..d2aebd0 100644
 --- a/test/mxc_v4l2_test/mxc_v4l2_overlay.c
 +++ b/test/mxc_v4l2_test/mxc_v4l2_overlay.c
 @@ -94,6 +94,7 @@ unsigned long loc_alpha_phy_addr1;
@@ -44,37 +45,32 @@ index a1adbe6..f89824c 100644
                          return -1;
                  }
          }
-@@ -600,6 +605,9 @@ main(int argc, char **argv)
+@@ -600,6 +605,7 @@ main(int argc, char **argv)
  	int ret = 0;
  	struct sigaction act;
  	struct v4l2_dbg_chip_ident chip;
 +	struct v4l2_control c;
-+		c.id = V4L2_CID_FOCUS_AUTO;
-+		c.value = 1;
  
  	print_name(argv);
  
-@@ -617,6 +625,8 @@ main(int argc, char **argv)
-                 return TFAIL;
-         }
- 
-+	c.value = af_enabled;
-+
-         if ((fd_v4l = open(v4l_device, O_RDWR, 0)) < 0) {
-                 printf("Unable to open %s\n", v4l_device);
-                 return TFAIL;
-@@ -719,6 +729,11 @@ main(int argc, char **argv)
+@@ -718,6 +724,17 @@ main(int argc, char **argv)
+ 			return TFAIL;
  		}
  	}
++	if (af_enabled) {
++		c.id = V4L2_CID_FOCUS_AUTO;
++		c.value = 1;
++	} else {
++		c.id = V4L2_CID_AUTO_FOCUS_STOP;
++		c.value = 0;
++	}
++	if (ioctl(fd_v4l, VIDIOC_S_CTRL, &c) < 0)
++	{
++		printf("Warning! VIDIOC_S_CTRL failed AF ctrls unavailable!\n");
++	}
  
-+        if (ioctl(fd_v4l, VIDIOC_S_CTRL, &c) < 0)
-+        {
-+                printf("Warning! VIDIOC_S_CTRL failed Focus Control not available!!\n");
-+        }
-+
          if (!g_overlay) {
  	        g_alpha.alpha = 255;
- 	        g_alpha.enable = 1;
 -- 
 2.7.4
 
