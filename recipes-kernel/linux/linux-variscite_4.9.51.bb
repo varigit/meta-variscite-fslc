@@ -1,6 +1,6 @@
 # Copyright (C) 2013-2016 Freescale Semiconductor
 # Copyright 2017 NXP
-# Copyright 2018 Variscite Ltd.
+# Copyright 2018-2019 Variscite Ltd.
 # Released under the MIT license (see COPYING.MIT for the terms)
 
 SUMMARY = "Linux Kernel provided and supported by NXP"
@@ -22,7 +22,7 @@ DEFAULT_DTB = "sd-emmc-dcss-lvds"
 
 KERNEL_SRC ?= "git://github.com/varigit/linux-imx;protocol=git"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
-SRCREV = "891be4433e8fff947c5b08c1f0f024346d877481"
+SRCREV = "fa349fc3ae13f5d76ec6600e76e10f19afa8aa5c"
 
 S = "${WORKDIR}/git"
 
