@@ -3,26 +3,26 @@
 # Copyright 2018-2019 Variscite Ltd.
 # Released under the MIT license (see COPYING.MIT for the terms)
 
-SUMMARY = "Linux Kernel provided and supported by NXP"
-DESCRIPTION = "Linux Kernel provided and supported by NXP with focus on \
-i.MX Family Reference Boards. It includes support for many IPs such as GPU, VPU and IPU."
+SUMMARY = "Linux kernel provided and supported by Variscite"
+DESCRIPTION = "Linux kernel provided and supported by Variscite (based on the kernel provided by NXP) \
+with focus on i.MX Family SOMs. It includes support for many IPs such as GPU, VPU and IPU."
 
 require recipes-kernel/linux/linux-imx.inc
-require recipes-kernel/linux/linux-dtb.inc
 
 DEPENDS += "lzop-native bc-native"
 
 DEFAULT_PREFERENCE = "1"
 
-SRCBRANCH = "imx_4.9.51_imx8m_ga_var01"
+SRCBRANCH = "imx_4.14.78_1.0.0_ga_var01"
 
 LOCALVERSION = "-${SRCBRANCH}"
-KERNEL_DEFCONFIG = "${S}/arch/arm64/configs/imx8m_var_dart_defconfig"
-DEFAULT_DTB = "sd-emmc-dcss-lvds"
+KERNEL_DEFCONFIG = "${S}/arch/arm64/configs/imx8_var_defconfig"
+DEFAULT_DTB = "sd-emmc-lvds"
+DEFAULT_DTB_PREFIX = "fsl-imx8mq-var-dart"
 
 KERNEL_SRC ?= "git://github.com/varigit/linux-imx;protocol=git"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
-SRCREV = "fa349fc3ae13f5d76ec6600e76e10f19afa8aa5c"
+SRCREV = "0a8a22a0ab6db4cd57555f02d72d33f417549b48"
 
 S = "${WORKDIR}/git"
 
@@ -33,7 +33,7 @@ do_copy_defconfig () {
 
 pkg_postinst_kernel-devicetree_append () {
 	cd $D/boot
-	ln -s ${MACHINE}-${DEFAULT_DTB}.dtb ${MACHINE}.dtb
+	ln -s ${DEFAULT_DTB_PREFIX}-${DEFAULT_DTB}.dtb ${UBOOT_DTB_NAME}
 }
 
 COMPATIBLE_MACHINE = "(imx8m-var-dart)"
