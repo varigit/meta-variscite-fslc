@@ -5,10 +5,10 @@
 IMGS_PATH=/opt/images/Yocto
 UBOOT_IMAGE=imx-boot-sd.bin
 ROOTFS_IMAGE=rootfs.tar.gz
-BOARD=imx8m-var-dart
+BOARD=fsl-imx8mq-var-dart
 BOOTLOADER_RESERVED_SIZE=8
 BOOTLOADER_OFFSET=33
-DISPLAY=dcss-lvds
+DISPLAY=lvds
 
 PART=p
 BLOCK=mmcblk0
@@ -109,6 +109,22 @@ install_rootfs_to_emmc()
 	umount ${MOUNTDIR}
 }
 
+stop_udev()
+{
+	if [ -f /lib/systemd/system/systemd-udevd.service ]; then
+		systemctl -q mask --runtime systemd-udevd
+		systemctl -q stop systemd-udevd
+	fi
+}
+
+start_udev()
+{
+	if [ -f /lib/systemd/system/systemd-udevd.service ]; then
+		systemctl -q unmask --runtime systemd-udevd
+		systemctl -q start systemd-udevd
+	fi
+}
+
 usage()
 {
 	echo
@@ -117,8 +133,8 @@ usage()
 	echo " Usage: $(basename $0) <option>"
 	echo
 	echo " options:"
-	echo " -h 						    show help message"
-	echo " -d <hdmi|hdmi-4k|dcss-lvds|lcdif-lvds|dual-display>  set display type, default is dcss-lvds"
+	echo " -h                           show help message"
+	echo " -d <lvds|hdmi|dual-display>  set display type, default is lvds"
 	echo
 }
 
@@ -154,9 +170,8 @@ do
 	esac
 done
 
-if [[ $DISPLAY != "hdmi" && $DISPLAY != "hdmi-4k" && $DISPLAY != "dual-display" && \
-      $DISPLAY != "dcss-lvds" && $DISPLAY != "lcdif-lvds" ]]; then
-	echo "Invalid display, should be hdmi, hdmi-4k, dcss-lvds, lcdif-lvds or dual-display"
+if [[ $DISPLAY != "lvds" && $DISPLAY != "hdmi" && $DISPLAY != "dual-display" ]]; then
+	echo "Invalid display, should be lvds, hdmi or dual-display"
 	exit 1
 fi
 
@@ -173,9 +188,11 @@ if [[ ! -b $NODE ]] ; then
 fi
 
 check_images
+stop_udev
 delete_emmc
 create_emmc_parts
 format_emmc_parts
 install_bootloader_to_emmc
 install_rootfs_to_emmc
+start_udev
 finish
