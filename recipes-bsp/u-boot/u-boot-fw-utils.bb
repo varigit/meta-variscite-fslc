@@ -13,7 +13,7 @@ inherit uboot-config
 
 do_compile_imx8m-var-dart () {
 	oe_runmake imx8m_var_dart_defconfig
-	oe_runmake env
+	oe_runmake envtools
 }
 
 do_install () {

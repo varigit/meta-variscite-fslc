@@ -1,8 +1,8 @@
 # Copyright (C) 2013-2016 Freescale Semiconductor
-# Copyright 2017 NXP
-# Copyright 2018 Variscite Ltd.
+# Copyright 2017-2018 NXP
+# Copyright 2018-2019 Variscite Ltd.
 
-DESCRIPTION = "i.MX U-Boot suppporting i.MX reference boards."
+SUMMARY = "U-Boot for Variscite's i.MX boards"
 require recipes-bsp/u-boot/u-boot.inc
 inherit pythonnative
 
@@ -18,7 +18,7 @@ LOCALVERSION ?= "-${SRCBRANCH}"
 BOOT_TOOLS = "imx-boot-tools"
 
 do_deploy_append_mx8mq () {
-    # Deploy the mkimage, u-boot-nodtb.bin and imx8m-var-dart.dtb for mkimage to generate boot binary
+    # Deploy the mkimage, u-boot-nodtb.bin and the U-Boot dtb for mkimage to generate boot binary
     if [ -n "${UBOOT_CONFIG}" ]
     then
         for config in ${UBOOT_MACHINE}; do
@@ -28,9 +28,9 @@ do_deploy_append_mx8mq () {
                 if [ $j -eq $i ]
                 then
                     install -d ${DEPLOYDIR}/${BOOT_TOOLS}
-                    install -m 0777 ${B}/${config}/arch/arm/dts/imx8m-var-dart.dtb  ${DEPLOYDIR}/${BOOT_TOOLS}
+                    install -m 0777 ${B}/${config}/arch/arm/dts/${UBOOT_DTB_NAME}  ${DEPLOYDIR}/${BOOT_TOOLS}
                     install -m 0777 ${B}/${config}/tools/mkimage  ${DEPLOYDIR}/${BOOT_TOOLS}/mkimage_uboot
-                    install -m 0777 ${B}/${config}/u-boot-nodtb.bin  ${DEPLOYDIR}/${BOOT_TOOLS}
+                    install -m 0777 ${B}/${config}/u-boot-nodtb.bin  ${DEPLOYDIR}/${BOOT_TOOLS}/u-boot-nodtb.bin-${MACHINE}-${UBOOT_CONFIG}
                 fi
             done
             unset  j
@@ -46,4 +46,3 @@ COMPATIBLE_MACHINE = "(mx6|mx7|mx8)"
 UBOOT_NAME_mx6 = "u-boot-${MACHINE}.bin-${UBOOT_CONFIG}"
 UBOOT_NAME_mx7 = "u-boot-${MACHINE}.bin-${UBOOT_CONFIG}"
 UBOOT_NAME_mx8 = "u-boot-${MACHINE}.bin-${UBOOT_CONFIG}"
-
