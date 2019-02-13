@@ -16,6 +16,11 @@ do_compile_imx8m-var-dart () {
 	oe_runmake envtools
 }
 
+do_compile_imx8mm-var-dart () {
+	oe_runmake imx8mm_var_dart_defconfig
+	oe_runmake envtools
+}
+
 do_install () {
 	install -d ${D}${base_sbindir}
 	install -d ${D}${sysconfdir}
