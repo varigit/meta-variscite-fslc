@@ -13,27 +13,15 @@ readonly SCRIPT_POINT=${ABSOLUTE_DIRECTORY}
 
 readonly YOCTO_ROOT="${SCRIPT_POINT}/../../../../"
 
-if [[ -e ${YOCTO_ROOT}b2qt-init-build-env ]] ; then
-	readonly BSP_TYPE="B2QT"
-	readonly YOCTO_BUILD=${YOCTO_ROOT}/build-${MACHINE}
-	readonly YOCTO_DEFAULT_IMAGE=b2qt-embedded-qt5-image
-elif [[ ${MACHINE} = "imx8m-var-dart" ]] ; then
-	readonly BSP_TYPE="YOCTO"
-	readonly YOCTO_BUILD=${YOCTO_ROOT}/build_xwayland
-	readonly YOCTO_DEFAULT_IMAGE=fsl-image-gui
-else
-	readonly BSP_TYPE="YOCTO"
-	readonly YOCTO_BUILD=${YOCTO_ROOT}/build_x11
-	readonly YOCTO_DEFAULT_IMAGE=fsl-image-gui
-fi
-echo "BSP type: ${BSP_TYPE}"
+readonly BSP_TYPE="YOCTO"
+readonly YOCTO_BUILD=${YOCTO_ROOT}/build_xwayland
+readonly YOCTO_DEFAULT_IMAGE=fsl-image-gui
 
 readonly YOCTO_SCRIPTS_PATH=${SCRIPT_POINT}/variscite_scripts
 readonly YOCTO_IMGS_PATH=${YOCTO_BUILD}/tmp/deploy/images/${MACHINE}
 
 # Sizes are in MiB
-BOOTLOAD_RESERVE_SIZE=4
-BOOT_ROM_SIZE=20
+BOOTLOAD_RESERVE_SIZE=8
 DEFAULT_ROOTFS_SIZE=3700
 
 AUTO_FILL_SD=0
@@ -98,7 +86,7 @@ echo "================================================"
 
 help() {
 	bn=`basename $0`
-	echo " Usage: MACHINE=<var-som-mx6|imx6ul-var-dart|imx7-var-som> $bn <options> device_node"
+	echo " Usage: MACHINE=<imx8m-var-dart|imx8mm-var-dart> $bn <options> device_node"
 	echo
 	echo " options:"
 	echo " -h		display this Help message"
@@ -115,19 +103,7 @@ if [[ $EUID -ne 0 ]] ; then
 	exit 1
 fi
 
-if [[ $MACHINE == var-som-mx6 ]] ; then
-	FAT_VOLNAME=BOOT-VARMX6
-	IS_SPL=true
-elif [[ $MACHINE == imx6ul-var-dart ]] ; then
-	FAT_VOLNAME=BOOT-VAR6UL
-	IS_SPL=true
-elif [[ $MACHINE == imx7-var-som ]] ; then
-	FAT_VOLNAME=BOOT-VARMX7
-	IS_SPL=false
-elif [[ $MACHINE == "imx8m-var-dart" ]] ; then
-	BOOTLOAD_RESERVE_SIZE=8
-	IS_SPL=false
-else
+if [[ $MACHINE != "imx8m-var-dart" && $MACHINE != "imx8mm-var-dart" ]] ; then
 	help
 	exit 1
 fi
@@ -178,28 +154,16 @@ read -p "Press Enter to continue"
 if [ "${AUTO_FILL_SD}" -eq "1" ]; then
 	TOTAL_SIZE=`sfdisk -s ${node}`
 	TOTAL_SIZE=`expr ${TOTAL_SIZE} / 1024`
-	if [[ $MACHINE != "imx8m-var-dart" ]] ; then
-		ROOTFS_SIZE=`expr ${TOTAL_SIZE} - ${BOOTLOAD_RESERVE_SIZE} - ${BOOT_ROM_SIZE} - ${SPARE_SIZE}`
-	else
-		ROOTFS_SIZE=`expr ${TOTAL_SIZE} - ${BOOTLOAD_RESERVE_SIZE} - ${SPARE_SIZE}`
-	fi
+	ROOTFS_SIZE=`expr ${TOTAL_SIZE} - ${BOOTLOAD_RESERVE_SIZE} - ${SPARE_SIZE}`
 else
 	ROOTFS_SIZE=${DEFAULT_ROOTFS_SIZE}
 fi
 
 if [ "${cal_only}" -eq "1" ]; then
-if [[ $MACHINE != "imx8m-var-dart" ]] ; then
-cat << EOF
-BOOTLOADER (No Partition) : ${BOOTLOAD_RESERVE_SIZE}MiB
-BOOT                      : ${BOOT_ROM_SIZE}MiB
-ROOT-FS                   : ${ROOTFS_SIZE}MiB
-EOF
-else
 cat << EOF
 BOOTLOADER (No Partition) : ${BOOTLOAD_RESERVE_SIZE}MiB
 ROOT-FS                   : ${ROOTFS_SIZE}MiB
 EOF
-fi
 exit 3
 fi
 
@@ -237,35 +201,17 @@ function create_parts
 	BLOCK=`echo ${node} | cut -d "/" -f 3`
 	SECT_SIZE_BYTES=`cat /sys/block/${BLOCK}/queue/physical_block_size`
 
-	if [[ $MACHINE != "imx8m-var-dart" ]] ; then	
-		BOOTLOAD_RESERVE_SIZE_BYTES=$((BOOTLOAD_RESERVE_SIZE * 1024 * 1024))
-		BOOT_ROM_SIZE_BYTES=$((BOOT_ROM_SIZE * 1024 * 1024))
-		ROOTFS_SIZE_BYTES=$((ROOTFS_SIZE * 1024 * 1024))
+	BOOTLOAD_RESERVE_SIZE_BYTES=$((BOOTLOAD_RESERVE_SIZE * 1024 * 1024))
+	ROOTFS_SIZE_BYTES=$((ROOTFS_SIZE * 1024 * 1024))
 
-		PART1_START=`ceildiv ${BOOTLOAD_RESERVE_SIZE_BYTES} ${SECT_SIZE_BYTES}`
-		PART1_SIZE=`ceildiv ${BOOT_ROM_SIZE_BYTES} ${SECT_SIZE_BYTES}`
-		PART2_START=$((PART1_START + PART1_SIZE))
-		PART2_SIZE=$((ROOTFS_SIZE_BYTES / SECT_SIZE_BYTES))
-
-sfdisk --force -uS ${node} &> /dev/null << EOF
-${PART1_START},${PART1_SIZE},c
-${PART2_START},${PART2_SIZE},83
-EOF
-	else
-
-		BOOTLOAD_RESERVE_SIZE_BYTES=$((BOOTLOAD_RESERVE_SIZE * 1024 * 1024))
-		ROOTFS_SIZE_BYTES=$((ROOTFS_SIZE * 1024 * 1024))
-
-		PART1_START=`ceildiv ${BOOTLOAD_RESERVE_SIZE_BYTES} ${SECT_SIZE_BYTES}`
-		PART1_SIZE=`ceildiv ${ROOTFS_SIZE_BYTES} ${SECT_SIZE_BYTES}`
+	PART1_START=`ceildiv ${BOOTLOAD_RESERVE_SIZE_BYTES} ${SECT_SIZE_BYTES}`
+	PART1_SIZE=`ceildiv ${ROOTFS_SIZE_BYTES} ${SECT_SIZE_BYTES}`
 
 sfdisk --force -uS ${node} &> /dev/null << EOF
 ${PART1_START},${PART1_SIZE},83
 EOF
-	fi
 
 	sync; sleep 1
-
 	fdisk -l $node
 }
 
@@ -273,13 +219,7 @@ function format_parts
 {
 	echo
 	echo "Formatting partitions"
-	if [[ $MACHINE != "imx8m-var-dart" ]] ; then
-		mkfs.vfat ${node}${part}1 -n ${FAT_VOLNAME}
-		mkfs.ext4 ${node}${part}2 -L rootfs
-	else
-		mkfs.ext4 ${node}${part}1 -L rootfs
-	fi
-
+	mkfs.ext4 ${node}${part}1 -L rootfs
 	sync; sleep 1
 }
 
@@ -287,40 +227,19 @@ function install_bootloader
 {
 	echo
 	echo "Installing U-Boot"
-	if [[ $IS_SPL == true ]] ; then
-		dd if=${YOCTO_IMGS_PATH}/SPL-sd of=${node} bs=1K seek=1; sync
-		dd if=${YOCTO_IMGS_PATH}/u-boot.img-sd of=${node} bs=1K seek=69; sync
-	elif [[ $MACHINE != "imx8m-var-dart" ]]; then
-		dd if=${YOCTO_IMGS_PATH}/u-boot.imx-sd of=${node} bs=1K seek=1; sync
-	else 
-		dd if=${YOCTO_IMGS_PATH}/imx-boot-${MACHINE}-sd.bin of=${node} bs=1K seek=33; sync
-	fi
+	dd if=${YOCTO_IMGS_PATH}/imx-boot-${MACHINE}-sd.bin of=${node} bs=1K seek=33; sync
 }
 
 function mount_parts
 {
-	if [[ $MACHINE != "imx8m-var-dart" ]]; then
-		mkdir -p ${P1_MOUNT_DIR}
-		mkdir -p ${P2_MOUNT_DIR}
-		sync
-		mount ${node}${part}1  ${P1_MOUNT_DIR}
-		mount ${node}${part}2  ${P2_MOUNT_DIR}
-	else
-		mkdir -p ${P2_MOUNT_DIR}
-		sync
-		mount ${node}${part}1  ${P2_MOUNT_DIR}
-	fi	
+	mkdir -p ${P2_MOUNT_DIR}
+	sync
+	mount ${node}${part}1  ${P2_MOUNT_DIR}
 }
 
 function unmount_parts
 {
-	if [[ $MACHINE != "imx8m-var-dart" ]]; then
-		umount ${P1_MOUNT_DIR}
-		umount ${P2_MOUNT_DIR}
-	else
-		umount ${P2_MOUNT_DIR}
-	fi
-
+	umount ${P2_MOUNT_DIR}
 	rm -rf ${TEMP_DIR}
 }
 
@@ -330,14 +249,6 @@ function install_yocto
 	echo "Installing Yocto Root File System"
 	pv ${YOCTO_IMGS_PATH}/${YOCTO_DEFAULT_IMAGE}-${MACHINE}.tar.gz | tar -xz -C ${P2_MOUNT_DIR}/
 	sync
-
-	if [[ $MACHINE != "imx8m-var-dart" ]]; then
-		echo
-		echo "Installing Yocto Boot partition"
-		cp ${YOCTO_IMGS_PATH}/?Image-imx*.dtb		${P1_MOUNT_DIR}/
-		rename 's/.Image-//' 				${P1_MOUNT_DIR}/?Image-*
-		pv ${YOCTO_IMGS_PATH}/?Image >			${P1_MOUNT_DIR}/`cd ${YOCTO_IMGS_PATH}; ls ?Image`
-	fi
 }
 
 function copy_images
@@ -346,12 +257,6 @@ function copy_images
 	echo "Copying Yocto images to /opt/images/"
 	mkdir -p ${P2_MOUNT_DIR}/opt/images/Yocto
 
-	if [[ $MACHINE != "imx8m-var-dart" ]]; then
-		cp ${YOCTO_RECOVERY_ROOTFS_PATH}/?Image-imx*.dtb		${P2_MOUNT_DIR}/opt/images/Yocto/
-		rename 's/.Image-//' ${P2_MOUNT_DIR}/opt/images/Yocto/?Image-*
-		cp ${YOCTO_RECOVERY_ROOTFS_PATH}/?Image			${P2_MOUNT_DIR}/opt/images/Yocto/
-	fi
-
 	# Copy image for eMMC
 	if [ -f ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}.tar.gz ]; then
 		pv ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}.tar.gz > ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.tar.gz
@@ -359,74 +264,16 @@ function copy_images
 		echo "rootfs.tar.gz file is not present. Installation on \"eMMC\" will not be supported."
 	fi
 
-	# Copy image for NAND flash
-	if [ -f ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}.ubi ]; then
-		pv ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}.ubi > ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.ubi
-	else
-		if [[ $MACHINE != "imx8m-var-dart" ]]; then
-		  echo "rootfs.ubi file is not present. Installation on \"NAND flash\" will not be supported."
-		fi
-	fi
-
-	if [[ $MACHINE != "imx8m-var-dart" ]]; then
-		cp ${YOCTO_RECOVERY_ROOTFS_PATH}/u-boot.im?-nand		${P2_MOUNT_DIR}/opt/images/Yocto/
-		cp ${YOCTO_RECOVERY_ROOTFS_PATH}/u-boot.im?-sd			${P2_MOUNT_DIR}/opt/images/Yocto/
-	fi
-
-	if [[ $IS_SPL == true ]] ; then
-		cp ${YOCTO_RECOVERY_ROOTFS_PATH}/SPL-nand			${P2_MOUNT_DIR}/opt/images/Yocto/
-		cp ${YOCTO_RECOVERY_ROOTFS_PATH}/SPL-sd				${P2_MOUNT_DIR}/opt/images/Yocto/
-	fi
-
-	if [[ $MACHINE = "imx8m-var-dart" ]]; then
-		cp ${YOCTO_RECOVERY_ROOTFS_PATH}/imx-boot-${MACHINE}-sd.bin	${P2_MOUNT_DIR}/opt/images/Yocto/imx-boot-sd.bin
-	fi
+	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/imx-boot-${MACHINE}-sd.bin ${P2_MOUNT_DIR}/opt/images/Yocto/imx-boot-sd.bin
 }
 
 function copy_scripts
 {
 	echo
-	echo "Copying scripts and desktop icons"
+	echo "Copying scripts"
 
-	cp ${YOCTO_SCRIPTS_PATH}/echos.sh				${P2_MOUNT_DIR}/usr/bin/
-	if [[ $MACHINE == var-som-mx6 ]] ; then
-		cp ${YOCTO_SCRIPTS_PATH}/mx6_install_yocto.sh		${P2_MOUNT_DIR}/usr/bin/install_yocto.sh
-		cp ${YOCTO_SCRIPTS_PATH}/mx6_install_yocto_emmc.sh	${P2_MOUNT_DIR}/usr/bin/install_yocto_emmc.sh
-	elif [[ $MACHINE != imx8m-var-dart ]] ; then
-		cp ${YOCTO_SCRIPTS_PATH}/mx6ul_mx7_install_yocto.sh	${P2_MOUNT_DIR}/usr/bin/install_yocto.sh
-	else
-		cp ${YOCTO_SCRIPTS_PATH}/mx8_install_yocto.sh		${P2_MOUNT_DIR}/usr/bin/install_yocto.sh
-	fi
-
-	if [[ $MACHINE = "imx8m-var-dart" ]]; then
-		return
-	fi
-	
-	if [ -d ${P2_MOUNT_DIR}/usr/share/applications ]; then
-		cp ${YOCTO_SCRIPTS_PATH}/${MACHINE}*.desktop		${P2_MOUNT_DIR}/usr/share/applications/
-
-		# Remove inactive icons
-		if [ ! -f ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.tar.gz ]; then
-			rm -rf ${P2_MOUNT_DIR}/usr/share/applications/${MACHINE}*yocto*emmc*.desktop
-		fi
-
-		if [ ! -f ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs.ubi ]; then
-			rm -rf ${P2_MOUNT_DIR}/usr/share/applications/${MACHINE}*yocto*nand*.desktop
-		fi
-
-		if [ ${RELEASE_NOTES_FILE} ] && [ -f ${RELEASE_NOTES_FILE} ]; then
-			cp ${YOCTO_SCRIPTS_PATH}/release_notes.desktop		${P2_MOUNT_DIR}/usr/share/applications/
-		fi
-
-		if [[ ${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME} == var-image-swupdate* ]]; then
-			sed -i 's/install_yocto.sh/& -u/' ${P2_MOUNT_DIR}/usr/share/applications/${MACHINE}*yocto*emmc*.desktop
-		fi
-	fi
-
-	if [ ${RELEASE_NOTES_FILE} ] && [ -f ${RELEASE_NOTES_FILE} ]; then
-		cp ${RELEASE_NOTES_FILE} 				${P2_MOUNT_DIR}/opt/images/release_notes.txt
-	fi
-
+	cp ${YOCTO_SCRIPTS_PATH}/echos.sh 		${P2_MOUNT_DIR}/usr/bin/
+	cp ${YOCTO_SCRIPTS_PATH}/mx8_install_yocto.sh	${P2_MOUNT_DIR}/usr/bin/install_yocto.sh
 }
 
 umount ${node}${part}*  2> /dev/null || true
