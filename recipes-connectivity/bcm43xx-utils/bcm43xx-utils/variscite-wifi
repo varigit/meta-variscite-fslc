@@ -3,52 +3,61 @@
 . /etc/wifi/variscite-wifi.conf
 . /etc/wifi/variscite-wifi-common.sh
 
-#################################################
-#              Execution starts here            #
-#################################################
+# Return true if WIFI interface exists
+wifi_interface_exists()
+{
+	for i in $(seq 1 20); do
+		[ -d /sys/class/net/wlan0 ] && return 0
+		sleep 1
+	done
 
-# Exit if booting from SD on DART-IMX8M
-if grep -q MX8M /sys/devices/soc0/soc_id && \
-   grep -q mmcblk1 /proc/cmdline; then
-	exit 0
-fi
+	return 1
+}
 
-# Enable ethernet and exit if booting from eMMC without WIFI
-if grep -q MX8M /sys/devices/soc0/soc_id && \
-   ! grep -q WIFI /sys/devices/soc0/machine ; then
-	modprobe fec
-	exit 0
-fi
+# Start WIFI hardware
+wifi_start()
+{
+	# Exit if WIFI should not be started
+	wifi_should_not_be_started && exit 0
 
-# Exit if WIFI is already up
-if [ -d /sys/class/net/wlan0 ]; then
-	exit 0
-fi
+	# Setup WIFI control GPIOs
+	wifi_pre_up
 
-# Run initial setup sequence
-wifi_setup
+	# Try starting WIFI hardware
+	for i in $(seq 1 3); do
+		# Up WIFI
+		wifi_up
 
-for i in $(seq 1 3); do
+		# Exit if WIFI interface exists
+		wifi_interface_exists && exit 0
 
-	# Up WIFI
-	wifi_up
+		# Down WIFI
+		wifi_down
 
-	# Check that WIFI interface is up
-	if wifi_is_up; then
-		echo "WIFI startup success"
-		exit 0
-	fi
+		# Wait enough time for discharge
+		sleep 5
+	done
 
-	# Down WIFI
-	wifi_down
+	exit 1
+}
 
-	# Wait enough time for discharge
-	sleep 5
-done
+# Stop WIFI hardware
+# Note that on DART-MX8M this also stops Ethernet
+wifi_stop()
+{
+   wifi_down
+}
 
-echo "WIFI startup failed"
+###########################
+#  Execution starts here  #
+###########################
+case $1 in
+start)
+	wifi_start
+	;;
+stop)
+	wifi_stop
+	;;
+esac
 
-exit 1
-
-
-
+exit 0

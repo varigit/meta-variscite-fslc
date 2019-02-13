@@ -17,6 +17,7 @@ FILES_${PN} = " \
 	/etc/wifi/*  \
 	/etc/init.d/* \
 	/etc/rcS.d/* \
+	/etc/modprobe.d \
 	/lib/systemd/system/* \
 	/etc/systemd/system/* \
 "
@@ -29,7 +30,6 @@ do_install() {
 	install -m 0644 ${WORKDIR}/variscite-wifi.conf ${D}${sysconfdir}/wifi
 	install -m 0644 ${WORKDIR}/variscite-wifi-common.sh ${D}/${sysconfdir}/wifi
 	install -m 0755 ${WORKDIR}/variscite-wifi ${D}/${sysconfdir}/wifi
-	install -m 0644 ${WORKDIR}/blacklist.conf ${D}/${sysconfdir}/wifi
 
 	if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)}; then
 		install -d ${D}${systemd_unitdir}/system
@@ -45,4 +45,11 @@ do_install() {
 	fi
 }
 
+do_install_append_imx8m-var-dart() {
+	install -m 0644 ${WORKDIR}/blacklist.conf ${D}/${sysconfdir}/wifi
+}
 
+do_install_append_imx8mm-var-dart() {
+	install -d ${D}${sysconfdir}/modprobe.d
+	install -m 0644 ${WORKDIR}/blacklist.conf ${D}/${sysconfdir}/modprobe.d
+}

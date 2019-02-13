@@ -1,5 +1,5 @@
 # Setup WIFI control GPIOs
-wifi_setup()
+wifi_pre_up()
 {
 	if [ ! -d /sys/class/gpio/gpio${WIFI_VSEL_GPIO} ]; then
 		echo ${WIFI_VSEL_GPIO} > /sys/class/gpio/export
@@ -31,23 +31,12 @@ wifi_setup()
 	usleep 10000
 }
 
-# Check that WIFI interface exists
-wifi_is_up()
-{
-	for i in $(seq 1 20); do
-		[ -d /sys/class/net/wlan0 ] && return 0
-		sleep 1
-	done
-
-	return 1
-}
-
 # Power up WIFI chip
 wifi_up()
 {
 	# Unbind WIFI device from MMC controller
 	if [ -e /sys/bus/platform/drivers/sdhci-esdhc-imx/${WIFI_MMC_HOST} ]; then
-	   echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
+		echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
         fi
 
 	# WIFI_PWR up
@@ -96,7 +85,7 @@ wifi_down()
 	   echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
 	fi
 
-	# WLAN_EN down
+	# WIFI_EN down
 	echo 0 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
 
 	# BT_BUF down
@@ -106,7 +95,26 @@ wifi_down()
 	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
 	usleep 10000
 
-	# WIFI power down
+	# WIFI_PWR down
 	echo 0 > /sys/class/gpio/gpio${WIFI_PWR_GPIO}/value
 }
 
+# Return true if WIFI should not be started
+wifi_should_not_be_started()
+{
+        # Do not enable WIFI if it is already up
+        [ -d /sys/class/net/wlan0 ] && return 0
+
+        # Do not enable WIFI if booting from SD on DART-IMX8M          
+        if grep -q mmcblk1 /proc/cmdline; then
+                return 0
+        fi
+
+        # Enable ethernet and exit if booting from eMMC without WIFI
+        if ! grep -q WIFI /sys/devices/soc0/machine; then
+                modprobe fec
+                return 0
+        fi
+
+        return 1
+}
