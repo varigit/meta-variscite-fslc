@@ -5,17 +5,41 @@
 IMGS_PATH=/opt/images/Yocto
 UBOOT_IMAGE=imx-boot-sd.bin
 ROOTFS_IMAGE=rootfs.tar.gz
-BOARD=fsl-imx8mq-var-dart
 BOOTLOADER_RESERVED_SIZE=8
 BOOTLOADER_OFFSET=33
 DISPLAY=lvds
-
 PART=p
-BLOCK=mmcblk0
-NODE=/dev/${BLOCK}
 ROOTFSPART=1
 BOOTDIR=/boot
-MOUNTDIR=/run/media/${BLOCK}${PART}${ROOTFSPART}
+
+check_board()
+{
+	if grep -q "i.MX8MM" /sys/devices/soc0/soc_id; then
+		BOARD=imx8mm-var-dart
+		DTB_PREFIX=fsl-imx8mm-var-dart
+		BLOCK=mmcblk2
+	elif grep -q "i.MX8M" /sys/devices/soc0/soc_id; then
+		BOARD=imx8m-var-dart
+		DTB_PREFIX=fsl-imx8mq-var-dart
+		BLOCK=mmcblk0
+
+		if [[ $DISPLAY != "lvds" && $DISPLAY != "hdmi" && \
+		      $DISPLAY != "dual-display" ]]; then
+			red_bold_echo "ERROR: invalid display, should be lvds, hdmi or dual-display"
+			exit 1
+		fi
+	else
+		red_bold_echo "ERROR: Unsupported board"
+		exit 1	
+	fi
+
+
+	if [[ ! -b /dev/${BLOCK} ]] ; then
+		red_bold_echo "ERROR: Can't find eMMC device (/dev/${BLOCK})."
+		red_bold_echo "Please verify you are using the correct options for your SOM."
+		exit 1
+	fi
+}
 
 check_images()
 {
@@ -35,16 +59,16 @@ delete_emmc()
 	echo
 	blue_underlined_bold_echo "Deleting current partitions"
 
-	umount ${NODE}${PART}* 2>/dev/null || true
+	umount /dev/${BLOCK}${PART}* 2>/dev/null || true
 
 	for ((i=1; i<=16; i++)); do
-		if [[ -e ${NODE}${PART}${i} ]]; then
-			dd if=/dev/zero of=${NODE}${PART}${i} bs=1M count=1 2>/dev/null || true
+		if [[ -e /dev/${BLOCK}${PART}${i} ]]; then
+			dd if=/dev/zero of=/dev/${BLOCK}${PART}${i} bs=1M count=1 2>/dev/null || true
 		fi
 	done
 	sync
 
-	dd if=/dev/zero of=$NODE bs=1M count=${BOOTLOADER_RESERVED_SIZE}
+	dd if=/dev/zero of=/dev/${BLOCK} bs=1M count=${BOOTLOADER_RESERVED_SIZE}
 
 	sync; sleep 1
 }
@@ -58,10 +82,10 @@ create_emmc_parts()
 	PART1_FIRST_SECT=$(($BOOTLOADER_RESERVED_SIZE * 1024 * 1024 / $SECT_SIZE_BYTES))
 
 	(echo n; echo p; echo $ROOTFSPART; echo $PART1_FIRST_SECT; echo; \
-	 echo p; echo w) | fdisk -u $NODE > /dev/null
+	 echo p; echo w) | fdisk -u /dev/${BLOCK} > /dev/null
 
 	sync; sleep 1
-	fdisk -u -l $NODE
+	fdisk -u -l /dev/${BLOCK}
 }
 
 format_emmc_parts()
@@ -69,7 +93,7 @@ format_emmc_parts()
 	echo
 	blue_underlined_bold_echo "Formatting partitions"
 
-	mkfs.ext4 ${NODE}${PART}${ROOTFSPART} -L rootfs
+	mkfs.ext4 /dev/${BLOCK}${PART}${ROOTFSPART} -L rootfs
 
 	sync; sleep 1
 }
@@ -79,7 +103,7 @@ install_bootloader_to_emmc()
 	echo
 	blue_underlined_bold_echo "Installing booloader"
 
-	dd if=${IMGS_PATH}/${UBOOT_IMAGE} of=${NODE} bs=1K seek=${BOOTLOADER_OFFSET}
+	dd if=${IMGS_PATH}/${UBOOT_IMAGE} of=/dev/${BLOCK} bs=1K seek=${BOOTLOADER_OFFSET}
 	sync
 }
 
@@ -88,20 +112,23 @@ install_rootfs_to_emmc()
 	echo
 	blue_underlined_bold_echo "Installing rootfs"
 
+	MOUNTDIR=/run/media/${BLOCK}${PART}${ROOTFSPART}
 	mkdir -p ${MOUNTDIR}
-	mount ${NODE}${PART}${ROOTFSPART} ${MOUNTDIR}
+	mount /dev/${BLOCK}${PART}${ROOTFSPART} ${MOUNTDIR}
 
 	printf "Extracting files"
 	tar --warning=no-timestamp -xpf ${IMGS_PATH}/${ROOTFS_IMAGE} -C ${MOUNTDIR} --checkpoint=.1200
 
-	# Create DTB symlink
-	(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${BOARD}-emmc-wifi-${DISPLAY}.dtb ${BOARD}.dtb)
+	if [[ ${BOARD} = "imx8m-var-dart" ]]; then
+		# Create DTB symlink
+		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-emmc-wifi-${DISPLAY}.dtb ${DTB_PREFIX}.dtb)
+
+		# Install blacklist.conf
+		cp ${MOUNTDIR}/etc/wifi/blacklist.conf ${MOUNTDIR}/etc/modprobe.d
+	fi
 
 	# Adjust u-boot-fw-utils for eMMC on the installed rootfs
 	sed -i "s/\/dev\/mmcblk./\/dev\/${BLOCK}/" ${MOUNTDIR}/etc/fw_env.config
-
-	# Install blacklist.conf
-	cp ${MOUNTDIR}/etc/wifi/blacklist.conf ${MOUNTDIR}/etc/modprobe.d
 
 	echo
 	sync
@@ -145,6 +172,10 @@ finish()
 	exit 0
 }
 
+#################################################
+#           Execution starts here               #
+#################################################
+
 if [[ $EUID != 0 ]] ; then
 	red_bold_echo "This script must be run with super-user privileges"
 	exit 1
@@ -170,23 +201,13 @@ do
 	esac
 done
 
-if [[ $DISPLAY != "lvds" && $DISPLAY != "hdmi" && $DISPLAY != "dual-display" ]]; then
-	echo "Invalid display, should be lvds, hdmi or dual-display"
-	exit 1
-fi
-
 printf "Board: "
 blue_bold_echo $BOARD
 
 printf "Installing to internal storage device: "
 blue_bold_echo eMMC
 
-if [[ ! -b $NODE ]] ; then
-	red_bold_echo "ERROR: Can't find eMMC device ($NODE)."
-	red_bold_echo "Please verify you are using the correct options for your SOM."
-	exit 1
-fi
-
+check_board
 check_images
 stop_udev
 delete_emmc
