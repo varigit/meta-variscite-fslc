@@ -31,10 +31,10 @@ do_copy_defconfig () {
     cp ${KERNEL_DEFCONFIG} ${WORKDIR}/defconfig
 }
 
-pkg_postinst_kernel-devicetree_append () {
-	cd $D/boot
-	ln -s ${DEFAULT_DTB_PREFIX}-${DEFAULT_DTB}.dtb ${UBOOT_DTB_NAME}
+pkg_postinst_kernel-devicetree_append_imx8m-var-dart () {
+    cd $D/boot
+    ln -s ${DEFAULT_DTB_PREFIX}-${DEFAULT_DTB}.dtb ${UBOOT_DTB_NAME}
 }
 
-COMPATIBLE_MACHINE = "(imx8m-var-dart)"
+COMPATIBLE_MACHINE = "(imx8m-var-dart|imx8mm-var-dart)"
 EXTRA_OEMAKE_append_mx8 = " ARCH=arm64"
