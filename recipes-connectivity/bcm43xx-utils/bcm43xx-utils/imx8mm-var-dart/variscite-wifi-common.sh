@@ -103,3 +103,9 @@ wifi_should_not_be_started()
 
 	return 1
 }
+
+# Return true if WIFI should not be stopped
+wifi_should_not_be_stopped()
+{
+	return 1
+}

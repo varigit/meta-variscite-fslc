@@ -118,3 +118,20 @@ wifi_should_not_be_started()
 
         return 1
 }
+
+# Return true if WIFI should not be stopped
+wifi_should_not_be_stopped()
+{
+        # Do not stop WIFI if booting from SD on DART-IMX8M
+        if grep -q mmcblk1 /proc/cmdline; then
+                return 0
+        fi
+
+        # Do not stop WIFI if booting from eMMC without WIFI
+        if ! grep -q WIFI /sys/devices/soc0/machine; then
+                modprobe fec
+                return 0
+        fi
+
+        return 1
+}

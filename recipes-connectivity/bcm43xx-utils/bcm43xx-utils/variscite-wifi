@@ -45,7 +45,10 @@ wifi_start()
 # Note that on DART-MX8M this also stops Ethernet
 wifi_stop()
 {
-   wifi_down
+	# Exit if WIFI should not be stopped
+	wifi_should_not_be_stopped && exit 0
+
+	wifi_down
 }
 
 ###########################
