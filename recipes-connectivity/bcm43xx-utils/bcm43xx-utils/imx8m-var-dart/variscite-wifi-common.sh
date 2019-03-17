@@ -1,11 +1,6 @@
 # Setup WIFI control GPIOs
 wifi_pre_up()
 {
-	if [ ! -d /sys/class/gpio/gpio${WIFI_VSEL_GPIO} ]; then
-		echo ${WIFI_VSEL_GPIO} > /sys/class/gpio/export
-		echo out > /sys/class/gpio/gpio${WIFI_VSEL_GPIO}/direction
-	fi
-
 	if [ ! -d /sys/class/gpio/gpio${WIFI_PWR_GPIO} ]; then
 		echo ${WIFI_PWR_GPIO} > /sys/class/gpio/export
 		echo out > /sys/class/gpio/gpio${WIFI_PWR_GPIO}/direction
@@ -25,10 +20,6 @@ wifi_pre_up()
 		echo ${BT_EN_GPIO} > /sys/class/gpio/export
 		echo out > /sys/class/gpio/gpio${BT_EN_GPIO}/direction
 	fi
-
-	# WIFI_VSEL up
-	echo 1 > /sys/class/gpio/gpio${WIFI_VSEL_GPIO}/value
-	usleep 10000
 }
 
 # Power up WIFI chip
