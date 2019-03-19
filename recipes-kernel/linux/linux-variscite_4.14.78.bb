@@ -15,7 +15,9 @@ DEFAULT_PREFERENCE = "1"
 
 SRCBRANCH = "imx_4.14.78_1.0.0_ga_var01"
 
-LOCALVERSION = "-${SRCBRANCH}"
+LOCALVERSION_imx8m-var-dart = "-imx8m"
+LOCALVERSION_imx8mm-var-dart = "-imx8mm"
+
 KERNEL_DEFCONFIG = "${S}/arch/arm64/configs/imx8_var_defconfig"
 DEFAULT_DTB = "sd-emmc-lvds"
 DEFAULT_DTB_PREFIX = "fsl-imx8mq-var-dart"
