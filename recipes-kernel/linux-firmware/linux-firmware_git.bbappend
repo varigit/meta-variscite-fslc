@@ -9,8 +9,8 @@ SRCREV_tiwlan = "d153edae2a75393937da43159b7e6251c2cd01b6"
 BRANCH_tiwlan = "master"
 SRCREV_tibt = "31a43dc1248a6c19bb886006f8c167e2fd21cb78"
 BRANCH_tibt = "master"
-SRCREV_brcm = "423be46b06b5629e45a4943f98a3053c819091ce"
-BRANCH_brcm = "3.5.5.18"
+SRCREV_brcm = "7bce9b69b51ffd967176c1597feed79305927370"
+BRANCH_brcm = "6.0.0.121"
 SRC_URI_append = " \
 	   git://git.ti.com/wilink8-wlan/wl18xx_fw.git;protocol=git;branch=${BRANCH_tiwlan};destsuffix=tiwlan;name=tiwlan \
 	   git://git.ti.com/ti-bt/service-packs.git;protocol=git;branch=${BRANCH_tibt};destsuffix=tibt;name=tibt \
@@ -35,4 +35,5 @@ FILES_${PN}-bcm4339 += " \
 FILES_${PN}-bcm43430 += " \
   ${nonarch_base_libdir}/firmware/bcm/bcm43430a1.hcd \
   ${nonarch_base_libdir}/firmware/brcm/brcmfmac43430-sdio.txt \
+  ${nonarch_base_libdir}/firmware/brcm/brcmfmac43430-sdio.clm_blob \
 "
