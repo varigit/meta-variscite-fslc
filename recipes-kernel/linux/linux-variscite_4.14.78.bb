@@ -28,7 +28,7 @@ SRCREV = "a680d798ce71c8c667b170d71aa1c985c35a1456"
 
 S = "${WORKDIR}/git"
 
-addtask copy_defconfig after do_unpack before do_preconfigure
+addtask copy_defconfig after do_patch before do_preconfigure
 do_copy_defconfig () {
     cp ${KERNEL_DEFCONFIG} ${WORKDIR}/defconfig
 }
