@@ -3,9 +3,11 @@ LICENSE = "GPLv2+"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/GPL-2.0;md5=801f80980d171dd6425610833a22dbe6"
 SECTION = "bootloader"
 
-FILES_${PN} = "/boot/splash.bmp"
+SRC_URI += "file://splash.bmp"
+
+FILES_${PN} = "/boot"
 
 do_install () {
 	install -d ${D}/boot
-	install -m 644 ${THISDIR}/u-boot-splash/splash.bmp ${D}/boot/splash.bmp
+	install -m 644 splash.bmp ${D}/boot/splash.bmp
 }
