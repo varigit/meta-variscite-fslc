@@ -27,7 +27,7 @@ QT5_IMAGE_INSTALL = " \
 
 QT5_IMAGE_INSTALL_append_imxgpu3d = " \
     packagegroup-qt5-3d \
-    packagegroup-qt5-webkit \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'packagegroup-qt5-webkit', '', d)} \
 "
 
 # Most of QtWebEngine demo are currently broken.
