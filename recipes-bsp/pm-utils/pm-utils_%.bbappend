@@ -1,5 +1,9 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
+SRC_URI_append = " \
+        file://remove_default_sleep_d.diff \
+"
+
 SRC_URI_append_imx6ul-var-dart = " \
         file://imx6ul-wifi.sh \
 "
