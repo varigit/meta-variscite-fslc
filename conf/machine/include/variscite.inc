@@ -24,18 +24,18 @@ UBI_VOLNAME  = "rootfs"
 
 # Variscite BSP default providers
 PREFERRED_PROVIDER_virtual/kernel ?= "linux-variscite"
-PREFERRED_VERSION_linux-variscite = "4.14.78"
+PREFERRED_VERSION_linux-variscite ?= "4.14.78"
 
-PREFERRED_PROVIDER_u-boot = "u-boot-variscite"
-PREFERRED_PROVIDER_virtual/bootloader = "u-boot-variscite"
-PREFERRED_PROVIDER_u-boot-fw-utils = "u-boot-fw-utils"
+PREFERRED_PROVIDER_u-boot ?= "u-boot-variscite"
+PREFERRED_PROVIDER_virtual/bootloader ?= "u-boot-variscite"
+PREFERRED_PROVIDER_u-boot-fw-utils ?= "u-boot-fw-utils"
 
-PREFERRED_PROVIDER_wpa-supplicant-cli = "wpa-supplicant"
-PREFERRED_PROVIDER_wpa-supplicant-passphrase = "wpa-supplicant"
-PREFERRED_PROVIDER_wpa-supplicant = "wpa-supplicant"
+PREFERRED_PROVIDER_wpa-supplicant-cli ?= "wpa-supplicant"
+PREFERRED_PROVIDER_wpa-supplicant-passphrase ?= "wpa-supplicant"
+PREFERRED_PROVIDER_wpa-supplicant ?= "wpa-supplicant"
 
-PREFERRED_RPROVIDER_ptpd = "ptpd"
-PREFERRED_RPROVIDER_ptpd-dev = "ptpd"
+PREFERRED_RPROVIDER_ptpd ?= "ptpd"
+PREFERRED_RPROVIDER_ptpd-dev ?= "ptpd"
 
 MACHINE_EXTRA_RDEPENDS += " \
 			   crda \
