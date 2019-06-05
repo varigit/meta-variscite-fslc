@@ -8,4 +8,4 @@ Type=forking
 ExecStart=/etc/wifi/variscite-wifi
 
 [Install]
-WantedBy=muti-user.target
+WantedBy=multi-user.target
