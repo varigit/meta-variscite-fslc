@@ -33,6 +33,10 @@ do_copy_defconfig () {
     cp ${KERNEL_DEFCONFIG} ${WORKDIR}/defconfig
 }
 
+pkg_postinst_kernel-devicetree_append () {
+   rm -f $D/boot/devicetree-*
+}
+
 pkg_postinst_kernel-devicetree_append_imx8m-var-dart () {
     cd $D/boot
     ln -s ${DEFAULT_DTB_PREFIX}-${DEFAULT_DTB}.dtb ${DEFAULT_DTB_PREFIX}.dtb
