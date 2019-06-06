@@ -35,7 +35,8 @@ do_copy_defconfig () {
 
 pkg_postinst_kernel-devicetree_append_imx8m-var-dart () {
     cd $D/boot
-    ln -s ${DEFAULT_DTB_PREFIX}-${DEFAULT_DTB}.dtb ${UBOOT_DTB_NAME}
+    ln -s ${DEFAULT_DTB_PREFIX}-${DEFAULT_DTB}.dtb ${DEFAULT_DTB_PREFIX}.dtb
+    ln -s ${DEFAULT_DTB_PREFIX}-${DEFAULT_DTB}-cb12.dtb ${DEFAULT_DTB_PREFIX}-cb12.dtb
 }
 
 COMPATIBLE_MACHINE = "(imx8m-var-dart|imx8mm-var-dart)"
