@@ -44,7 +44,7 @@ wifi_is_up()
 
 # Exit if WIFI is disabled on DART-6UL
 if grep -q MX6UL /sys/devices/soc0/soc_id && \
-   ! grep -q WIFI /sys/devices/soc0/machine; then
+   ! grep -iq WiFi /sys/devices/soc0/machine; then
    exit 0
 fi
 
