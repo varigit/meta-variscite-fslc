@@ -299,7 +299,7 @@ finish()
 }
 
 
-blue_underlined_bold_echo "*** Variscite MX6UL/MX6ULL/MX7 Yocto eMMC/NAND Recovery ***"
+blue_underlined_bold_echo "*** Variscite MX6UL/MX6ULL/MX6ULZ/MX7 Yocto eMMC/NAND Recovery ***"
 echo
 
 VARSOMMX7_VARIANT=""
@@ -406,6 +406,8 @@ if [[ $BOARD == *6ul ]] ; then
 		soc="imx6ul"
 	elif [[ $SOC == i.MX6ULL ]] ; then
 		soc="imx6ull"
+	elif [[ $SOC == i.MX6ULZ ]] ; then
+		soc="imx6ulz"
 	fi
 	if [[ $BOARD == "dart6ul" ]] ; then
 		som="var-dart"
