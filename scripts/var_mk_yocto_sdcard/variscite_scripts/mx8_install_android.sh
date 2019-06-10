@@ -312,13 +312,31 @@ function finish
 	exit ${errors}
 }
 
+stop_udev()
+{
+	if [ -f /lib/systemd/system/systemd-udevd.service ]; then
+		systemctl -q mask --runtime systemd-udevd
+		systemctl -q stop systemd-udevd
+	fi
+}
+
+start_udev()
+{
+	if [ -f /lib/systemd/system/systemd-udevd.service ]; then
+		systemctl -q unmask --runtime systemd-udevd
+		systemctl -q start systemd-udevd
+	fi
+}
+
 check_images
 
 umount ${node}${part}*  2> /dev/null || true
 
+stop_udev
 delete_device
 create_parts
 install_bootloader
 format_android
 install_android
+start_udev
 finish
