@@ -13,10 +13,11 @@ DEPENDS += "lzop-native bc-native"
 
 DEFAULT_PREFERENCE = "1"
 
-SRCBRANCH = "imx_4.14.78_1.0.0_ga_var01"
+SRCBRANCH = "imx_4.14.98_2.0.0_ga_var01"
 
 LOCALVERSION_imx8m-var-dart = "-imx8m"
 LOCALVERSION_imx8mm-var-dart = "-imx8mm"
+LOCALVERSION_imx8qxp-var-som = "-imx8x"
 
 KERNEL_DEFCONFIG = "${S}/arch/arm64/configs/imx8_var_defconfig"
 DEFAULT_DTB = "sd-emmc-lvds"
@@ -24,7 +25,7 @@ DEFAULT_DTB_PREFIX = "fsl-imx8mq-var-dart"
 
 KERNEL_SRC ?= "git://github.com/varigit/linux-imx;protocol=git"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
-SRCREV = "324261d27fcfa926b873caabb3bebdcb09355bb3"
+SRCREV = "67ca11ed96d7b959550ad096c8868cc80edf16e5"
 
 S = "${WORKDIR}/git"
 
@@ -43,5 +44,5 @@ pkg_postinst_kernel-devicetree_append_imx8m-var-dart () {
     ln -s ${DEFAULT_DTB_PREFIX}-${DEFAULT_DTB}-cb12.dtb ${DEFAULT_DTB_PREFIX}-cb12.dtb
 }
 
-COMPATIBLE_MACHINE = "(imx8m-var-dart|imx8mm-var-dart)"
+COMPATIBLE_MACHINE = "(imx8m-var-dart|imx8mm-var-dart|imx8qxp-var-som)"
 EXTRA_OEMAKE_append_mx8 = " ARCH=arm64"
