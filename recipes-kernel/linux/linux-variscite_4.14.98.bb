@@ -20,12 +20,14 @@ LOCALVERSION_imx8mm-var-dart = "-imx8mm"
 LOCALVERSION_imx8qxp-var-som = "-imx8x"
 
 KERNEL_DEFCONFIG = "${S}/arch/arm64/configs/imx8_var_defconfig"
-DEFAULT_DTB = "sd-emmc-lvds"
-DEFAULT_DTB_PREFIX = "fsl-imx8mq-var-dart"
+DEFAULT_DTB_imx8m-var-dart = "sd-emmc-lvds"
+DEFAULT_DTB_imx8qxp-var-som = "sd"
+DEFAULT_DTB_PREFIX_imx8m-var-dart = "fsl-imx8mq-var-dart"
+DEFAULT_DTB_PREFIX_imx8qxp-var-som = "fsl-imx8qxp-var-som"
 
 KERNEL_SRC ?= "git://github.com/varigit/linux-imx;protocol=git"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
-SRCREV = "67ca11ed96d7b959550ad096c8868cc80edf16e5"
+SRCREV = "f991d14e659975965797baa47eed7e479cc5f760"
 
 S = "${WORKDIR}/git"
 
@@ -42,6 +44,11 @@ pkg_postinst_kernel-devicetree_append_imx8m-var-dart () {
     cd $D/boot
     ln -s ${DEFAULT_DTB_PREFIX}-${DEFAULT_DTB}.dtb ${DEFAULT_DTB_PREFIX}.dtb
     ln -s ${DEFAULT_DTB_PREFIX}-${DEFAULT_DTB}-cb12.dtb ${DEFAULT_DTB_PREFIX}-cb12.dtb
+}
+
+pkg_postinst_kernel-devicetree_append_imx8qxp-var-som () {
+    cd $D/boot
+    ln -s ${DEFAULT_DTB_PREFIX}-${DEFAULT_DTB}.dtb ${DEFAULT_DTB_PREFIX}.dtb
 }
 
 COMPATIBLE_MACHINE = "(imx8m-var-dart|imx8mm-var-dart|imx8qxp-var-som)"
