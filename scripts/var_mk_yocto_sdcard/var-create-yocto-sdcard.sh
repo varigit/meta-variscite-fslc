@@ -23,6 +23,7 @@ readonly YOCTO_IMGS_PATH=${YOCTO_BUILD}/tmp/deploy/images/${MACHINE}
 # Sizes are in MiB
 BOOTLOAD_RESERVE_SIZE=8
 DEFAULT_ROOTFS_SIZE=3700
+BOOTLOADER_OFFSET=33
 
 AUTO_FILL_SD=0
 SPARE_SIZE=4
@@ -86,7 +87,7 @@ echo "================================================"
 
 help() {
 	bn=`basename $0`
-	echo " Usage: MACHINE=<imx8m-var-dart|imx8mm-var-dart> $bn <options> device_node"
+	echo " Usage: MACHINE=<imx8m-var-dart|imx8mm-var-dart|imx8qxp-var-som> $bn <options> device_node"
 	echo
 	echo " options:"
 	echo " -h		display this Help message"
@@ -103,9 +104,13 @@ if [[ $EUID -ne 0 ]] ; then
 	exit 1
 fi
 
-if [[ $MACHINE != "imx8m-var-dart" && $MACHINE != "imx8mm-var-dart" ]] ; then
+if [[ $MACHINE != "imx8m-var-dart" && $MACHINE != "imx8mm-var-dart" && $MACHINE != "imx8qxp-var-som" ]] ; then
 	help
 	exit 1
+fi
+
+if [[ $MACHINE = "imx8qxp-var-som" ]]; then
+	BOOTLOADER_OFFSET=32
 fi
 
 TEMP_DIR=./var_tmp
@@ -227,7 +232,7 @@ function install_bootloader
 {
 	echo
 	echo "Installing U-Boot"
-	dd if=${YOCTO_IMGS_PATH}/imx-boot-${MACHINE}-sd.bin of=${node} bs=1K seek=33; sync
+	dd if=${YOCTO_IMGS_PATH}/imx-boot-${MACHINE}-sd.bin of=${node} bs=1K seek=${BOOTLOADER_OFFSET}; sync
 }
 
 function mount_parts
