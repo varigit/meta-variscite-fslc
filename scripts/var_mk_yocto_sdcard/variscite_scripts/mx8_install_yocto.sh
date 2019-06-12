@@ -18,6 +18,11 @@ check_board()
 		BOARD=imx8mm-var-dart
 		DTB_PREFIX=fsl-imx8mm-var-dart
 		BLOCK=mmcblk2
+	elif grep -q "i.MX8QXP" /sys/devices/soc0/soc_id; then
+		BOARD=imx8qxp-var-som
+		DTB_PREFIX=fsl-imx8qxp-var-som
+		BLOCK=mmcblk0
+		BOOTLOADER_OFFSET=32
 	elif grep -q "i.MX8M" /sys/devices/soc0/soc_id; then
 		BOARD=imx8m-var-dart
 		DTB_PREFIX=fsl-imx8mq-var-dart
@@ -126,6 +131,11 @@ install_rootfs_to_emmc()
 
 		# Install blacklist.conf
 		cp ${MOUNTDIR}/etc/wifi/blacklist.conf ${MOUNTDIR}/etc/modprobe.d
+	fi
+
+	if [[ ${BOARD} = "imx8qxp-var-som" ]]; then
+		# Create DTB symlink
+		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-wifi.dtb ${DTB_PREFIX}.dtb)
 	fi
 
 	# Adjust u-boot-fw-utils for eMMC on the installed rootfs
