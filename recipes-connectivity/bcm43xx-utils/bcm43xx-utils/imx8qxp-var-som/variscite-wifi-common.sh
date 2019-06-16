@@ -107,6 +107,11 @@ wifi_should_not_be_started()
                 return 0
         fi
 
+        # Do not enable WIFI if booting from eMMC without WIFI
+        if ! grep -q WIFI /sys/devices/soc0/machine; then
+                return 0
+        fi
+
         return 1
 }
 
@@ -115,6 +120,11 @@ wifi_should_not_be_stopped()
 {
         # Do not stop WIFI if booting from SD on VAR-SOM-MX8X
         if grep -q mmcblk1 /proc/cmdline; then
+                return 0
+        fi
+
+        # Do not stop WIFI if booting from eMMC without WIFI
+        if ! grep -q WIFI /sys/devices/soc0/machine; then
                 return 0
         fi
 
