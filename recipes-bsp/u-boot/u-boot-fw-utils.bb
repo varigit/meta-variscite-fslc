@@ -26,6 +26,11 @@ do_compile_imx8qxp-var-som () {
 	oe_runmake envtools
 }
 
+do_compile_imx8qm-var-som () {
+	oe_runmake imx8qm_var_som_defconfig
+	oe_runmake envtools
+}
+
 do_install () {
 	install -d ${D}${base_sbindir}
 	install -d ${D}${sysconfdir}
