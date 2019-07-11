@@ -35,7 +35,7 @@ check_board()
 		fi
 	else
 		red_bold_echo "ERROR: Unsupported board"
-		exit 1	
+		exit 1
 	fi
 
 
@@ -136,6 +136,9 @@ install_rootfs_to_emmc()
 	if [[ ${BOARD} = "imx8qxp-var-som" ]]; then
 		# Create DTB symlink
 		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-wifi.dtb ${DTB_PREFIX}.dtb)
+
+		# Install blacklist.conf
+		cp ${MOUNTDIR}/etc/wifi/blacklist.conf ${MOUNTDIR}/etc/modprobe.d
 	fi
 
 	# Adjust u-boot-fw-utils for eMMC on the installed rootfs
