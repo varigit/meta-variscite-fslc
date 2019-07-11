@@ -18,6 +18,7 @@ SRCBRANCH = "imx_4.14.98_2.0.0_ga_var01"
 LOCALVERSION_imx8m-var-dart = "-imx8m"
 LOCALVERSION_imx8mm-var-dart = "-imx8mm"
 LOCALVERSION_imx8qxp-var-som = "-imx8x"
+LOCALVERSION_imx8qm-var-som = "-imx8qm"
 
 KERNEL_DEFCONFIG = "${S}/arch/arm64/configs/imx8_var_defconfig"
 DEFAULT_DTB_imx8m-var-dart = "sd-emmc-lvds"
@@ -51,5 +52,5 @@ pkg_postinst_kernel-devicetree_append_imx8qxp-var-som () {
     ln -s ${DEFAULT_DTB_PREFIX}-${DEFAULT_DTB}.dtb ${DEFAULT_DTB_PREFIX}.dtb
 }
 
-COMPATIBLE_MACHINE = "(imx8m-var-dart|imx8mm-var-dart|imx8qxp-var-som)"
+COMPATIBLE_MACHINE = "(imx8m-var-dart|imx8mm-var-dart|imx8qxp-var-som|imx8qm-var-som)"
 EXTRA_OEMAKE_append_mx8 = " ARCH=arm64"
