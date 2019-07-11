@@ -53,3 +53,7 @@ do_install_append_imx8mm-var-dart() {
 	install -d ${D}${sysconfdir}/modprobe.d
 	install -m 0644 ${WORKDIR}/blacklist.conf ${D}/${sysconfdir}/modprobe.d
 }
+
+do_install_append_imx8qxp-var-som() {
+	install -m 0644 ${WORKDIR}/blacklist.conf ${D}/${sysconfdir}/wifi
+}
