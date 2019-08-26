@@ -96,9 +96,28 @@ wifi_down()
 	echo 0 > /sys/class/gpio/gpio${WIFI_3V3_GPIO}/value
 }
 
+# Return true if SOM has WIFI module assembled
+wifi_is_available()
+{
+	# Read SOM options EEPROM field
+	opt=$(i2cget -f -y 0x0 0x52 0x20)
+
+	# Check WIFI bit in SOM options
+	if [ $((opt & 0x1)) -eq 1 ]; then
+		return 0
+	else
+		return 1
+	fi
+}
+
 # Return true if WIFI should not be started
 wifi_should_not_be_started()
 {
+	# Do not enable WIFI if it's not available
+	if ! wifi_is_available; then
+		return 0
+	fi
+
         # Do not enable WIFI if it is already up
         [ -d /sys/class/net/wlan0 ] && return 0
 
@@ -118,6 +137,11 @@ wifi_should_not_be_started()
 # Return true if WIFI should not be stopped
 wifi_should_not_be_stopped()
 {
+	# Do not stop WIFI if it's not available
+	if ! wifi_is_available; then
+		return 0
+	fi
+
         # Do not stop WIFI if booting from SD on VAR-SOM-MX8X
         if grep -q mmcblk1 /proc/cmdline; then
                 return 0
