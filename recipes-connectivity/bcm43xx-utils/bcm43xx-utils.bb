@@ -21,7 +21,10 @@ FILES_${PN} = " \
 	/lib/systemd/system/* \
 	/etc/systemd/system/* \
 "
-RDEPENDS_${PN} = "bash"
+
+RDEPENDS_${PN}_imx8qm-var-som = "i2c-tools"
+RDEPENDS_${PN}_imx8qxp-var-som = "i2c-tools"
+RDEPENDS_${PN}_append = " bash"
 
 S = "${WORKDIR}"
 
