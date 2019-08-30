@@ -9,6 +9,8 @@ SRC_URI += " \
 
 FILES_${PN} += "${sysconfdir}/systemd/system/*"
 
+DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', 'update-rc.d-native', '', d)}"
+
 do_install_append() {
 	install -d ${D}/${sysconfdir}/dbus-1/system.d
 	install -d ${D}/${sysconfdir}/pulse
