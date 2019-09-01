@@ -1,0 +1,20 @@
+diff -ur a/pm/Makefile.am b/pm/Makefile.am
+--- a/pm/Makefile.am	2010-07-04 17:42:50.000000000 +0300
++++ b/pm/Makefile.am	2019-05-27 14:24:27.332670308 +0300
+@@ -1,5 +1,4 @@
+ SUBDIRS =		\
+-	sleep.d 	\
+ 	power.d		\
+ 	module.d
+ 
+diff -ur a/pm/Makefile.in b/pm/Makefile.in
+--- a/pm/Makefile.in	2010-07-04 17:54:42.000000000 +0300
++++ b/pm/Makefile.in	2019-05-27 14:24:33.704726893 +0300
+@@ -198,7 +198,6 @@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+ SUBDIRS = \
+-	sleep.d 	\
+ 	power.d		\
+ 	module.d
+ 
