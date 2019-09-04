@@ -98,13 +98,55 @@ create_emmc_parts()
 	fdisk -u -l /dev/${BLOCK}
 }
 
+create_emmc_swupdate_parts()
+{
+	echo
+	blue_underlined_bold_echo "Creating new partitions"
+
+	TOTAL_SECTORS=`cat /sys/block/${BLOCK}/size`
+	SECT_SIZE_BYTES=`cat /sys/block/${BLOCK}/queue/hw_sector_size`
+
+	BOOTLOADER_RESERVED_SIZE_BYTES=$((BOOTLOADER_RESERVED_SIZE * 1024 * 1024))
+	ROOTFS1_PART_START=$((BOOTLOADER_RESERVED_SIZE_BYTES / SECT_SIZE_BYTES))
+
+	DATA_SIZE_BYTES=$((DATA_SIZE * 1024 * 1024))
+	DATA_PART_SIZE=$((DATA_SIZE_BYTES / SECT_SIZE_BYTES))
+
+	ROOTFS1_PART_SIZE=$((( TOTAL_SECTORS - ROOTFS1_PART_START - DATA_PART_SIZE ) / 2))
+	ROOTFS2_PART_SIZE=$ROOTFS1_PART_SIZE
+
+	ROOTFS2_PART_START=$((ROOTFS1_PART_START + ROOTFS1_PART_SIZE))
+	DATA_PART_START=$((ROOTFS2_PART_START + ROOTFS2_PART_SIZE))
+
+	ROOTFS1_PART_END=$((ROOTFS2_PART_START - 1))
+	ROOTFS2_PART_END=$((DATA_PART_START - 1))
+
+	if [[ $ROOTFS1_PART_START == 0 ]] ; then
+		ROOTFS1_PART_START=""
+	fi
+
+	(echo n; echo p; echo $ROOTFSPART;  echo $ROOTFS1_PART_START; echo $ROOTFS1_PART_END; \
+	 echo n; echo p; echo $ROOTFS2PART; echo $ROOTFS2_PART_START; echo $ROOTFS2_PART_END; \
+	 echo n; echo p; echo $DATAPART;    echo $DATA_PART_START; echo; \
+	 echo p; echo w) | fdisk -u /dev/${BLOCK} > /dev/null
+
+	sync; sleep 1
+	fdisk -u -l /dev/${BLOCK}
+}
+
+
 format_emmc_parts()
 {
 	echo
 	blue_underlined_bold_echo "Formatting partitions"
 
-	mkfs.ext4 /dev/${BLOCK}${PART}${ROOTFSPART} -L rootfs
-
+	if [[ $swupdate == 0 ]] ; then
+		mkfs.ext4 /dev/${BLOCK}${PART}${ROOTFSPART} -L rootfs
+	elif [[ $swupdate == 1 ]] ; then
+		mkfs.ext4 /dev/${BLOCK}${PART}${ROOTFSPART}  -L rootfs1
+		mkfs.ext4 /dev/${BLOCK}${PART}${ROOTFS2PART} -L rootfs2
+		mkfs.ext4 /dev/${BLOCK}${PART}${DATAPART}    -L data
+	fi
 	sync; sleep 1
 }
 
@@ -181,6 +223,7 @@ usage()
 	echo " options:"
 	echo " -h                           show help message"
 	echo " -d <lvds|hdmi|dual-display>  set display type, default is lvds"
+	echo " -u                           create two rootfs partitions (for swUpdate double-copy)."
 	echo
 }
 
@@ -203,7 +246,9 @@ fi
 blue_underlined_bold_echo "*** Variscite MX8M Yocto eMMC Recovery ***"
 echo
 
-while getopts d:h OPTION;
+swupdate=0
+
+while getopts d:hu OPTION;
 do
 	case $OPTION in
 	d)
@@ -212,6 +257,9 @@ do
 	h)
 		usage
 		exit 0
+		;;
+	u)
+		swupdate=1
 		;;
 	*)
 		usage
@@ -226,11 +274,23 @@ blue_bold_echo $BOARD
 printf "Installing to internal storage device: "
 blue_bold_echo eMMC
 
+if [[ $swupdate == 1 ]] ; then
+	blue_bold_echo "Creating two rootfs partitions"
+
+	ROOTFS2PART=2
+	DATAPART=3
+	DATA_SIZE=200
+fi
+
 check_board
 check_images
 stop_udev
 delete_emmc
-create_emmc_parts
+if [[ $swupdate == 0 ]] ; then
+	create_emmc_parts
+elif [[ $swupdate == 1 ]] ; then
+	create_emmc_swupdate_parts
+fi
 format_emmc_parts
 install_bootloader_to_emmc
 install_rootfs_to_emmc
