@@ -157,14 +157,13 @@ if [ ! -e $BUILD_DIR/conf/local.conf ]; then
 fi
 
 # On the first script run, backup the local.conf file
-# Consecutive runs, it restores the backup and changes are appended on this one.
 if [ ! -e $BUILD_DIR/conf/local.conf.org ]; then
     cp $BUILD_DIR/conf/local.conf $BUILD_DIR/conf/local.conf.org
-else
-    cp $BUILD_DIR/conf/local.conf.org $BUILD_DIR/conf/local.conf
 fi
 
 
+# On the first script run, backup the bblayers.conf file
+# On consecutive runs, it restores the backup and changes are appended on this one
 if [ ! -e $BUILD_DIR/conf/bblayers.conf.org ]; then
     cp $BUILD_DIR/conf/bblayers.conf $BUILD_DIR/conf/bblayers.conf.org
 else
