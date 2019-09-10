@@ -201,6 +201,9 @@ if [ -d ../sources/meta-freescale ]; then
     sed -e "s,\$.BSPDIR./sources/meta-fsl-arm-extra\s,,g" -i conf/bblayers.conf
 fi
 
+sed -i 's/IMAGE_FSTYPES =/IMAGE_FSTYPES ?=/g' \
+	$BUILD_DIR/../sources/meta-fsl-bsp-release/imx/meta-sdk/conf/distro/include/fsl-imx-base.inc
+
 cd  $BUILD_DIR
 clean_up
 unset FSLDISTRO
