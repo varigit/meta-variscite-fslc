@@ -243,7 +243,7 @@ if [[ $EUID != 0 ]] ; then
 	exit 1
 fi
 
-blue_underlined_bold_echo "*** Variscite MX8M Yocto eMMC Recovery ***"
+blue_underlined_bold_echo "*** Variscite MX8 Yocto eMMC Recovery ***"
 echo
 
 swupdate=0
@@ -268,6 +268,8 @@ do
 	esac
 done
 
+check_board
+
 printf "Board: "
 blue_bold_echo $BOARD
 
@@ -282,7 +284,6 @@ if [[ $swupdate == 1 ]] ; then
 	DATA_SIZE=200
 fi
 
-check_board
 check_images
 stop_udev
 delete_emmc
