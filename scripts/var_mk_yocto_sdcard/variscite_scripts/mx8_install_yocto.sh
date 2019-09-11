@@ -28,6 +28,12 @@ check_board()
 		DTB_PREFIX=fsl-imx8qm-var-som
 		BLOCK=mmcblk0
 		BOOTLOADER_OFFSET=32
+
+		if [[ $DISPLAY != "lvds" && $DISPLAY != "hdmi" && \
+		      $DISPLAY != "dp" ]]; then
+			red_bold_echo "ERROR: invalid display, should be lvds, hdmi or dp"
+			exit 1
+		fi
 	elif grep -q "i.MX8M" /sys/devices/soc0/soc_id; then
 		BOARD=imx8m-var-dart
 		DTB_PREFIX=fsl-imx8mq-var-dart
@@ -188,6 +194,11 @@ install_rootfs_to_emmc()
 		cp ${MOUNTDIR}/etc/wifi/blacklist.conf ${MOUNTDIR}/etc/modprobe.d
 	fi
 
+	if [[ ${BOARD} = "imx8qm-var-som" ]]; then
+		# Create DTB symlink
+		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-${DISPLAY}.dtb ${DTB_PREFIX}.dtb)
+	fi
+
 	# Adjust u-boot-fw-utils for eMMC on the installed rootfs
 	sed -i "s/\/dev\/mmcblk./\/dev\/${BLOCK}/" ${MOUNTDIR}/etc/fw_env.config
 
@@ -222,7 +233,11 @@ usage()
 	echo
 	echo " options:"
 	echo " -h                           show help message"
-	echo " -d <lvds|hdmi|dual-display>  set display type, default is lvds"
+	if grep -q "i.MX8QM" /sys/devices/soc0/soc_id; then
+		echo " -d <lvds|hdmi|dp>            set display type, default is lvds"
+	elif grep -q "i.MX8M" /sys/devices/soc0/soc_id; then
+		echo " -d <lvds|hdmi|dual-display>  set display type, default is lvds"
+	fi
 	echo " -u                           create two rootfs partitions (for swUpdate double-copy)."
 	echo
 }
