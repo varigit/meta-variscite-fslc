@@ -4,8 +4,7 @@
 . /etc/wifi/variscite-wifi-common.sh
 
 # Exit if WIFI is not available
-if grep -q MX8M /sys/devices/soc0/soc_id && \
-   ! grep -q WIFI /sys/devices/soc0/machine ; then
+if wifi_should_not_be_stopped; then
         exit 0
 fi
 
