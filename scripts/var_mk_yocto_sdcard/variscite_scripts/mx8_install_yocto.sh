@@ -195,8 +195,9 @@ install_rootfs_to_emmc()
 	fi
 
 	if [[ ${BOARD} = "imx8qm-var-som" ]]; then
-		# Create DTB symlink
+		# Create DTB symlinks
 		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-${DISPLAY}.dtb ${DTB_PREFIX}.dtb)
+		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs fsl-imx8qm-var-spear-${DISPLAY}.dtb fsl-imx8qm-var-spear.dtb)
 	fi
 
 	# Adjust u-boot-fw-utils for eMMC on the installed rootfs
