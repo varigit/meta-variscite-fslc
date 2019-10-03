@@ -18,18 +18,22 @@ VBMETA_SIZE=1
 
 sdshared=false
 if grep -q "i.MX8MM" /sys/devices/soc0/soc_id; then
-	soc_name=imx8mm-var-dart
 	node=/dev/mmcblk2
 elif grep -q "i.MX8M" /sys/devices/soc0/soc_id; then
-	soc_name=imx8mq-var-dart
 	node=/dev/mmcblk0
 	sdshared=true
+elif grep -q "i.MX8QXP" /sys/devices/soc0/soc_id; then
+	node=/dev/mmcblk0
+	sdshared=true
+elif grep -q "i.MX8QM" /sys/devices/soc0/soc_id; then
+	node=/dev/mmcblk0
 else
 	red_bold_echo "ERROR: Unsupported board"
 	exit 1	
 fi
 
 imagesdir="/opt/images/Android"
+soc_name="showoptions"
 
 img_prefix="dtbo-"
 img_search_str="ls ${imagesdir}/${img_prefix}*"
@@ -50,6 +54,10 @@ done
 if [[ $soc_name != "showoptions" ]] && [[ ! ${img_list[@]} =~ $soc_name ]] ; then
 	echo; red_bold_echo "ERROR: invalid dtb $soc_name"
 	soc_name=showoptions
+fi
+
+if [[ $soc_name == "showoptions" ]] && [[ ${#img_list[@]} == 1 ]] ; then
+	soc_name=${img_list[0]};
 fi
 
 if [[ $soc_name == "showoptions" ]] || [[ ${#img_list[@]} > 1 ]] ; then
@@ -95,13 +103,18 @@ if [[ "${soc_name}" = *"mx8mm"* ]]; then
 	bootloader_file="u-boot-imx8mm-var-dart.imx"
 fi
 
-if [[ "${soc_name}" = *"mx8q"* ]]; then
-	bootloader_offset=33
-	bootloader_file="u-boot-imx8q-var-spear.imx"
+if [[ "${soc_name}" = *"mx8qx"* ]]; then
+	bootloader_offset=32
+	bootloader_file="u-boot-imx8qxp.imx"
 fi
 
-echo "${soc_name} bootloader offset is: ${bootloader_offset}"
+if [[ "${soc_name}" = *"mx8qm"* ]]; then
+	bootloader_offset=32
+	bootloader_file="u-boot-imx8qm.imx"
+fi
+
 echo "${soc_name} bootloader is: ${bootloader_file}"
+echo "${soc_name} bootloader offset is: ${bootloader_offset}"
 
 # Get total device size
 seprate=100
@@ -142,32 +155,32 @@ function check_images
 	fi
 
 	if [[ ! -f ${imagesdir}/${bootloader_file} ]] ; then
-		red_bold_echo "ERROR: U-Boot image does not exist"
+		red_bold_echo "ERROR: ${bootloader_file} image does not exist"
 		exit 1
 	fi
 
 	if [[ ! -f ${imagesdir}/${dtboimage_file} ]] ; then
-		red_bold_echo "ERROR: boot image does not exist"
+		red_bold_echo "ERROR: ${dtboimage_file} image does not exist"
 		exit 1
 	fi
 
 	if [[ ! -f ${imagesdir}/${bootimage_file} ]] ; then
-		red_bold_echo "ERROR: boot image does not exist"
+		red_bold_echo "ERROR: ${bootimage_file} image does not exist"
 		exit 1
 	fi
 
 	if [[ ! -f ${imagesdir}/${systemimage_file} ]] ; then
-		red_bold_echo "ERROR: system image does not exist"
+		red_bold_echo "ERROR: ${systemimage_file} image does not exist"
 		exit 1
 	fi
 
 	if [[ ! -f ${imagesdir}/${vendorimage_file} ]] ; then
-		red_bold_echo "ERROR: vendor image does not exist"
+		red_bold_echo "ERROR: ${vendorimage_file} image does not exist"
 		exit 1
 	fi
 
 	if [[ ! -f ${imagesdir}/${vbmeta_file} ]] ; then
-		red_bold_echo "ERROR: vbmeta image does not exist"
+		red_bold_echo "ERROR: ${vbmeta_file} image does not exist"
 		exit 1
 	fi
 }
@@ -176,7 +189,7 @@ function delete_device
 {
 	echo
 	blue_underlined_bold_echo "Deleting current partitions"
-	for partition in ${node}*
+	for partition in ${node}${part}*
 	do
 		if [[ ${partition} = ${node} ]] ; then
 			# skip base node
@@ -261,14 +274,14 @@ function install_android
 {
 	echo
 	blue_underlined_bold_echo "Installing Android dtbo image: $dtboimage_file"
-	dd if=${imagesdir}/${dtboimage_file} of=${node}${part}1
-	dd if=${imagesdir}/${dtboimage_file} of=${node}${part}2
+	dd if=${imagesdir}/${dtboimage_file} of=${node}${part}1 bs=1M
+	dd if=${imagesdir}/${dtboimage_file} of=${node}${part}2 bs=1M
 	sync
 
 	echo
 	blue_underlined_bold_echo "Installing Android boot image: $bootimage_file"
-	dd if=${imagesdir}/${bootimage_file} of=${node}${part}3
-	dd if=${imagesdir}/${bootimage_file} of=${node}${part}4
+	dd if=${imagesdir}/${bootimage_file} of=${node}${part}3 bs=1M
+	dd if=${imagesdir}/${bootimage_file} of=${node}${part}4 bs=1M
 	sync
 
 	echo
@@ -285,8 +298,8 @@ function install_android
 
 	echo
 	blue_underlined_bold_echo "Installing Android vbmeta image: $vbmeta_file"
-	dd if=${imagesdir}/${vbmeta_file} of=${node}${part}14
-	dd if=${imagesdir}/${vbmeta_file} of=${node}${part}15
+	dd if=${imagesdir}/${vbmeta_file} of=${node}${part}14 bs=1M
+	dd if=${imagesdir}/${vbmeta_file} of=${node}${part}15 bs=1M
 	sync;
 
 	sleep 1

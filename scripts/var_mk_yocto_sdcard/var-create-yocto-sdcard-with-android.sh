@@ -12,14 +12,14 @@ readonly ABSOLUTE_DIRECTORY=`dirname ${ABSOLUTE_FILENAME}`
 readonly SCRIPT_POINT=${ABSOLUTE_DIRECTORY}
 
 ANDROID_SCRIPTS_PATH=${SCRIPT_POINT}/variscite_scripts
-ANDROID_BUILD_ROOT=~/var_imx-p9.0.0_1.0.0-ga/android_build
+ANDROID_BUILD_ROOT=~/var_imx-p9.0.0_2.0.0-ga/android_build
 
 TEMP_DIR=./var_tmp
 ROOTFS_MOUNT_DIR=${TEMP_DIR}/rootfs
 
 help() {
 	bn=`basename $0`
-	echo " Usage: MACHINE=<imx8m-var-dart|imx8mm-var-dart> $bn device_node"
+	echo " Usage: MACHINE=<imx8m-var-dart|imx8mm-var-dart|imx8qxp-var-som|imx8qm-var-som> $bn device_node"
 	echo
 }
 
@@ -29,6 +29,12 @@ case $MACHINE in
 		;;
 	"imx8mm-var-dart")
 		ANDROID_IMGS_PATH=${ANDROID_BUILD_ROOT}/out/target/product/dart_mx8mm
+		;;
+	"imx8qxp-var-som")
+		ANDROID_IMGS_PATH=${ANDROID_BUILD_ROOT}/out/target/product/som_mx8q
+		;;
+	"imx8qm-var-som")
+		ANDROID_IMGS_PATH=${ANDROID_BUILD_ROOT}/out/target/product/som_mx8q
 		;;
 	*)
 		help
