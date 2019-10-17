@@ -19,12 +19,12 @@ ROOTFS_MOUNT_DIR=${TEMP_DIR}/rootfs
 
 help() {
 	bn=`basename $0`
-	echo " Usage: MACHINE=<imx8m-var-dart|imx8mm-var-dart|imx8qxp-var-som|imx8qm-var-som> $bn device_node"
+	echo " Usage: MACHINE=<imx8mq-var-dart|imx8mm-var-dart|imx8qxp-var-som|imx8qm-var-som> $bn device_node"
 	echo
 }
 
 case $MACHINE in
-	"imx8m-var-dart")
+	"imx8mq-var-dart")
 		ANDROID_IMGS_PATH=${ANDROID_BUILD_ROOT}/out/target/product/dart_mx8mq
 		;;
 	"imx8mm-var-dart")

@@ -87,7 +87,7 @@ echo "================================================"
 
 help() {
 	bn=`basename $0`
-	echo " Usage: MACHINE=<imx8m-var-dart|imx8mm-var-dart|imx8qxp-var-som|imx8qm-var-som> $bn <options> device_node"
+	echo " Usage: MACHINE=<imx8mq-var-dart|imx8mm-var-dart|imx8qxp-var-som|imx8qm-var-som> $bn <options> device_node"
 	echo
 	echo " options:"
 	echo " -h		display this Help message"
@@ -104,7 +104,7 @@ if [[ $EUID -ne 0 ]] ; then
 	exit 1
 fi
 
-if [[ $MACHINE != "imx8m-var-dart" && $MACHINE != "imx8mm-var-dart" && \
+if [[ $MACHINE != "imx8mq-var-dart" && $MACHINE != "imx8mm-var-dart" && \
       $MACHINE != "imx8qxp-var-som" && $MACHINE != "imx8qm-var-som" ]] ; then
 	help
 	exit 1

@@ -35,7 +35,7 @@ check_board()
 			exit 1
 		fi
 	elif grep -q "i.MX8M" /sys/devices/soc0/soc_id; then
-		BOARD=imx8m-var-dart
+		BOARD=imx8mq-var-dart
 		DTB_PREFIX=fsl-imx8mq-var-dart
 		BLOCK=mmcblk0
 
@@ -177,7 +177,7 @@ install_rootfs_to_emmc()
 	printf "Extracting files"
 	tar --warning=no-timestamp -xpf ${IMGS_PATH}/${ROOTFS_IMAGE} -C ${MOUNTDIR} --checkpoint=.1200
 
-	if [[ ${BOARD} = "imx8m-var-dart" ]]; then
+	if [[ ${BOARD} = "imx8mq-var-dart" ]]; then
 		# Create DTB symlinks
 		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-emmc-wifi-${DISPLAY}.dtb ${DTB_PREFIX}.dtb)
 		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-emmc-wifi-${DISPLAY}-cb12.dtb ${DTB_PREFIX}-cb12.dtb)
