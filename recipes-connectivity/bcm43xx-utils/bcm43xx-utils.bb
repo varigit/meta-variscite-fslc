@@ -48,7 +48,7 @@ do_install() {
 	fi
 }
 
-do_install_append_imx8m-var-dart() {
+do_install_append_imx8mq-var-dart() {
 	install -m 0644 ${WORKDIR}/blacklist.conf ${D}/${sysconfdir}/wifi
 }
 
