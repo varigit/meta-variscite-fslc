@@ -11,8 +11,8 @@ EXTRA_OEMAKE_class-cross = 'ARCH=${TARGET_ARCH} CC="${CC} ${CFLAGS} ${LDFLAGS}" 
 
 inherit uboot-config
 
-do_compile_imx8m-var-dart () {
-	oe_runmake imx8m_var_dart_defconfig
+do_compile_imx8mq-var-dart () {
+	oe_runmake imx8mq_var_dart_defconfig
 	oe_runmake envtools
 }
 
