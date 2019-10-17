@@ -35,6 +35,27 @@ fi
 imagesdir="/opt/images/Android"
 soc_name="showoptions"
 
+function help() {
+
+	bn=`basename $0`
+	echo " usage $bn <option>"
+	echo
+	echo " options:"
+	echo " -h			displays this help message"
+	echo " -f soc_name		flash android image [optional]."
+}
+
+moreoptions=1
+while [ "$moreoptions" = 1 -a $# -gt 0 ]; do
+	case $1 in
+		-h) help; exit ;;
+		-f) soc_name=$2; shift ;;
+		*)  moreoptions=0 ;;
+	esac
+	[ "$moreoptions" = 0 ] && [ $# -gt 2 ] && help && exit
+	[ "$moreoptions" = 1 ] && shift
+done
+
 img_prefix="dtbo-"
 img_search_str="ls ${imagesdir}/${img_prefix}*"
 if [ "$sdshared" = true ] ; then
@@ -60,7 +81,7 @@ if [[ $soc_name == "showoptions" ]] && [[ ${#img_list[@]} == 1 ]] ; then
 	soc_name=${img_list[0]};
 fi
 
-if [[ $soc_name == "showoptions" ]] || [[ ${#img_list[@]} > 1 ]] ; then
+if [[ $soc_name == "showoptions" ]] && [[ ${#img_list[@]} > 1 ]] ; then
 	PS3='Please choose your configuration: '
 	select opt in "${img_list[@]}"
 	do
