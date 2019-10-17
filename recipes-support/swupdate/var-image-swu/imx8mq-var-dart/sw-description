@@ -2,12 +2,12 @@ software =
 {
 	version = "0.1.0";
 
-	imx8m-var-dart = {
+	imx8mq-var-dart = {
 		hardware-compatibility: [ "1.0" ];
 
 		files: (
 			{
-				filename = "var-image-swupdate-imx8m-var-dart.tar.gz";
+				filename = "var-image-swupdate-imx8mq-var-dart.tar.gz";
 				type = "archive";
 				compressed = true;
 				device = "/dev/update";
