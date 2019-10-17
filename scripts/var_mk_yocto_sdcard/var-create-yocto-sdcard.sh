@@ -270,7 +270,12 @@ function copy_images
 		echo "rootfs.tar.gz file is not present. Installation on \"eMMC\" will not be supported."
 	fi
 
-	cp ${YOCTO_RECOVERY_ROOTFS_PATH}/imx-boot-${MACHINE}-sd.bin ${P2_MOUNT_DIR}/opt/images/Yocto/imx-boot-sd.bin
+	if [ ${MACHINE} = "imx8mq-var-dart" ]; then
+		cp ${YOCTO_RECOVERY_ROOTFS_PATH}/imx-boot-${MACHINE}-sd.bin-* ${P2_MOUNT_DIR}/opt/images/Yocto
+		(cd ${P2_MOUNT_DIR}/opt/images/Yocto; ln -fs imx-boot-${MACHINE}-sd.bin-flash_evk imx-boot-sd.bin)
+	else
+		cp ${YOCTO_RECOVERY_ROOTFS_PATH}/imx-boot-${MACHINE}-sd.bin ${P2_MOUNT_DIR}/opt/images/Yocto/imx-boot-sd.bin
+	fi
 }
 
 function copy_scripts
