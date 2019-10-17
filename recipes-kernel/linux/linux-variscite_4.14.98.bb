@@ -15,16 +15,16 @@ DEFAULT_PREFERENCE = "1"
 
 SRCBRANCH = "imx_4.14.98_2.0.0_ga_var01"
 
-LOCALVERSION_imx8m-var-dart = "-imx8m"
+LOCALVERSION_imx8mq-var-dart = "-imx8mq"
 LOCALVERSION_imx8mm-var-dart = "-imx8mm"
 LOCALVERSION_imx8qxp-var-som = "-imx8x"
 LOCALVERSION_imx8qm-var-som = "-imx8qm"
 
 KERNEL_DEFCONFIG = "${S}/arch/arm64/configs/imx8_var_defconfig"
-DEFAULT_DTB_imx8m-var-dart = "sd-emmc-lvds"
+DEFAULT_DTB_imx8mq-var-dart = "sd-emmc-lvds"
 DEFAULT_DTB_imx8qxp-var-som = "sd"
 DEFAULT_DTB_imx8qm-var-som = "lvds"
-DEFAULT_DTB_PREFIX_imx8m-var-dart = "fsl-imx8mq-var-dart"
+DEFAULT_DTB_PREFIX_imx8mq-var-dart = "fsl-imx8mq-var-dart"
 DEFAULT_DTB_PREFIX_imx8qxp-var-som = "fsl-imx8qxp-var-som"
 DEFAULT_DTB_PREFIX_imx8qm-var-som = "fsl-imx8qm-var-som"
 
@@ -43,7 +43,7 @@ pkg_postinst_kernel-devicetree_append () {
    rm -f $D/boot/devicetree-*
 }
 
-pkg_postinst_kernel-devicetree_append_imx8m-var-dart () {
+pkg_postinst_kernel-devicetree_append_imx8mq-var-dart () {
     cd $D/boot
     ln -s ${DEFAULT_DTB_PREFIX}-${DEFAULT_DTB}.dtb ${DEFAULT_DTB_PREFIX}.dtb
     ln -s ${DEFAULT_DTB_PREFIX}-${DEFAULT_DTB}-cb12.dtb ${DEFAULT_DTB_PREFIX}-cb12.dtb
