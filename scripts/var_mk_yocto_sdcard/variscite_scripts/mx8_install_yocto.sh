@@ -4,9 +4,9 @@
 
 IMGS_PATH=/opt/images/Yocto
 UBOOT_IMAGE=imx-boot-sd.bin
+UBOOT_IMAGE_MX8MQ_DP=imx-boot-imx8mq-var-dart-sd.bin-flash_dp_evk
 ROOTFS_IMAGE=rootfs.tar.gz
 BOOTLOADER_RESERVED_SIZE=8
-BOOTLOADER_OFFSET=33
 DISPLAY=lvds
 PART=p
 ROOTFSPART=1
@@ -18,6 +18,7 @@ check_board()
 		BOARD=imx8mm-var-dart
 		DTB_PREFIX=fsl-imx8mm-var-dart
 		BLOCK=mmcblk2
+		BOOTLOADER_OFFSET=33
 	elif grep -q "i.MX8QXP" /sys/devices/soc0/soc_id; then
 		BOARD=imx8qxp-var-som
 		DTB_PREFIX=fsl-imx8qxp-var-som
@@ -34,14 +35,14 @@ check_board()
 			red_bold_echo "ERROR: invalid display, should be lvds, hdmi or dp"
 			exit 1
 		fi
-	elif grep -q "i.MX8M" /sys/devices/soc0/soc_id; then
+	elif grep -q "i.MX8MQ" /sys/devices/soc0/soc_id; then
 		BOARD=imx8mq-var-dart
 		DTB_PREFIX=fsl-imx8mq-var-dart
 		BLOCK=mmcblk0
-
+		BOOTLOADER_OFFSET=33
 		if [[ $DISPLAY != "lvds" && $DISPLAY != "hdmi" && \
-		      $DISPLAY != "dual-display" ]]; then
-			red_bold_echo "ERROR: invalid display, should be lvds, hdmi or dual-display"
+		      $DISPLAY != "dp" && $DISPLAY != "dual-display" ]]; then
+			red_bold_echo "ERROR: invalid display, should be lvds, hdmi, dp or dual-display"
 			exit 1
 		fi
 	else
@@ -161,6 +162,10 @@ install_bootloader_to_emmc()
 	echo
 	blue_underlined_bold_echo "Installing booloader"
 
+	if [[ ${BOARD} = "imx8mq-var-dart" && ${DISPLAY} = "dp" ]]; then
+		UBOOT_IMAGE=${UBOOT_IMAGE_MX8MQ_DP}
+	fi
+
 	dd if=${IMGS_PATH}/${UBOOT_IMAGE} of=/dev/${BLOCK} bs=1K seek=${BOOTLOADER_OFFSET}
 	sync
 }
@@ -179,8 +184,8 @@ install_rootfs_to_emmc()
 
 	if [[ ${BOARD} = "imx8mq-var-dart" ]]; then
 		# Create DTB symlinks
-		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-emmc-wifi-${DISPLAY}.dtb ${DTB_PREFIX}.dtb)
-		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-emmc-wifi-${DISPLAY}-cb12.dtb ${DTB_PREFIX}-cb12.dtb)
+		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-wifi-${DISPLAY}.dtb ${DTB_PREFIX}.dtb)
+		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-wifi-${DISPLAY}-cb12.dtb ${DTB_PREFIX}-cb12.dtb)
 
 		# Install blacklist.conf
 		cp ${MOUNTDIR}/etc/wifi/blacklist.conf ${MOUNTDIR}/etc/modprobe.d
@@ -236,8 +241,8 @@ usage()
 	echo " -h                           show help message"
 	if grep -q "i.MX8QM" /sys/devices/soc0/soc_id; then
 		echo " -d <lvds|hdmi|dp>            set display type, default is lvds"
-	elif grep -q "i.MX8M" /sys/devices/soc0/soc_id; then
-		echo " -d <lvds|hdmi|dual-display>  set display type, default is lvds"
+	elif grep -q "i.MX8MQ" /sys/devices/soc0/soc_id; then
+		echo " -d <lvds|hdmi|dp|dual-display>  set display type, default is lvds"
 	fi
 	echo " -u                           create two rootfs partitions (for swUpdate double-copy)."
 	echo
