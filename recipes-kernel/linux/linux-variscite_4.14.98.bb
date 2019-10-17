@@ -60,5 +60,5 @@ pkg_postinst_kernel-devicetree_append_imx8qm-var-som () {
     ln -s fsl-imx8qm-var-spear-${DEFAULT_DTB}.dtb fsl-imx8qm-var-spear.dtb
 }
 
-COMPATIBLE_MACHINE = "(imx8m-var-dart|imx8mm-var-dart|imx8qxp-var-som|imx8qm-var-som)"
+COMPATIBLE_MACHINE = "(mx8)"
 EXTRA_OEMAKE_append_mx8 = " ARCH=arm64"
