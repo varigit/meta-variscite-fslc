@@ -4,8 +4,8 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 SRCREV_FORMAT = "linux-firmware"
 
-SRCREV_brcm = "7bce9b69b51ffd967176c1597feed79305927370"
-BRANCH_brcm = "6.0.0.121"
+SRCREV_brcm = "7080491e10b82661ca4a67237fdb361190775d2f"
+BRANCH_brcm = "7.0.0.142"
 SRC_URI_append = " \
            git://github.com/varigit/bcm_4343w_fw.git;protocol=git;branch=${BRANCH_brcm};destsuffix=brcm;name=brcm \
 "
