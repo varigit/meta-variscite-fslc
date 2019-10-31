@@ -41,8 +41,8 @@ check_board()
 		BLOCK=mmcblk0
 		BOOTLOADER_OFFSET=33
 		if [[ $DISPLAY != "lvds" && $DISPLAY != "hdmi" && \
-		      $DISPLAY != "dp" && $DISPLAY != "dual-display" ]]; then
-			red_bold_echo "ERROR: invalid display, should be lvds, hdmi, dp or dual-display"
+		      $DISPLAY != "dp" && $DISPLAY != "lvds-dp" && $DISPLAY != "lvds-hdmi" ]]; then
+			red_bold_echo "ERROR: invalid display, should be lvds, hdmi, dp, lvds-dp or lvds-hdmi"
 			exit 1
 		fi
 	else
@@ -162,7 +162,7 @@ install_bootloader_to_emmc()
 	echo
 	blue_underlined_bold_echo "Installing booloader"
 
-	if [[ ${BOARD} = "imx8mq-var-dart" && ${DISPLAY} = "dp" ]]; then
+	if [[ ${BOARD} = "imx8mq-var-dart" && ( ${DISPLAY} = "dp" || ${DISPLAY} = "lvds-dp" ) ]]; then
 		UBOOT_IMAGE=${UBOOT_IMAGE_MX8MQ_DP}
 	fi
 
@@ -242,7 +242,7 @@ usage()
 	if grep -q "i.MX8QM" /sys/devices/soc0/soc_id; then
 		echo " -d <lvds|hdmi|dp>            set display type, default is lvds"
 	elif grep -q "i.MX8MQ" /sys/devices/soc0/soc_id; then
-		echo " -d <lvds|hdmi|dp|dual-display>  set display type, default is lvds"
+		echo " -d <lvds|hdmi|dp|lvds-dp|lvds-hdmi>  set display type, default is lvds"
 	fi
 	echo " -u                           create two rootfs partitions (for swUpdate double-copy)."
 	echo
