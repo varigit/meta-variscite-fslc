@@ -76,7 +76,7 @@ wifi_down()
 wifi_is_available()
 {
 	# For now assume WIFI is available on SPEAR-MX8
-	if grep -q SPEAR-MX8 /sys/devices/soc0/machine
+	if grep -q SPEAR-MX8 /sys/devices/soc0/machine; then
 		return 0
 	fi
 
