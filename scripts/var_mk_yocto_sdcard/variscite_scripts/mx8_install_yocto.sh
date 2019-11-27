@@ -188,7 +188,9 @@ install_rootfs_to_emmc()
 		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-wifi-${DISPLAY}-cb12.dtb ${DTB_PREFIX}-cb12.dtb)
 
 		# Install blacklist.conf
-		cp ${MOUNTDIR}/etc/wifi/blacklist.conf ${MOUNTDIR}/etc/modprobe.d
+		if [ -f ${MOUNTDIR}/etc/wifi/blacklist.conf ]; then
+			cp ${MOUNTDIR}/etc/wifi/blacklist.conf ${MOUNTDIR}/etc/modprobe.d
+		fi
 	fi
 
 	if [[ ${BOARD} = "imx8qxp-var-som" ]]; then
@@ -196,7 +198,9 @@ install_rootfs_to_emmc()
 		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-wifi.dtb ${DTB_PREFIX}.dtb)
 
 		# Install blacklist.conf
-		cp ${MOUNTDIR}/etc/wifi/blacklist.conf ${MOUNTDIR}/etc/modprobe.d
+		if [ -f ${MOUNTDIR}/etc/wifi/blacklist.conf ]; then
+			cp ${MOUNTDIR}/etc/wifi/blacklist.conf ${MOUNTDIR}/etc/modprobe.d
+		fi
 	fi
 
 	if [[ ${BOARD} = "imx8qm-var-som" ]]; then
