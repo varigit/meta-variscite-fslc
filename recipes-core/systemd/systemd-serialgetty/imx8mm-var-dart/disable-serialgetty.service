@@ -1,0 +1,11 @@
+[Unit]
+Description=Disable redundant serial getty service
+After=systemd-remount-fs.service
+ConditionPathIsReadWrite=/etc
+
+[Service]
+Type=oneshot
+ExecStart=/lib/systemd/system/disable-serialgetty.sh
+
+[Install]
+WantedBy=sysinit.target
