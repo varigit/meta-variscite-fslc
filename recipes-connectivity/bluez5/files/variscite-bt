@@ -32,11 +32,13 @@ bt_found()
 # Return true if SoC is from NXP i.MX8 family
 soc_is_imx8()
 {
-   if grep -q MX8 /sys/devices/soc0/soc_id; then
-     return 0
-   fi
+   grep -q MX8 /sys/devices/soc0/soc_id
+}
 
-   return 1
+# Return true if SOM is VAR-SOM-MX8M-MINI
+som_is_var_som_mx8mm()
+{
+   grep -q VAR-SOM-MX8MM /sys/devices/soc0/machine
 }
 
 # Enable BT via GPIO(s)
@@ -51,12 +53,14 @@ enable_bt()
   sleep 1
   echo 1 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
 
-  if soc_is_imx8; then
-    if [ ! -d /sys/class/gpio/gpio${BT_BUF_GPIO} ]; then
+  if soc_is_imx8 ; then
+    if ! som_is_var_som_mx8mm && [ ! -d /sys/class/gpio/gpio${BT_BUF_GPIO} ]; then
       echo ${BT_BUF_GPIO} >/sys/class/gpio/export
       echo "out" > /sys/class/gpio/gpio${BT_BUF_GPIO}/direction
     fi
-    echo 0 > /sys/class/gpio/gpio${BT_BUF_GPIO}/value
+    if ! som_is_var_som_mx8mm; then
+       echo 0 > /sys/class/gpio/gpio${BT_BUF_GPIO}/value
+    fi
   fi
 
 }
@@ -112,6 +116,10 @@ bt_start()
     if som_has_5g_wifi; then
       BT_FIRMWARE=${BT_FIRMWARE_5G}
     fi
+    # On VAR-SOM-MX8M-MINI use different UART
+    if som_is_var_som_mx8mm; then
+      BT_TTY_DEV=${BT_TTY_DEV_SOM}
+    fi
 
     # Load BT firmware and set MAC address (if necessary)
     pidof brcm_patchram_plus > /dev/null && killall -9 brcm_patchram_plus
@@ -144,7 +152,7 @@ bt_stop()
   fi
 
   # BT_BUF down
-  if soc_is_imx8; then
+  if soc_is_imx8 && ! som_is_var_som_mx8mm; then
     echo 1 > /sys/class/gpio/gpio${BT_BUF_GPIO}/value
   fi
 
