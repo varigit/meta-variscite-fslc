@@ -1,10 +1,15 @@
-# Workaround to fix do_compile() failure due to missing fsl-imx8mq-evk.dtb
+FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+
+SRC_URI_append = " \
+        file://soc.mak \
+"
+
 do_compile_prepend() {
-	echo "Copying DTB"
-        if [ -f ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/fsl-imx8mq-var-dart.dtb ]; then
-          cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/fsl-imx8mq-var-dart.dtb ${S}/iMX8M/fsl-imx8mq-evk.dtb
-        fi
-        if [ -f ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/fsl-imx8mm-var-dart.dtb ]; then
-          cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/fsl-imx8mm-var-dart.dtb ${S}/iMX8M/fsl-imx8mm-evk.dtb
-        fi
+	echo "Copying soc.mak"
+	cp ${WORKDIR}/soc.mak ${S}/iMX8M
+
+	echo "Copying DTBs"
+	if [ -f ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/fsl-imx8mm-var-som.dtb ]; then
+		cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/fsl-imx8mm-var-som.dtb ${S}/iMX8M/
+	fi
 }
