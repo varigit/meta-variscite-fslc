@@ -210,7 +210,9 @@ install_rootfs_to_emmc()
 	fi
 
 	# Adjust u-boot-fw-utils for eMMC on the installed rootfs
-	sed -i "s/\/dev\/mmcblk./\/dev\/${BLOCK}/" ${MOUNTDIR}/etc/fw_env.config
+	if [ -f ${MOUNTDIR}/etc/fw_env.config ]; then
+		sed -i "s/\/dev\/mmcblk./\/dev\/${BLOCK}/" ${MOUNTDIR}/etc/fw_env.config
+	fi
 
 	echo
 	sync
