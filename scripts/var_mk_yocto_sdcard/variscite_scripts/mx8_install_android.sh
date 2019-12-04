@@ -116,7 +116,11 @@ bootloader_offset=1
 
 if [[ "${soc_name}" = *"mx8mq"* ]]; then
 	bootloader_offset=33
-	bootloader_file="u-boot-imx8mq-var-dart.imx"
+	if [[ "${soc_name}" = *"dp"* ]]; then
+		bootloader_file="u-boot-imx8mq-var-dart-dp.imx"
+	else
+		bootloader_file="u-boot-imx8mq-var-dart.imx"
+	fi
 fi
 
 if [[ "${soc_name}" = *"mx8mm"* ]]; then
