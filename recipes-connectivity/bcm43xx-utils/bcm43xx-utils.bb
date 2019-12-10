@@ -10,7 +10,6 @@ SRC_URI = " \
 	file://variscite-wifi-common.sh \
 	file://variscite-wifi.service \
 	file://variscite-wifi.conf \
-	file://blacklist.conf \
 "
 
 FILES_${PN} = " \ 
@@ -24,7 +23,7 @@ FILES_${PN} = " \
 
 RDEPENDS_${PN}_imx8qm-var-som = "i2c-tools"
 RDEPENDS_${PN}_imx8qxp-var-som = "i2c-tools"
-RDEPENDS_${PN}_append = " bash"
+RDEPENDS_${PN}_append = " bash base-files"
 
 S = "${WORKDIR}"
 
@@ -46,22 +45,4 @@ do_install() {
 		ln -s ${sysconfdir}/wifi/variscite-wifi ${D}${sysconfdir}/init.d/variscite-wifi
 		update-rc.d -r ${D} variscite-wifi start 5 S .
 	fi
-}
-
-do_install_append_imx8mq-var-dart() {
-	install -m 0644 ${WORKDIR}/blacklist.conf ${D}/${sysconfdir}/wifi
-}
-
-do_install_append_imx8mm-var-dart() {
-	install -d ${D}${sysconfdir}/modprobe.d
-	install -m 0644 ${WORKDIR}/blacklist.conf ${D}/${sysconfdir}/modprobe.d
-}
-
-do_install_append_imx8qxp-var-som() {
-	install -m 0644 ${WORKDIR}/blacklist.conf ${D}/${sysconfdir}/wifi
-}
-
-do_install_append_imx8qm-var-som() {
-	install -d ${D}${sysconfdir}/modprobe.d
-	install -m 0644 ${WORKDIR}/blacklist.conf ${D}/${sysconfdir}/modprobe.d
 }

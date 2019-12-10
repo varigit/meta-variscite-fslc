@@ -187,20 +187,13 @@ install_rootfs_to_emmc()
 		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-wifi-${DISPLAY}.dtb ${DTB_PREFIX}.dtb)
 		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-wifi-${DISPLAY}-cb12.dtb ${DTB_PREFIX}-cb12.dtb)
 
-		# Install blacklist.conf
-		if [ -f ${MOUNTDIR}/etc/wifi/blacklist.conf ]; then
-			cp ${MOUNTDIR}/etc/wifi/blacklist.conf ${MOUNTDIR}/etc/modprobe.d
-		fi
+		# Update variscite-blacklist.conf
+		echo "blacklist fec" >> /etc/modprobe.d/variscite-blacklist.conf
 	fi
 
 	if [[ ${BOARD} = "imx8qxp-var-som" ]]; then
 		# Create DTB symlink
 		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-wifi.dtb ${DTB_PREFIX}.dtb)
-
-		# Install blacklist.conf
-		if [ -f ${MOUNTDIR}/etc/wifi/blacklist.conf ]; then
-			cp ${MOUNTDIR}/etc/wifi/blacklist.conf ${MOUNTDIR}/etc/modprobe.d
-		fi
 	fi
 
 	if [[ ${BOARD} = "imx8qm-var-som" ]]; then
