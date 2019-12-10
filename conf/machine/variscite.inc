@@ -27,6 +27,7 @@ MACHINE_EXTRA_RDEPENDS += " \
 	networkmanager \
 	packagegroup-tools-bluetooth \
 	pm-utils \
+	rng-tools \
 	wpa-supplicant \
 	u-boot-fw-utils \
 	u-boot-splash \
