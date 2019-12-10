@@ -24,7 +24,7 @@ MACHINE_EXTRA_RDEPENDS += " \
 	kmod \
 	linux-firmware-bcm4339 \
 	linux-firmware-bcm43430 \
-	networkmanager \
+	${@bb.utils.contains('DISTRO', 'b2qt', '', 'networkmanager', d)} \
 	packagegroup-tools-bluetooth \
 	pm-utils \
 	rng-tools \
