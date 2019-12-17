@@ -214,7 +214,7 @@ function delete_device
 {
 	echo
 	blue_underlined_bold_echo "Deleting current partitions"
-	for partition in ${node}${part}*
+	for partition in `ls ${node}${part}* 2> /dev/null`
 	do
 		if [[ ${partition} = ${node} ]] ; then
 			# skip base node
