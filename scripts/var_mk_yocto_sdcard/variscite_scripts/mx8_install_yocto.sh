@@ -19,6 +19,11 @@ check_board()
 		DTB_PREFIX=fsl-imx8mm-var-dart
 		BLOCK=mmcblk2
 		BOOTLOADER_OFFSET=33
+	elif grep -q "i.MX8MN" /sys/devices/soc0/soc_id; then
+		BOARD=imx8mn-var-som
+		DTB_PREFIX=fsl-imx8mn-var-som
+		BLOCK=mmcblk2
+		BOOTLOADER_OFFSET=32
 	elif grep -q "i.MX8QXP" /sys/devices/soc0/soc_id; then
 		BOARD=imx8qxp-var-som
 		DTB_PREFIX=fsl-imx8qxp-var-som
