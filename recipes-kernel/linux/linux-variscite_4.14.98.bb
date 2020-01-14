@@ -14,9 +14,11 @@ DEPENDS += "lzop-native bc-native"
 DEFAULT_PREFERENCE = "1"
 
 SRCBRANCH = "imx_4.14.98_2.0.0_ga_var01"
+SRCBRANCH_imx8mn-var-som = "imx_4.14.98_2.3.0_var01"
 
 LOCALVERSION_imx8mq-var-dart = "-imx8mq"
 LOCALVERSION_imx8mm-var-dart = "-imx8mm"
+LOCALVERSION_imx8mn-var-som = "-imx8mn"
 LOCALVERSION_imx8qxp-var-som = "-imx8x"
 LOCALVERSION_imx8qm-var-som = "-imx8qm"
 
@@ -31,6 +33,7 @@ DEFAULT_DTB_PREFIX_imx8qm-var-som = "fsl-imx8qm-var-som"
 KERNEL_SRC ?= "git://github.com/varigit/linux-imx;protocol=git"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
 SRCREV = "f46b4b86d886f281c13ec9e2d304c6af7ca69fa0"
+SRCREV_imx8mn-var-som = "89b58f34e6ce638066659854c1c12e512e18e2db"
 
 S = "${WORKDIR}/git"
 
