@@ -1,0 +1,15 @@
+diff --git a/src/hal/os/linux/kernel/platform/freescale/gc_hal_kernel_platform_imx.c b/src/hal/os/linux/kernel/platform/freescale/gc_hal_kernel_platform_imx.c
+index a00b6a5..b0269de 100644
+--- a/src/hal/os/linux/kernel/platform/freescale/gc_hal_kernel_platform_imx.c
++++ b/src/hal/os/linux/kernel/platform/freescale/gc_hal_kernel_platform_imx.c
+@@ -1569,7 +1569,8 @@ _AdjustParam(
+     patch_param(Platform->device, Args);
+ 
+     if ((of_find_compatible_node(NULL, NULL, "fsl,imx8mq-gpu") ||
+-        of_find_compatible_node(NULL, NULL, "fsl,imx8mm-gpu")) &&
++        of_find_compatible_node(NULL, NULL, "fsl,imx8mm-gpu") ||
++        of_find_compatible_node(NULL, NULL, "fsl,imx8mn-gpu")) &&
+         ((Args->baseAddress + totalram_pages * PAGE_SIZE) > 0x100000000))
+     {
+         Platform->flagBits |= gcvPLATFORM_FLAG_LIMIT_4G_ADDRESS;
+
