@@ -21,6 +21,11 @@ do_compile_imx8mm-var-dart () {
 	oe_runmake envtools
 }
 
+do_compile_imx8mn-var-som () {
+        oe_runmake imx8mn_var_som_defconfig
+        oe_runmake envtools
+}
+
 do_compile_imx8qxp-var-som () {
 	oe_runmake imx8qxp_var_som_defconfig
 	oe_runmake envtools
