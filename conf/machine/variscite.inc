@@ -15,7 +15,6 @@ PREFERRED_RPROVIDER_ptpd-dev = "ptpd"
 MACHINE_EXTRA_RDEPENDS += " \
 	bcm43xx-utils \
 	brcm-patchram-plus \
-	crda \
 	gptfdisk \
 	hostapd \
 	hdparm \
@@ -29,6 +28,7 @@ MACHINE_EXTRA_RDEPENDS += " \
 	pm-utils \
 	rng-tools \
 	wpa-supplicant \
+	wireless-regdb-static \
 	u-boot-fw-utils \
 	u-boot-splash \
 "
