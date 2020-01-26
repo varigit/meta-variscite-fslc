@@ -1,14 +1,22 @@
 diff --git a/src/hal/os/linux/kernel/platform/freescale/gc_hal_kernel_platform_imx.c b/src/hal/os/linux/kernel/platform/freescale/gc_hal_kernel_platform_imx.c
-index 8b00941..63b9230 100644
+index ebfcc1990578..b593887d0a1d 100644
 --- a/src/hal/os/linux/kernel/platform/freescale/gc_hal_kernel_platform_imx.c
 +++ b/src/hal/os/linux/kernel/platform/freescale/gc_hal_kernel_platform_imx.c
-@@ -1512,7 +1512,8 @@ _AdjustParam(
- {
+@@ -1626,10 +1626,12 @@ _AdjustParam(
      patch_param(Platform->device, Args);
  
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(5,0,0)
 -    if (of_find_compatible_node(NULL, NULL, "fsl,imx8mq-gpu") &&
 +    if ((of_find_compatible_node(NULL, NULL, "fsl,imx8mq-gpu") ||
-+	of_find_compatible_node(NULL, NULL, "fsl,imx8mm-gpu")) &&
-         ((Args->baseAddress + totalram_pages * PAGE_SIZE) > 0x100000000))
++         of_find_compatible_node(NULL, NULL, "fsl,imx8mm-gpu")) &&
+         ((Args->baseAddress + totalram_pages() * PAGE_SIZE) > 0x100000000))
+ #else
+-     if (of_find_compatible_node(NULL, NULL, "fsl,imx8mq-gpu") &&
++    if ((of_find_compatible_node(NULL, NULL, "fsl,imx8mq-gpu") ||
++         of_find_compatible_node(NULL, NULL, "fsl,imx8mm-gpu")) &&
+          ((Args->baseAddress + totalram_pages * PAGE_SIZE) > 0x100000000))
+ #endif
      {
-         Platform->flagBits |= gcvPLATFORM_FLAG_LIMIT_4G_ADDRESS;
+-- 
+2.17.1
+
