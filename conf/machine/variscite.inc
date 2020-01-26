@@ -4,7 +4,7 @@ PREFERRED_VERSION_linux-variscite = "4.19.35"
 
 KERNEL_IMAGETYPE_mx8 = "Image.gz"
 
-SDCARD_GENERATION_COMMAND_mx8 = "generate_imx_sdcard_mx8"
+SOC_DEFAULT_WKS_FILE_mx8 = "imx-imx-boot-bootpart1.wks.in"
 
 DEFAULTTUNE_mx8 = "aarch64"
 
@@ -39,4 +39,4 @@ IMAGE_INSTALL_append = " \
 	kernel-devicetree \
 "
 
-IMAGE_FSTYPES = "tar.gz sdcard.gz"
+IMAGE_FSTYPES = "tar.gz wic.gz"
