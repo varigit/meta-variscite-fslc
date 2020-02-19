@@ -2,6 +2,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 SRC_URI_append = " \
 	file://variscite-bt \
+	file://variscite-bt-common.sh \
 	file://variscite-bt.service \
 	file://variscite-bt.conf \
 	file://main.conf \
@@ -32,6 +33,7 @@ do_install_append() {
 		install -d ${D}${sysconfdir}/systemd/system/multi-user.target.wants
 		install -m 0644 ${WORKDIR}/variscite-bt.service ${D}${systemd_unitdir}/system
 		install -m 0755 ${WORKDIR}/variscite-bt ${D}${sysconfdir}/bluetooth
+		install -m 0755 ${WORKDIR}/variscite-bt-common.sh ${D}${sysconfdir}/bluetooth
 		install -m 0644 ${WORKDIR}/obex.service ${D}${systemd_unitdir}/system
 		install -m 0644 ${WORKDIR}/bluetooth.service ${D}${systemd_unitdir}/system
 
