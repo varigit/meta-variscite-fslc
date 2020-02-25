@@ -171,7 +171,14 @@ else
 fi
 
 
-META_FSL_BSP_RELEASE="${CWD}/sources/meta-fsl-bsp-release/imx/meta-bsp"
+META_FSL_BSP_RELEASE="$BUILD_DIR/../sources/meta-fsl-bsp-release/imx/meta-bsp"
+
+# hack meta-fsl-bsp-release to make it compatible with warrior HEAD of poky
+cd $META_FSL_BSP_RELEASE
+if [ -e recipes-kernel/linux-firmware/linux-firmware_git.bbappend ]; then
+    mv recipes-kernel/linux-firmware/linux-firmware_git.bbappend recipes-kernel/linux-firmware/linux-firmware_%.bbappend
+fi
+cd -
 
 echo "" >> $BUILD_DIR/conf/bblayers.conf
 echo "# Freescale Yocto Project Release layers" >> $BUILD_DIR/conf/bblayers.conf
