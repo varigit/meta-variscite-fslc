@@ -175,6 +175,9 @@ META_FSL_BSP_RELEASE="$BUILD_DIR/../sources/meta-fsl-bsp-release/imx/meta-bsp"
 
 # hack meta-fsl-bsp-release to make it compatible with warrior HEAD of poky
 cd $META_FSL_BSP_RELEASE
+if [ -e recipes-connectivity/openssl/openssl_1.1.1b.bbappend ]; then
+    mv recipes-connectivity/openssl/openssl_1.1.1b.bbappend recipes-connectivity/openssl/openssl_%.bbappend
+fi
 if [ -e recipes-kernel/linux-firmware/linux-firmware_git.bbappend ]; then
     mv recipes-kernel/linux-firmware/linux-firmware_git.bbappend recipes-kernel/linux-firmware/linux-firmware_%.bbappend
 fi
