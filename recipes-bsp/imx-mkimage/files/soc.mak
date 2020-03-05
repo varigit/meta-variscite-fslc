@@ -143,7 +143,7 @@ u-boot-ddr4-evk.itb: $(dtbs_ddr4_evk)
 	TEE_LOAD_ADDR=$(TEE_LOAD_ADDR) ATF_LOAD_ADDR=$(ATF_LOAD_ADDR) ./mkimage_fit_atf.sh $(dtbs_ddr4_evk) > u-boot-ddr4-evk.its
 	./mkimage_uboot -E -p 0x3000 -f u-boot-ddr4-evk.its u-boot-ddr4-evk.itb
 
-dtbs_lpddr4_ddr4_evk = fsl-$(PLAT)-var-dart.dtb fsl-$(PLAT)-var-som.dtb
+dtbs_lpddr4_ddr4_evk = fsl-$(PLAT)-var-dart.dtb fsl-$(PLAT)-var-som.dtb fsl-$(PLAT)-var-som-rev10.dtb
 u-boot-lpddr4-ddr4-evk.itb: $(dtbs_lpddr4_ddr4_evk)
 	./$(PAD_IMAGE) bl31.bin
 	TEE_LOAD_ADDR=$(TEE_LOAD_ADDR) ATF_LOAD_ADDR=$(ATF_LOAD_ADDR) ./mkimage_fit_atf.sh $(dtbs_lpddr4_ddr4_evk) > u-boot-lpddr4-ddr4-evk.its
