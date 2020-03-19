@@ -334,7 +334,7 @@ function finish
 {
 	echo
 	errors=0
-	for partition in ${node}*
+	for partition in ${node}${part}*
 	do
 		if [[ ! -b ${partition} ]] ; then
 			red_bold_echo "ERROR: \"${partition}\" is not a block device"
