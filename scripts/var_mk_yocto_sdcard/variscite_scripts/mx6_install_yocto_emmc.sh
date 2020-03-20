@@ -249,10 +249,31 @@ function install_rootfs
 	umount ${node}${part}${rootfspart}
 }
 
+stop_udev()
+{
+	if [ -f /lib/systemd/system/systemd-udevd.service ]; then
+		systemctl -q mask --runtime systemd-udevd
+		systemctl -q stop systemd-udevd
+	else
+		/etc/init.d/udev stop
+	fi
+}
+
+start_udev()
+{
+	if [ -f /lib/systemd/system/systemd-udevd.service ]; then
+		systemctl -q unmask systemd-udevd
+		systemctl -q start systemd-udevd
+	else
+		/etc/init.d/udev start
+	fi
+}
+
 check_images
 
 umount ${node}${part}*  2> /dev/null || true
-/etc/init.d/udev stop
+
+stop_udev
 
 delete_device
 if [[ $swupdate == 1 ]] ; then
@@ -270,6 +291,7 @@ if [[ $is_dart == true ]] ; then
 		install_kernel
 	fi
 fi
-/etc/init.d/udev start
+
+start_udev
 
 exit 0
