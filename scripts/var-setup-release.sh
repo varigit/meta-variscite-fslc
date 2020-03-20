@@ -1,8 +1,9 @@
 #!/bin/sh
 #
-# FSL Build Enviroment Setup Script
+# i.MX Yocto Project Build Environment Setup Script
 #
-# Copyright (C) 2011-2015 Freescale Semiconductor
+# Copyright (C) 2011-2016 Freescale Semiconductor
+# Copyright 2017 NXP
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,10 +33,9 @@ exit_message ()
 usage()
 {
     echo -e "\nUsage: source fsl-setup-release.sh
-    Optional parameters: [-b build-dir] [-e back-end] [-h]"
+    Optional parameters: [-b build-dir] [-h]"
 echo "
     * [-b build-dir]: Build directory, if unspecified script uses 'build' as output directory
-    * [-e back-end]: Options are 'fb', 'dfb', 'x11, 'wayland'
     * [-h]: help
 "
 }
@@ -44,7 +44,7 @@ echo "
 clean_up()
 {
 
-    unset CWD BUILD_DIR BACKEND FSLDISTRO
+    unset CWD BUILD_DIR FSLDISTRO
     unset fsl_setup_help fsl_setup_error fsl_setup_flag
     unset usage clean_up
     unset ARM_DIR META_FSL_BSP_RELEASE
@@ -61,71 +61,31 @@ do
         b) BUILD_DIR="$OPTARG";
            echo -e "\n Build directory is " $BUILD_DIR
            ;;
-        e)
-            # Determine what distro needs to be used.
-            BACKEND="$OPTARG"
-            if [ "$BACKEND" = "fb" ]; then
-                if [ -z "$DISTRO" ]; then
-                    FSLDISTRO='fsl-imx-fb'
-                    echo -e "\n Using FB backend with FB DIST_FEATURES to override poky X11 DIST FEATURES"
-                elif [ ! "$DISTRO" = "fsl-imx-fb" ]; then
-                    echo -e "\n DISTRO specified conflicts with -e. Please use just one or the other."
-                    fsl_setup_error='true'
-                fi
-
-            elif [ "$BACKEND" = "dfb" ]; then
-                if [ -z "$DISTRO" ]; then
-                    FSLDISTRO='fsl-imx-dfb'
-                    echo -e "\n Using DirectFB backend with DirectFB DIST_FEATURES to override poky X11 DIST FEATURES"
-                elif [ ! "$DISTRO" = "fsl-imx-dfb" ]; then
-                    echo -e "\n DISTRO specified conflicts with -e. Please use just one or the other."
-                    fsl_setup_error='true'
-                fi
-
-            elif [ "$BACKEND" = "wayland" ]; then
-                if [ -z "$DISTRO" ]; then
-                    FSLDISTRO='fsl-imx-wayland'
-                    echo -e "\n Using Wayland backend."
-                elif [ ! "$DISTRO" = "fsl-imx-wayland" ]; then
-                    echo -e "\n DISTRO specified conflicts with -e. Please use just one or the other."
-                    fsl_setup_error='true'
-                fi
-
-            elif [ "$BACKEND" = "x11" ]; then
-                if [ -z "$DISTRO" ]; then
-                    FSLDISTRO='fsl-imx-x11'
-                    echo -e  "\n Using X11 backend with poky DIST_FEATURES"
-                elif [ ! "$DISTRO" = "fsl-imx-x11" ]; then
-                    echo -e "\n DISTRO specified conflicts with -e. Please use just one or the other."
-                    fsl_setup_error='true'
-                fi
-
-            else
-                echo -e "\n Invalid backend specified with -e.  Use fb, dfb, wayland, or x11"
-                fsl_setup_error='true'
-            fi
-           ;;
         h) fsl_setup_help='true';
            ;;
-        ?) fsl_setup_error='true';
+        \?) fsl_setup_error='true';
            ;;
     esac
 done
+shift $((OPTIND-1))
+if [ $# -ne 0 ]; then
+    fsl_setup_error=true
+    echo -e "Invalid command line ending: '$@'"
+fi
+OPTIND=$OLD_OPTIND
+if test $fsl_setup_help; then
+    usage && clean_up && return 1
+elif test $fsl_setup_error; then
+    clean_up && return 1
+fi
 
 
 if [ -z "$DISTRO" ]; then
     if [ -z "$FSLDISTRO" ]; then
-        FSLDISTRO='fsl-imx-x11'
+        FSLDISTRO='fsl-imx-xwayland'
     fi
 else
     FSLDISTRO="$DISTRO"
-fi
-
-OPTIND=$OLD_OPTIND
-
-# check the "-h" and other not supported options
-if test $fsl_setup_error || test $fsl_setup_help; then
-    usage && clean_up && return 1
 fi
 
 if [ -z "$BUILD_DIR" ]; then
@@ -134,8 +94,26 @@ fi
 
 if [ -z "$MACHINE" ]; then
     echo setting to default machine
-    MACHINE='imx6qsabresd'
+    MACHINE='imx6qpsabresd'
 fi
+
+case $MACHINE in
+imx8*)
+    case $DISTRO in
+    *wayland)
+        : ok
+        ;;
+    *)
+        echo -e "\n ERROR - Only Wayland distros are supported for i.MX 8 or i.MX 8M"
+        echo -e "\n"
+        return 1
+        ;;
+    esac
+    ;;
+*)
+    : ok
+    ;;
+esac
 
 # copy new EULA into community so setup uses latest i.MX EULA
 cp sources/meta-fsl-bsp-release/imx/EULA.txt sources/meta-freescale/EULA
@@ -157,13 +135,14 @@ if [ ! -e $BUILD_DIR/conf/local.conf ]; then
 fi
 
 # On the first script run, backup the local.conf file
+# Consecutive runs, it restores the backup and changes are appended on this one.
 if [ ! -e $BUILD_DIR/conf/local.conf.org ]; then
     cp $BUILD_DIR/conf/local.conf $BUILD_DIR/conf/local.conf.org
+else
+    cp $BUILD_DIR/conf/local.conf.org $BUILD_DIR/conf/local.conf
 fi
 
 
-# On the first script run, backup the bblayers.conf file
-# On consecutive runs, it restores the backup and changes are appended on this one
 if [ ! -e $BUILD_DIR/conf/bblayers.conf.org ]; then
     cp $BUILD_DIR/conf/bblayers.conf $BUILD_DIR/conf/bblayers.conf.org
 else
@@ -184,22 +163,31 @@ fi
 cd -
 
 echo "" >> $BUILD_DIR/conf/bblayers.conf
-echo "# Freescale Yocto Project Release layers" >> $BUILD_DIR/conf/bblayers.conf
+echo "# i.MX Yocto Project Release layers" >> $BUILD_DIR/conf/bblayers.conf
 hook_in_layer meta-fsl-bsp-release/imx/meta-bsp
 hook_in_layer meta-fsl-bsp-release/imx/meta-sdk
+hook_in_layer meta-fsl-bsp-release/imx/meta-ml
 
 echo "" >> $BUILD_DIR/conf/bblayers.conf
-echo "BBLAYERS += \" \${BSPDIR}/sources/meta-browser \"" >> $BUILD_DIR/conf/bblayers.conf
-echo "BBLAYERS += \" \${BSPDIR}/sources/meta-rust\"" >> $BUILD_DIR/conf/bblayers.conf
-echo "BBLAYERS += \" \${BSPDIR}/sources/meta-openembedded/meta-gnome \"" >> $BUILD_DIR/conf/bblayers.conf
-echo "BBLAYERS += \" \${BSPDIR}/sources/meta-openembedded/meta-networking \"" >> $BUILD_DIR/conf/bblayers.conf
-echo "BBLAYERS += \" \${BSPDIR}/sources/meta-openembedded/meta-python \"" >> $BUILD_DIR/conf/bblayers.conf
-echo "BBLAYERS += \" \${BSPDIR}/sources/meta-openembedded/meta-filesystems \"" >> $BUILD_DIR/conf/bblayers.conf
+echo "BBLAYERS += \"\${BSPDIR}/sources/meta-browser\"" >> $BUILD_DIR/conf/bblayers.conf
+echo "BBLAYERS += \"\${BSPDIR}/sources/meta-rust\"" >> $BUILD_DIR/conf/bblayers.conf
+echo "BBLAYERS += \"\${BSPDIR}/sources/meta-openembedded/meta-gnome\"" >> $BUILD_DIR/conf/bblayers.conf
+echo "BBLAYERS += \"\${BSPDIR}/sources/meta-openembedded/meta-networking\"" >> $BUILD_DIR/conf/bblayers.conf
+echo "BBLAYERS += \"\${BSPDIR}/sources/meta-openembedded/meta-python\"" >> $BUILD_DIR/conf/bblayers.conf
+echo "BBLAYERS += \"\${BSPDIR}/sources/meta-openembedded/meta-filesystems\"" >> $BUILD_DIR/conf/bblayers.conf
 
-echo "BBLAYERS += \" \${BSPDIR}/sources/meta-qt5 \"" >> $BUILD_DIR/conf/bblayers.conf
+echo "BBLAYERS += \"\${BSPDIR}/sources/meta-qt5\"" >> $BUILD_DIR/conf/bblayers.conf
 
-echo "BBLAYERS += \" \${BSPDIR}/sources/meta-swupdate \"" >> $BUILD_DIR/conf/bblayers.conf
-echo "BBLAYERS += \" \${BSPDIR}/sources/meta-variscite-imx \"" >> $BUILD_DIR/conf/bblayers.conf
+echo "BBLAYERS += \"\${BSPDIR}/sources/meta-swupdate\"" >> $BUILD_DIR/conf/bblayers.conf
+echo "BBLAYERS += \"\${BSPDIR}/sources/meta-variscite-imx\"" >> $BUILD_DIR/conf/bblayers.conf
+
+if [ -d ../sources/meta-ivi ]; then
+    echo -e "\n## Genivi layers" >> $BUILD_DIR/conf/bblayers.conf
+    echo "BBLAYERS += \"\${BSPDIR}/sources/meta-gplv2\"" >> $BUILD_DIR/conf/bblayers.conf
+    echo "BBLAYERS += \"\${BSPDIR}/sources/meta-ivi/meta-ivi\"" >> $BUILD_DIR/conf/bblayers.conf
+    echo "BBLAYERS += \"\${BSPDIR}/sources/meta-ivi/meta-ivi-bsp\"" >> $BUILD_DIR/conf/bblayers.conf
+    echo "BBLAYERS += \"\${BSPDIR}/sources/meta-ivi/meta-ivi-test\"" >> $BUILD_DIR/conf/bblayers.conf
+fi
 
 echo BSPDIR=$BSPDIR
 echo BUILD_DIR=$BUILD_DIR
@@ -211,9 +199,6 @@ if [ -d ../sources/meta-freescale ]; then
     sed -e "s,meta-fsl-arm\s,meta-freescale ,g" -i conf/bblayers.conf
     sed -e "s,\$.BSPDIR./sources/meta-fsl-arm-extra\s,,g" -i conf/bblayers.conf
 fi
-
-sed -i 's/IMAGE_FSTYPES =/IMAGE_FSTYPES ?=/g' \
-	$BUILD_DIR/../sources/meta-fsl-bsp-release/imx/meta-sdk/conf/distro/include/fsl-imx-base.inc
 
 cd  $BUILD_DIR
 clean_up
