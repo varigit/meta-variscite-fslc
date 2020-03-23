@@ -193,7 +193,7 @@ install_rootfs_to_emmc()
 		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-wifi-${DISPLAY}-cb12.dtb ${DTB_PREFIX}-cb12.dtb)
 
 		# Update variscite-blacklist.conf
-		echo "blacklist fec" >> /etc/modprobe.d/variscite-blacklist.conf
+		echo "blacklist fec" >> ${MOUNTDIR}/etc/modprobe.d/variscite-blacklist.conf
 	fi
 
 	if [[ ${BOARD} = "imx8qxp-var-som" ]]; then
