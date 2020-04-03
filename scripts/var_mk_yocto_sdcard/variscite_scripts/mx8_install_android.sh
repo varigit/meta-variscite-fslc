@@ -12,7 +12,8 @@ SYSTEM_ROM_SIZE=1792
 MISC_SIZE=4
 METADATA_SIZE=2
 PRESISTDATA_SIZE=1
-VENDOR_ROM_SIZE=256
+VENDOR_ROM_SIZE=512
+PRODUCT_ROM_SIZE=1792
 FBMISC_SIZE=1
 VBMETA_SIZE=1
 
@@ -100,6 +101,7 @@ bootimage_file="boot.img"
 vbmeta_file="vbmeta-${soc_name}.img"
 systemimage_file="system.img"
 vendorimage_file="vendor.img"
+productimage_file="product.img"
 
 block=`basename $node`
 part=""
@@ -146,7 +148,7 @@ seprate=100
 total_size=`sfdisk -s ${node}`
 total_size=`expr ${total_size} \/ 1024`
 boot_rom_sizeb=`expr ${BOOTLOAD_RESERVE} + ${DTBO_ROM_SIZE} \* 2 + ${BOOT_ROM_SIZE} \* 2`
-extend_size=`expr ${SYSTEM_ROM_SIZE} \* 2 + ${MISC_SIZE} + ${METADATA_SIZE} + ${PRESISTDATA_SIZE} + ${VENDOR_ROM_SIZE} \* 2 + ${FBMISC_SIZE} + ${VBMETA_SIZE} \* 2 + ${seprate}`
+extend_size=`expr ${SYSTEM_ROM_SIZE} \* 2 + ${MISC_SIZE} + ${METADATA_SIZE} + ${PRESISTDATA_SIZE} + ${VENDOR_ROM_SIZE} \* 2 + ${PRODUCT_ROM_SIZE} \* 2 + ${FBMISC_SIZE} + ${VBMETA_SIZE} \* 2 + ${seprate}`
 data_size=`expr ${total_size} - ${boot_rom_sizeb} - ${extend_size}`
 
 # Echo partitions
@@ -164,6 +166,8 @@ METADATA         : ${METADATA_SIZE} MiB
 PRESISTDATA      : ${PRESISTDATA_SIZE} MiB
 VENDOR_A         : ${VENDOR_ROM_SIZE} MiB
 VENDOR_B         : ${VENDOR_ROM_SIZE} MiB
+PRODUCT_A        : ${PRODUCT_ROM_SIZE} MiB
+PRODUCT_B        : ${PRODUCT_ROM_SIZE} MiB
 USERDATA         : ${data_size} MiB
 FBMISC           : ${FBMISC_SIZE} MiB
 VBMETA_A         : ${VBMETA_SIZE} MiB
@@ -196,6 +200,11 @@ function check_images
 
 	if [[ ! -f ${imagesdir}/${systemimage_file} ]] ; then
 		red_bold_echo "ERROR: ${systemimage_file} image does not exist"
+		exit 1
+	fi
+
+	if [[ ! -f ${imagesdir}/${productimage_file} ]] ; then
+		red_bold_echo "ERROR: ${productimage_file} image does not exist"
 		exit 1
 	fi
 
@@ -254,10 +263,12 @@ function create_parts
 	sgdisk -n 9:0:+${PRESISTDATA_SIZE}M                 -c 9:"presistdata" -t 7:8300  $node
 	sgdisk -n 10:0:+${VENDOR_ROM_SIZE}M                 -c 10:"vendor_a"   -t 8:8300  $node
 	sgdisk -n 11:0:+${VENDOR_ROM_SIZE}M                 -c 11:"vendor_b"   -t 9:8300  $node
-	sgdisk -n 12:0:+${data_size}M                       -c 12:"userdata"   -t 10:8300 $node
-	sgdisk -n 13:0:+${FBMISC_SIZE}M                     -c 13:"fbmisc"     -t 11:8300 $node
-	sgdisk -n 14:0:+${VBMETA_SIZE}M                     -c 14:"vbmeta_a"   -t 12:8300 $node
-	sgdisk -n 15:0:+${VBMETA_SIZE}M                     -c 15:"vbmeta_b"   -t 13:8300 $node
+	sgdisk -n 12:0:+${PRODUCT_ROM_SIZE}M                -c 12:"product_a"  -t 10:8300 $node
+	sgdisk -n 13:0:+${PRODUCT_ROM_SIZE}M                -c 13:"product_b"  -t 11:8300 $node
+	sgdisk -n 14:0:+${data_size}M                       -c 14:"userdata"   -t 12:8300 $node
+	sgdisk -n 15:0:+${FBMISC_SIZE}M                     -c 15:"fbmisc"     -t 13:8300 $node
+	sgdisk -n 16:0:+${VBMETA_SIZE}M                     -c 16:"vbmeta_a"   -t 14:8300 $node
+	sgdisk -n 17:0:+${VBMETA_SIZE}M                     -c 17:"vbmeta_b"   -t 15:8300 $node
 
 	sync; sleep 2
 
@@ -285,13 +296,13 @@ function format_android
 	blue_underlined_bold_echo "Erasing presistdata partition"
 	dd if=/dev/zero of=${node}${part}9 bs=1M count=${PRESISTDATA_SIZE} conv=fsync
 	blue_underlined_bold_echo "Erasing fbmisc partition"
-	dd if=/dev/zero of=${node}${part}13 bs=1M count=${FBMISC_SIZE} conv=fsync
+	dd if=/dev/zero of=${node}${part}15 bs=1M count=${FBMISC_SIZE} conv=fsync
 	blue_underlined_bold_echo "Erasing misc partition"
 	dd if=/dev/zero of=${node}${part}7 bs=1M count=${MISC_SIZE} conv=fsync
 	blue_underlined_bold_echo "Erasing metadata partition"
 	dd if=/dev/zero of=${node}${part}8 bs=1M count=${METADATA_SIZE} conv=fsync
 	blue_underlined_bold_echo "Formating userdata partition"
-	mkfs.ext4 -F ${node}${part}12 -Ldata
+	mkfs.ext4 -F ${node}${part}14 -Ldata
 	sync; sleep 1
 }
 
@@ -322,9 +333,15 @@ function install_android
 	sync;
 
 	echo
+	blue_underlined_bold_echo "Installing Android product image: $productimage_file"
+	simg2img ${imagesdir}/${productimage_file} ${node}${part}12
+	simg2img ${imagesdir}/${productimage_file} ${node}${part}13
+	sync;
+
+	echo
 	blue_underlined_bold_echo "Installing Android vbmeta image: $vbmeta_file"
-	dd if=${imagesdir}/${vbmeta_file} of=${node}${part}14 bs=1M
-	dd if=${imagesdir}/${vbmeta_file} of=${node}${part}15 bs=1M
+	dd if=${imagesdir}/${vbmeta_file} of=${node}${part}16 bs=1M
+	dd if=${imagesdir}/${vbmeta_file} of=${node}${part}17 bs=1M
 	sync;
 
 	sleep 1
