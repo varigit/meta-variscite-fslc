@@ -179,6 +179,7 @@ echo "BBLAYERS += \"\${BSPDIR}/sources/meta-openembedded/meta-filesystems\"" >> 
 echo "BBLAYERS += \"\${BSPDIR}/sources/meta-qt5\"" >> $BUILD_DIR/conf/bblayers.conf
 
 echo "BBLAYERS += \"\${BSPDIR}/sources/meta-swupdate\"" >> $BUILD_DIR/conf/bblayers.conf
+echo "BBLAYERS += \"\${BSPDIR}/sources/meta-virtualization\"" >> $BUILD_DIR/conf/bblayers.conf
 echo "BBLAYERS += \"\${BSPDIR}/sources/meta-variscite-imx\"" >> $BUILD_DIR/conf/bblayers.conf
 
 if [ -d ../sources/meta-ivi ]; then
