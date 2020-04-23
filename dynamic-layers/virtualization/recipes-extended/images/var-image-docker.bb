@@ -5,7 +5,7 @@ inherit core-image distro_features_check
 
 REQUIRED_DISTRO_FEATURES += "virtualization"
 
-IMAGE_FEATURES += "ssh-server-dropbear"
+IMAGE_FEATURES += "splash ssh-server-dropbear"
 
 IMAGE_INSTALL += " \
     docker-ce \
