@@ -6,13 +6,16 @@ bt_found() {
      WIFI_SDIO_ID_FILE=${WIFI_SDIO_ID_FILE_DART}
   fi
 
-  if [ -f ${WIFI_SDIO_ID_FILE} ]; then
-    echo "BT found"
-    return 0
-  else
-    echo "No BT found"
-    return 1
-  fi
+  for i in $(seq 1 5); do
+     if [ -f ${WIFI_SDIO_ID_FILE} ]; then
+        echo "BT found"
+        return 0
+     else
+        sleep 1
+     fi
+  done
+
+  return 1
 }
 
 # Enable BT via GPIO
