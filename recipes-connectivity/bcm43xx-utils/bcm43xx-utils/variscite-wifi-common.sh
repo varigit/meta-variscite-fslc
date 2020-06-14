@@ -131,4 +131,28 @@ wifi_down()
 	fi
 }
 
+# Check if WIFI should be powered down during suspend
+wifi_should_be_down_in_suspend()
+{
+	# SOM is VAR-SOM-MX7
+	if grep -q MX7 /sys/devices/soc0/soc_id; then
+		# Do not power down WIFI on VAR-SOM-MX7-5G
+		if som_is_mx7_5g; then
+			return 1
+		else
+			return 0
+		fi
+	# SOM is DART-6UL
+	elif grep -q MX6UL /sys/devices/soc0/soc_id; then
+		# Do not power down WIFI when it is disabled in DTS
+		if ! grep -qi WiFi /sys/devices/soc0/machine; then
+			return 1
+		# Power down WIFI on DART-6UL-5G
+		elif som_is_dart_6ul_5g; then
+			return 0
+		else
+			return 1
+		fi
+	fi
+}
 
