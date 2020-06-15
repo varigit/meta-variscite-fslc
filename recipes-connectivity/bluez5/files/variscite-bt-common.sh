@@ -100,5 +100,7 @@ bt_stop()
   fi
 
   # BT_EN down
-  echo 0 > /sys/class/gpio/gpio${BT_GPIO}/value
+  if grep -q MX6UL /sys/devices/soc0/soc_id; then
+    echo 0 > /sys/class/gpio/gpio${BT_GPIO}/value
+  fi
 }
