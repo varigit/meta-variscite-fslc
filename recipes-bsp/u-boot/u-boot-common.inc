@@ -4,8 +4,8 @@ LIC_FILES_CHKSUM = "file://Licenses/gpl-2.0.txt;md5=b234ee4d69f5fce4486a80fdaf4a
 DEPENDS += "bison-native"
 
 UBOOT_SRC ?= "git://github.com/varigit/uboot-imx;protocol=git"
-SRCBRANCH = "imx_v2019.04_4.19.35_1.1.0-var01"
-SRCREV = "f786e7bf9fd99050b158732e05e67ad34fdd9d2b"
+SRCBRANCH = "lf-5.4.y_v2019.04_var01"
+SRCREV = "0d12643be878f11981b6901535ad5f87650d4e64"
 SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH}"
 
 S = "${WORKDIR}/git"
