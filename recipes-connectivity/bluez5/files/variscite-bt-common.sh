@@ -112,7 +112,7 @@ bt_start()
     fi
 
     # Load BT firmware and set MAC address (if necessary)
-    pidof brcm_patchram_plus > /dev/null && killall -9 brcm_patchram_plus
+    kill -9 $(pidof brcm_patchram_plus) 2>/dev/null || true
     if soc_is_imx8; then
       brcm_patchram_plus --patchram ${BT_FIRMWARE} \
 		         --enable_hci \
