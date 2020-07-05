@@ -19,7 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-. sources/meta-fsl-bsp-release/imx/tools/setup-utils.sh
+. sources/meta-imx/tools/setup-utils.sh
 
 CWD=`pwd`
 PROGNAME="setup-environment"
@@ -32,7 +32,7 @@ exit_message ()
 
 usage()
 {
-    echo -e "\nUsage: source fsl-setup-release.sh
+    echo -e "\nUsage: source var-setup-release.sh
     Optional parameters: [-b build-dir] [-h]"
 echo "
     * [-b build-dir]: Build directory, if unspecified script uses 'build' as output directory
@@ -116,7 +116,7 @@ imx8*)
 esac
 
 # copy new EULA into community so setup uses latest i.MX EULA
-cp sources/meta-fsl-bsp-release/imx/EULA.txt sources/meta-freescale/EULA
+cp sources/meta-imx/EULA.txt sources/meta-freescale/EULA
 
 # Set up the basic yocto environment
 if [ -z "$DISTRO" ]; then
@@ -150,30 +150,19 @@ else
 fi
 
 
-META_FSL_BSP_RELEASE="$BUILD_DIR/../sources/meta-fsl-bsp-release/imx/meta-bsp"
-
-# hack meta-fsl-bsp-release to make it compatible with warrior HEAD of poky
-cd $META_FSL_BSP_RELEASE
-if [ -e recipes-connectivity/openssl/openssl_1.1.1b.bbappend ]; then
-    mv recipes-connectivity/openssl/openssl_1.1.1b.bbappend recipes-connectivity/openssl/openssl_%.bbappend
-fi
-if [ -e recipes-kernel/linux-firmware/linux-firmware_git.bbappend ]; then
-    mv recipes-kernel/linux-firmware/linux-firmware_git.bbappend recipes-kernel/linux-firmware/linux-firmware_%.bbappend
-fi
-cd -
+META_FSL_BSP_RELEASE="${CWD}/sources/meta-imx/meta-bsp"
 
 echo "" >> $BUILD_DIR/conf/bblayers.conf
 echo "# i.MX Yocto Project Release layers" >> $BUILD_DIR/conf/bblayers.conf
-hook_in_layer meta-fsl-bsp-release/imx/meta-bsp
-hook_in_layer meta-fsl-bsp-release/imx/meta-sdk
-hook_in_layer meta-fsl-bsp-release/imx/meta-ml
+hook_in_layer meta-imx/meta-bsp
+hook_in_layer meta-imx/meta-sdk
+hook_in_layer meta-imx/meta-ml
 
 echo "" >> $BUILD_DIR/conf/bblayers.conf
 echo "BBLAYERS += \"\${BSPDIR}/sources/meta-browser\"" >> $BUILD_DIR/conf/bblayers.conf
 echo "BBLAYERS += \"\${BSPDIR}/sources/meta-rust\"" >> $BUILD_DIR/conf/bblayers.conf
 echo "BBLAYERS += \"\${BSPDIR}/sources/meta-openembedded/meta-gnome\"" >> $BUILD_DIR/conf/bblayers.conf
 echo "BBLAYERS += \"\${BSPDIR}/sources/meta-openembedded/meta-networking\"" >> $BUILD_DIR/conf/bblayers.conf
-echo "BBLAYERS += \"\${BSPDIR}/sources/meta-openembedded/meta-python\"" >> $BUILD_DIR/conf/bblayers.conf
 echo "BBLAYERS += \"\${BSPDIR}/sources/meta-openembedded/meta-filesystems\"" >> $BUILD_DIR/conf/bblayers.conf
 
 echo "BBLAYERS += \"\${BSPDIR}/sources/meta-qt5\"" >> $BUILD_DIR/conf/bblayers.conf
