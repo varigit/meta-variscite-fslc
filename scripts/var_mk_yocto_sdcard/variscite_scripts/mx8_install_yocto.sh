@@ -221,16 +221,20 @@ install_rootfs_to_emmc()
 stop_udev()
 {
 	if [ -f /lib/systemd/system/systemd-udevd.service ]; then
-		systemctl -q mask --runtime systemd-udevd
-		systemctl -q stop systemd-udevd
+		systemctl -q stop \
+			systemd-udevd-kernel.socket \
+			systemd-udevd-control.socket \
+			systemd-udevd
 	fi
 }
 
 start_udev()
 {
 	if [ -f /lib/systemd/system/systemd-udevd.service ]; then
-		systemctl -q unmask systemd-udevd
-		systemctl -q start systemd-udevd
+		systemctl -q start \
+			systemd-udevd-kernel.socket \
+			systemd-udevd-control.socket \
+			systemd-udevd
 	fi
 }
 
