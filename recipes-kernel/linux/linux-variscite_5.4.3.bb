@@ -15,7 +15,7 @@ DEPENDS += "lzop-native bc-native"
 
 DEFAULT_PREFERENCE = "1"
 
-SRCBRANCH = "imx_4.19.35_1.1.0_var01"
+SRCBRANCH = "lf-5.4.y_var01"
 
 LOCALVERSION_imx8mq-var-dart = "-imx8mq"
 LOCALVERSION_imx8mm-var-dart = "-imx8mm"
@@ -27,13 +27,13 @@ KERNEL_DEFCONFIG = "${S}/arch/arm64/configs/imx8_var_defconfig"
 DEFAULT_DTB_imx8mq-var-dart = "sd-lvds"
 DEFAULT_DTB_imx8qxp-var-som = "sd"
 DEFAULT_DTB_imx8qm-var-som = "lvds"
-DEFAULT_DTB_PREFIX_imx8mq-var-dart = "fsl-imx8mq-var-dart"
-DEFAULT_DTB_PREFIX_imx8qxp-var-som = "fsl-imx8qxp-var-som"
-DEFAULT_DTB_PREFIX_imx8qm-var-som = "fsl-imx8qm-var-som"
+DEFAULT_DTB_PREFIX_imx8mq-var-dart = "imx8mq-var-dart"
+DEFAULT_DTB_PREFIX_imx8qxp-var-som = "imx8qxp-var-som"
+DEFAULT_DTB_PREFIX_imx8qm-var-som = "imx8qm-var-som"
 
 KERNEL_SRC ?= "git://github.com/varigit/linux-imx;protocol=git"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
-SRCREV = "8aeff32a1a1f71d3f55b3e379a0303bebf634af9"
+SRCREV = "de17354acb029bec38aaeb7560a497285d6c971b"
 
 S = "${WORKDIR}/git"
 
