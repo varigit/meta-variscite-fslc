@@ -60,7 +60,7 @@ pkg_postinst_kernel-devicetree_append_imx8qxp-var-som () {
 pkg_postinst_kernel-devicetree_append_imx8qm-var-som () {
     cd $D/boot
     ln -s ${DEFAULT_DTB_PREFIX}-${DEFAULT_DTB}.dtb ${DEFAULT_DTB_PREFIX}.dtb
-    ln -s fsl-imx8qm-var-spear-${DEFAULT_DTB}.dtb fsl-imx8qm-var-spear.dtb
+    ln -s imx8qm-var-spear-${DEFAULT_DTB}.dtb imx8qm-var-spear.dtb
 }
 
 COMPATIBLE_MACHINE = "(mx8)"
