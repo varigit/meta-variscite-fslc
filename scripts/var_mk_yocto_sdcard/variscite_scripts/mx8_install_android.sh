@@ -369,18 +369,22 @@ function finish
 
 stop_udev()
 {
-	if [ -f /lib/systemd/system/systemd-udevd.service ]; then
-		systemctl -q mask --runtime systemd-udevd
-		systemctl -q stop systemd-udevd
-	fi
+        if [ -f /lib/systemd/system/systemd-udevd.service ]; then
+                systemctl -q stop \
+                        systemd-udevd-kernel.socket \
+                        systemd-udevd-control.socket \
+                        systemd-udevd
+        fi
 }
 
 start_udev()
 {
-	if [ -f /lib/systemd/system/systemd-udevd.service ]; then
-		systemctl -q unmask systemd-udevd
-		systemctl -q start systemd-udevd
-	fi
+        if [ -f /lib/systemd/system/systemd-udevd.service ]; then
+                systemctl -q start \
+                        systemd-udevd-kernel.socket \
+                        systemd-udevd-control.socket \
+                        systemd-udevd
+        fi
 }
 
 check_images
