@@ -36,7 +36,7 @@ MACHINE_EXTRA_RDEPENDS += " \
 "
 
 # Packages added to all images (including core-image-minimal)
-IMAGE_INSTALL_append = " \
+IMAGE_INSTALL_append_mx8 = " \
 	kernel-image \
 	kernel-devicetree \
 "
