@@ -1,6 +1,6 @@
 MACHINE_FEATURES += " pci bluetooth wifi"
 
-PREFERRED_VERSION_linux-variscite = "5.4.3"
+PREFERRED_VERSION_linux-variscite = "5.4.24"
 
 KERNEL_IMAGETYPE_mx8 = "Image.gz"
 
