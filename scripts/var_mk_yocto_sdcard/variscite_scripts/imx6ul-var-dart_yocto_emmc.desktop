@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Yocto->eMMC
+Comment=SD/WiFi
+Exec=/usr/bin/xterm -e "/usr/bin/install_yocto.sh -r emmc; read"
+Icon=media-flash
+Terminal=false
+Categories=GTK;Application;
+StartupNotify=true

@@ -17,13 +17,15 @@ DEFAULT_PREFERENCE = "1"
 
 SRCBRANCH = "lf-5.4.y_var01"
 
+LOCALVERSION_imx6ul-var-dart = "-imx6ul"
 LOCALVERSION_imx8mq-var-dart = "-imx8mq"
 LOCALVERSION_imx8mm-var-dart = "-imx8mm"
 LOCALVERSION_imx8mn-var-som = "-imx8mn"
 LOCALVERSION_imx8qxp-var-som = "-imx8x"
 LOCALVERSION_imx8qm-var-som = "-imx8qm"
 
-KERNEL_DEFCONFIG = "${S}/arch/arm64/configs/imx8_var_defconfig"
+KERNEL_DEFCONFIG_mx6 = "${S}/arch/arm/configs/imx_v7_var_defconfig"
+KERNEL_DEFCONFIG_mx8 = "${S}/arch/arm64/configs/imx8_var_defconfig"
 DEFAULT_DTB_imx8mq-var-dart = "sd-lvds"
 DEFAULT_DTB_imx8qxp-var-som = "sd"
 DEFAULT_DTB_imx8qm-var-som = "lvds"
@@ -33,7 +35,7 @@ DEFAULT_DTB_PREFIX_imx8qm-var-som = "imx8qm-var-som"
 
 KERNEL_SRC ?= "git://github.com/varigit/linux-imx;protocol=git"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
-SRCREV = "96dfc9f796aa4a4f3b0bb453b0c011d02fee1da4"
+SRCREV = "811094e802d0404a536485b47e0e323116020cd1"
 
 S = "${WORKDIR}/git"
 
@@ -63,5 +65,5 @@ pkg_postinst_kernel-devicetree_append_imx8qm-var-som () {
     ln -s imx8qm-var-spear-${DEFAULT_DTB}.dtb imx8qm-var-spear.dtb
 }
 
-COMPATIBLE_MACHINE = "(mx8)"
+COMPATIBLE_MACHINE = "(mx6|mx8)"
 EXTRA_OEMAKE_append_mx8 = " ARCH=arm64"

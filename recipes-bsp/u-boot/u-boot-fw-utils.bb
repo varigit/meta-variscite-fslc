@@ -1,6 +1,8 @@
 SUMMARY = "U-Boot bootloader fw_printenv/setenv utilities"
 include u-boot-common.inc
 
+DEPENDS += "mtd-utils"
+
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI += "file://fw_env.config"
@@ -10,6 +12,16 @@ EXTRA_OEMAKE_class-target = 'CROSS_COMPILE=${TARGET_PREFIX} CC="${CC} ${CFLAGS} 
 EXTRA_OEMAKE_class-cross = 'ARCH=${TARGET_ARCH} CC="${CC} ${CFLAGS} ${LDFLAGS}" V=1'
 
 inherit uboot-config
+
+do_compile_imx6ul-var-dart () {
+	oe_runmake mx6ul_var_dart_mmc_defconfig
+	oe_runmake envtools
+	mv tools/env/fw_printenv tools/env/fw_printenv-mmc
+	oe_runmake mx6ul_var_dart_nand_defconfig
+	oe_runmake envtools
+	mv tools/env/fw_printenv tools/env/fw_printenv-nand
+	ln -s fw_printenv-nand tools/env/fw_printenv
+}
 
 do_compile_imx8mq-var-dart () {
 	oe_runmake imx8mq_var_dart_defconfig
@@ -39,7 +51,7 @@ do_compile_imx8qm-var-som () {
 do_install () {
 	install -d ${D}${base_sbindir}
 	install -d ${D}${sysconfdir}
-	install -m 755 ${S}/tools/env/fw_printenv ${D}${base_sbindir}/fw_printenv
+	install -m 755 ${S}/tools/env/fw_printenv* ${D}${base_sbindir}/
 	ln -s ${base_sbindir}/fw_printenv ${D}${base_sbindir}/fw_setenv
 	install -m 0644 ${WORKDIR}/fw_env.config ${D}${sysconfdir}/fw_env.config
 }

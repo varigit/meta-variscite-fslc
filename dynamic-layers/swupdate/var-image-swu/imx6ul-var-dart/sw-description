@@ -1,0 +1,27 @@
+software =
+{
+	version = "0.1.0";
+
+	imx6ul-var-dart = {
+		hardware-compatibility: [ "1.0" ];
+
+		files: (
+			{
+				filename = "var-image-swupdate-imx6ul-var-dart.tar.gz";
+				type = "archive";
+				compressed = true;
+				device = "/dev/update";
+				filesystem = "ext4";
+				preserve-attributes = true;
+				path = "/";
+			}
+		);
+
+		scripts: (
+			{
+				filename = "update.sh";
+				type = "shellscript";
+			}
+		);
+	};
+}
