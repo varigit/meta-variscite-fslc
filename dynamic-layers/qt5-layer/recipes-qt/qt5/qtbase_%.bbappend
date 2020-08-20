@@ -29,6 +29,8 @@ do_install_append () {
 			# enable multiple buffer for iMX6 and iMX8 families
 			echo "export FB_MULTI_BUFFER=2" >> ${D}${sysconfdir}/profile.d/qt5.sh
 		fi
-		echo "export XDG_RUNTIME_DIR=/run/user" >> ${D}${sysconfdir}/profile.d/qt5.sh
+		echo "if test -z \"\$XDG_RUNTIME_DIR\"; then" >> ${D}${sysconfdir}/profile.d/qt5.sh
+		echo "   export XDG_RUNTIME_DIR=/run/user" >> ${D}${sysconfdir}/profile.d/qt5.sh
+		echo "fi" >> ${D}${sysconfdir}/profile.d/qt5.sh
 	fi
 }
