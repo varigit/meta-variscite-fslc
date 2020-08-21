@@ -17,7 +17,7 @@ do_compile_prepend() {
 		cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/fsl-imx8mm-var-som-rev10.dtb ${S}/iMX8M/
 	fi
 
-       if [ -f ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/fsl-imx8mn-var-som-rev10.dtb ]; then
-                cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/fsl-imx8mn-var-som-rev10.dtb ${S}/iMX8M/
+       if [ -f ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/imx8mn-var-som-rev10.dtb ]; then
+                cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/imx8mn-var-som-rev10.dtb ${S}/iMX8M/
        fi
 }

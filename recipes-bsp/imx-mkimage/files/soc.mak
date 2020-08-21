@@ -148,7 +148,7 @@ u-boot-ddr4.itb: $(dtbs_ddr4)
 	DEK_BLOB_LOAD_ADDR=$(DEK_BLOB_LOAD_ADDR) TEE_LOAD_ADDR=$(TEE_LOAD_ADDR) ATF_LOAD_ADDR=$(ATF_LOAD_ADDR) ./mkimage_fit_atf.sh $(dtbs_ddr4) > u-boot-ddr4.its
 	./mkimage_uboot -E -p 0x3000 -f u-boot-ddr4.its u-boot-ddr4.itb
 
-dtbs_ddr4_evk = fsl-$(PLAT)-var-som.dtb fsl-$(PLAT)-var-som-rev10.dtb
+dtbs_ddr4_evk = $(PLAT)-var-som.dtb $(PLAT)-var-som-rev10.dtb
 u-boot-ddr4-evk.itb: $(dtbs_ddr4_evk)
 	./$(PAD_IMAGE) bl31.bin
 	./$(PAD_IMAGE) u-boot-nodtb.bin $(dtbs_ddr4_evk)
