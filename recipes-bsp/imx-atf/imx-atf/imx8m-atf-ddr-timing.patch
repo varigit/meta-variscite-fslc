@@ -7,14 +7,14 @@ ATF struct dram_timing_info holds DRAM configuration created by
 u-boot. Variscite u-boot code added additional member to this structure.
 Make ATF definition mirror the u-boot one.
 ---
- plat/imx/common/include/dram.h | 2 ++
+ plat/imx/imx8m/include/dram.h | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/plat/imx/common/include/dram.h b/plat/imx/common/include/dram.h
-index bf0b384..8b5f90c 100644
---- a/plat/imx/common/include/dram.h
-+++ b/plat/imx/common/include/dram.h
-@@ -41,6 +41,8 @@ struct dram_cfg_param {
+diff --git a/plat/imx/imx8m/include/dram.h b/plat/imx/imx8m/include/dram.h
+index d0d5bf81e..70fb46165 100644
+--- a/plat/imx/imx8m/include/dram.h
++++ b/plat/imx/imx8m/include/dram.h
+@@ -29,6 +29,8 @@ struct dram_cfg_param {
  };
  
  struct dram_timing_info {
@@ -23,6 +23,3 @@ index bf0b384..8b5f90c 100644
  	/* umctl2 config */
  	struct dram_cfg_param *ddrc_cfg;
  	unsigned int ddrc_cfg_num;
--- 
-2.7.4
-
