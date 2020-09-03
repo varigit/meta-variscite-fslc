@@ -12,7 +12,7 @@ readonly ABSOLUTE_DIRECTORY=`dirname ${ABSOLUTE_FILENAME}`
 readonly SCRIPT_POINT=${ABSOLUTE_DIRECTORY}
 
 ANDROID_SCRIPTS_PATH=${SCRIPT_POINT}/variscite_scripts
-ANDROID_BUILD_ROOT=~/var_imx-p10.0.0_1.0.0-ga/android_build
+ANDROID_BUILD_ROOT=~/var_imx-p10.0.0_2.3.0-ga/android_build
 
 TEMP_DIR=./var_tmp
 ROOTFS_MOUNT_DIR=${TEMP_DIR}/rootfs
@@ -98,15 +98,21 @@ function copy_android
 	cp ${ANDROID_IMGS_PATH}/dtbo-*.img			${ROOTFS_MOUNT_DIR}/opt/images/Android/
 	cp ${ANDROID_IMGS_PATH}/vbmeta-*.img			${ROOTFS_MOUNT_DIR}/opt/images/Android/
 
-	echo "Copying system image to /opt/images/"
-	pv ${ANDROID_IMGS_PATH}/system.img >		${ROOTFS_MOUNT_DIR}/opt/images/Android/system.img
-	sync | pv -t
-	echo "Copying vendor image to /opt/images/"
-	pv ${ANDROID_IMGS_PATH}/vendor.img >		${ROOTFS_MOUNT_DIR}/opt/images/Android/vendor.img
-	sync | pv -t
-	echo "Copying product image to /opt/images/"
-	pv ${ANDROID_IMGS_PATH}/product.img >		${ROOTFS_MOUNT_DIR}/opt/images/Android/product.img
-	sync | pv -t
+	if [ -e "${ANDROID_IMGS_PATH}/super.img" ]; then
+		echo "Copying super image to /opt/images/"
+		pv ${ANDROID_IMGS_PATH}/super.img >		${ROOTFS_MOUNT_DIR}/opt/images/Android/super.img
+		sync | pv -t
+	else
+		echo "Copying system image to /opt/images/"
+		pv ${ANDROID_IMGS_PATH}/system.img >		${ROOTFS_MOUNT_DIR}/opt/images/Android/system.img
+		sync | pv -t
+		echo "Copying vendor image to /opt/images/"
+		pv ${ANDROID_IMGS_PATH}/vendor.img >		${ROOTFS_MOUNT_DIR}/opt/images/Android/vendor.img
+		sync | pv -t
+		echo "Copying product image to /opt/images/"
+		pv ${ANDROID_IMGS_PATH}/product.img >		${ROOTFS_MOUNT_DIR}/opt/images/Android/product.img
+		sync | pv -t
+	fi
 }
 
 function copy_android_scripts
