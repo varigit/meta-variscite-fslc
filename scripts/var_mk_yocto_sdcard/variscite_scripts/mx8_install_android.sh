@@ -20,6 +20,8 @@ VBMETA_SIZE=1
 sdshared=false
 if grep -q "i.MX8MM" /sys/devices/soc0/soc_id; then
 	node=/dev/mmcblk2
+elif grep -q "i.MX8MN" /sys/devices/soc0/soc_id; then
+	node=/dev/mmcblk2
 elif grep -q "i.MX8M" /sys/devices/soc0/soc_id; then
 	node=/dev/mmcblk0
 	sdshared=true
@@ -138,6 +140,11 @@ fi
 if [[ "${soc_name}" = *"mx8qm"* ]]; then
 	bootloader_offset=32
 	bootloader_file="u-boot-imx8qm.imx"
+fi
+
+if [[ "${soc_name}" = *"mx8mn"* ]]; then
+       bootloader_offset=32
+       bootloader_file="u-boot-imx8mn-var-som.imx"
 fi
 
 echo "${soc_name} bootloader is: ${bootloader_file}"
