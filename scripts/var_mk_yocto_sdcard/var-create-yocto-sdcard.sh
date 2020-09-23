@@ -19,7 +19,11 @@ if [[ -e ${YOCTO_ROOT}/b2qt-init-build-env ]] ; then
 	readonly YOCTO_DEFAULT_IMAGE=b2qt-embedded-qt5-image
 else
 	readonly BSP_TYPE="YOCTO"
-	readonly YOCTO_BUILD=${YOCTO_ROOT}/build_xwayland
+	if [[ $MACHINE = "imx6ul-var-dart" ]]; then
+		readonly YOCTO_BUILD=${YOCTO_ROOT}/build_x11
+	else
+		readonly YOCTO_BUILD=${YOCTO_ROOT}/build_xwayland
+	fi
 	readonly YOCTO_DEFAULT_IMAGE=fsl-image-gui
 fi
 echo "BSP type: ${BSP_TYPE}"
