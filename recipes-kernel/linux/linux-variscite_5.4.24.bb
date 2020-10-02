@@ -26,6 +26,7 @@ LOCALVERSION_imx8qm-var-som = "-imx8qm"
 
 KERNEL_DEFCONFIG_mx6 = "${S}/arch/arm/configs/imx_v7_var_defconfig"
 KERNEL_DEFCONFIG_mx8 = "${S}/arch/arm64/configs/imx8_var_defconfig"
+KERNEL_DEFCONFIG_imx8mq-var-dart = "${S}/arch/arm64/configs/imx8mq_var_dart_defconfig"
 DEFAULT_DTB_imx8mq-var-dart = "sd-lvds"
 DEFAULT_DTB_imx8qxp-var-som = "sd"
 DEFAULT_DTB_imx8qm-var-som = "lvds"
