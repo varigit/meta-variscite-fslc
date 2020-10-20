@@ -3,7 +3,7 @@ LICENSE = "MIT"
 
 require recipes-fsl/images/fsl-image-gui.bb
 
-inherit distro_features_check
+inherit features_check
 
 REQUIRED_DISTRO_FEATURES += "virtualization"
 

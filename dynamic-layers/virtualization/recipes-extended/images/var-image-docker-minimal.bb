@@ -1,7 +1,7 @@
 DESCRIPTION = "A console-only image with docker-ce support"
 LICENSE = "MIT"
 
-inherit core-image distro_features_check
+inherit core-image features_check
 
 REQUIRED_DISTRO_FEATURES += "virtualization"
 
