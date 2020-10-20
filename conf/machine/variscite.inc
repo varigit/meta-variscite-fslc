@@ -1,5 +1,7 @@
 MACHINE_FEATURES += " pci bluetooth wifi"
 
+IMX_DEFAULT_BSP = "nxp"
+
 PREFERRED_VERSION_linux-variscite = "5.4.24"
 
 KERNEL_IMAGETYPE_mx8 = "Image.gz"
