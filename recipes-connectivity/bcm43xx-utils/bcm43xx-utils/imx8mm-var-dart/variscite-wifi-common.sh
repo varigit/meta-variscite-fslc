@@ -138,6 +138,7 @@ wifi_should_not_be_started()
 		return 0
 	fi
 
+	# Do not start WIFI if it is already started
 	[ -d /sys/class/net/wlan0 ] && return 0
 
 	return 1

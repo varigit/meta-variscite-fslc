@@ -1,35 +1,25 @@
-From 7191fb1074ba4108e56fb48a69dd1a30a67d7b41 Mon Sep 17 00:00:00 2001
-From: Felix Radensky <felix.r@variscite.com>
-Date: Mon, 4 May 2020 11:49:51 +0300
-Subject: [PATCH 3/4] imx8mn: Allocate UART2 to M7 domain only if M7 is enabled
+From d325d4fdf0a37fcec52fd1dce4e64ebb8e545e2e Mon Sep 17 00:00:00 2001
+From: Nate Drude <nate.d@variscite.com>
+Date: Fri, 28 Aug 2020 13:07:23 -0500
+Subject: [PATCH] imx8mn: Remove uart2 and uart4 domain restrictions
 
-i.MX8MN ATF code unconditionally allocates UART2 and UART4 to M7 domain.
-On Variscite i.MX8MN board UART4 is used by Linux running on A53 domain.
-Allocate only UART2 to M7 domain and only if M7 is enabled.
+i.MX8MN ATF code assigns UART2 to the A53 Domain and UART4 to the M7 domain. 
+Remove these assignments to allow for usage in either domain.
+
 ---
- plat/imx/imx8mn/imx8mn_bl31_setup.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ plat/imx/imx8m/imx8mn/imx8mn_bl31_setup.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/plat/imx/imx8mn/imx8mn_bl31_setup.c b/plat/imx/imx8mn/imx8mn_bl31_setup.c
-index 57db28a..68fd169 100644
---- a/plat/imx/imx8mn/imx8mn_bl31_setup.c
-+++ b/plat/imx/imx8mn/imx8mn_bl31_setup.c
-@@ -242,10 +242,11 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
- #endif
- 	bl31_tzc380_setup();
+diff --git a/plat/imx/imx8m/imx8mn/imx8mn_bl31_setup.c b/plat/imx/imx8m/imx8mn/imx8mn_bl31_setup.c
+index 2f40004db..9d9fd1ee0 100644
+--- a/plat/imx/imx8m/imx8mn/imx8mn_bl31_setup.c
++++ b/plat/imx/imx8m/imx8mn/imx8mn_bl31_setup.c
+@@ -57,8 +57,6 @@ static const struct imx_rdc_cfg rdc[] = {
+ 	RDC_MDAn(RDC_MDA_M7, DID1),
  
--	/* Assign M7 to domain 1 */
--	mmio_write_32(IMX_RDC_BASE + 0x204, 0x1);
--	mmio_write_32(IMX_RDC_BASE + 0x518, 0xfc);
--	mmio_write_32(IMX_RDC_BASE + 0x5A4, 0xf3);
-+	/* Assign UART2 to domain 1 */
-+	if (imx_is_m4_enabled()) {
-+		mmio_write_32(IMX_RDC_BASE + 0x204, 0x1);
-+		mmio_write_32(IMX_RDC_BASE + 0x5A4, 0xf3);
-+	}
- }
+ 	/* peripherals domain permission */
+-	RDC_PDAPn(RDC_PDAP_UART4, D1R | D1W),
+-	RDC_PDAPn(RDC_PDAP_UART2, D0R | D0W),
  
- void bl31_plat_arch_setup(void)
--- 
-2.7.4
-
+ 	/* memory region */
+ 	RDC_MEM_REGIONn(16, 0x0, 0x0, 0xff),

@@ -102,7 +102,7 @@ wifi_should_not_be_started()
 	# Do not enable WIFI if it is already up
 	[ -d /sys/class/net/wlan0 ] && return 0
 
-	# Do not enable WIFI if booting from SD on VAR-SOM-MX8X
+	# Do not enable WIFI if booting from SD
 	if grep -q mmcblk1 /proc/cmdline; then
 		return 0
 	fi
@@ -118,7 +118,7 @@ wifi_should_not_be_started()
 # Return true if WIFI should not be stopped
 wifi_should_not_be_stopped()
 {
-	# Do not stop WIFI if booting from SD on VAR-SOM-MX8X
+	# Do not stop WIFI if booting from SD
 	if grep -q mmcblk1 /proc/cmdline; then
 		return 0
 	fi
