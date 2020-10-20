@@ -4,10 +4,9 @@
 
 SUMMARY = "U-Boot for Variscite's i.MX boards"
 require recipes-bsp/u-boot/u-boot.inc
-inherit pythonnative
 
 PROVIDES += "u-boot"
-DEPENDS_append = " python dtc-native"
+DEPENDS += "bison-native bc-native dtc-native"
 
 include u-boot-common.inc
 
@@ -43,7 +42,7 @@ do_deploy_append_mx8m () {
 }
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
-COMPATIBLE_MACHINE = "(mx6|mx7|mx8)"
+COMPATIBLE_MACHINE = "(imx6ul-var-dart|imx8mq-var-dart|imx8mm-var-dart|imx8mn-var-som|imx8qxp-var-som|imx8qm-var-som)"
 
 UBOOT_NAME_mx6 = "u-boot-${MACHINE}.bin-${UBOOT_CONFIG}"
 UBOOT_NAME_mx7 = "u-boot-${MACHINE}.bin-${UBOOT_CONFIG}"
