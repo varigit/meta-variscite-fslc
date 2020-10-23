@@ -5,12 +5,12 @@ SRC_URI_append_imx8mq-var-dart = " file://imx-mkimage-imx8m-soc.mak-add-dart-mx8
 
 do_compile_prepend() {
 	echo "Copying DTBs"
-	if [ -f ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/fsl-imx8mm-var-som.dtb ]; then
-		cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/fsl-imx8mm-var-som.dtb ${S}/iMX8M/
+	if [ -f ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/imx8mm-var-som.dtb ]; then
+		cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/imx8mm-var-som.dtb ${S}/iMX8M/
 	fi
 
-	if [ -f ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/fsl-imx8mm-var-som-rev10.dtb ]; then
-		cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/fsl-imx8mm-var-som-rev10.dtb ${S}/iMX8M/
+	if [ -f ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/imx8mm-var-som-rev10.dtb ]; then
+		cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/imx8mm-var-som-rev10.dtb ${S}/iMX8M/
 	fi
 
 	if [ -f ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/imx8mn-var-som-rev10.dtb ]; then
