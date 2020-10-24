@@ -2,8 +2,6 @@ MACHINE_FEATURES += " pci bluetooth wifi"
 
 IMX_DEFAULT_BSP = "nxp"
 
-PREFERRED_VERSION_linux-variscite = "5.4.24"
-
 KERNEL_IMAGETYPE_mx8 = "Image.gz"
 
 SOC_DEFAULT_WKS_FILE_mx8 = "imx-imx-boot-bootpart1.wks.in"
@@ -14,9 +12,11 @@ DEFAULTTUNE_mx8mq  ?= "cortexa53-crypto"
 DEFAULTTUNE_mx8qxp ?= "cortexa35-crypto"
 DEFAULTTUNE_mx8qm ?= "cortexa72-cortexa53-crypto"
 
+# Variscite BSP default providers
+PREFERRED_PROVIDER_u-boot = "u-boot-variscite"
 PREFERRED_PROVIDER_u-boot-fw-utils = "u-boot-fw-utils"
-PREFERRED_RPROVIDER_ptpd = "ptpd"
-PREFERRED_RPROVIDER_ptpd-dev = "ptpd"
+PREFERRED_PROVIDER_virtual/bootloader = "u-boot-variscite"
+PREFERRED_PROVIDER_virtual/kernel = "linux-variscite"
 
 MACHINE_EXTRA_RDEPENDS += " \
 	bcm43xx-utils \
