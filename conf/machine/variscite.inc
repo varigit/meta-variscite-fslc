@@ -19,16 +19,12 @@ PREFERRED_PROVIDER_virtual/bootloader = "u-boot-variscite"
 PREFERRED_PROVIDER_virtual/kernel = "linux-variscite"
 
 MACHINE_EXTRA_RDEPENDS += " \
-	bcm43xx-utils \
-	brcm-patchram-plus \
 	gptfdisk \
 	hostapd \
 	hdparm \
 	iw \
 	kernel-modules \
 	kmod \
-	linux-firmware-bcm4339 \
-	linux-firmware-bcm43430 \
 	${@bb.utils.contains('DISTRO', 'b2qt', '', \
            bb.utils.contains('DISTRO_FEATURES', 'wayland', 'networkmanager', \
                                                        '', d), d)} \
