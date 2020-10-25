@@ -17,6 +17,7 @@ DEPENDS += "lzop-native bc-native"
 
 DEFAULT_PREFERENCE = "1"
 
+LOCALVERSION_var-som-mx6 = "-imx6ul"
 LOCALVERSION_imx6ul-var-dart = "-imx6ul"
 LOCALVERSION_imx8mq-var-dart = "-imx8mq"
 LOCALVERSION_imx8mm-var-dart = "-imx8mm"
@@ -24,6 +25,7 @@ LOCALVERSION_imx8mn-var-som = "-imx8mn"
 LOCALVERSION_imx8qxp-var-som = "-imx8x"
 LOCALVERSION_imx8qm-var-som = "-imx8qm"
 
+KBUILD_DEFCONFIG_var-som-mx6 = "imx_v7_var_defconfig"
 KBUILD_DEFCONFIG_imx6ul-var-dart = "imx_v7_var_defconfig"
 KBUILD_DEFCONFIG_imx8mq-var-dart = "imx8_var_defconfig"
 KBUILD_DEFCONFIG_imx8mm-var-dart = "imx8_var_defconfig"
@@ -63,4 +65,4 @@ pkg_postinst_kernel-devicetree_append_imx8qm-var-som () {
     ln -s imx8qm-var-spear-${DEFAULT_DTB}.dtb imx8qm-var-spear.dtb
 }
 
-COMPATIBLE_MACHINE = "(imx6ul-var-dart|imx8mq-var-dart|imx8mm-var-dart|imx8mn-var-som|imx8qxp-var-som|imx8qm-var-som)"
+COMPATIBLE_MACHINE = "(mx6|mx8)"

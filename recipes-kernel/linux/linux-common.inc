@@ -1,3 +1,4 @@
-SRCBRANCH = "imx_5.4.24_2.1.0_var01"
-SRCREV = "89dc37c105210b93995d395c37579f283bfa0399"
-KERNEL_SRC = "git://github.com/varigit/linux-imx;protocol=git"
+LINUX_VERSION = "5.4.72"
+SRCBRANCH = "5.4-2.1.x-imx-var01"
+SRCREV = "7daa8ba61fece8e29f37b29c276689ad9456975e"
+KERNEL_SRC = "git://github.com/varigigi/linux-imx;protocol=git"
