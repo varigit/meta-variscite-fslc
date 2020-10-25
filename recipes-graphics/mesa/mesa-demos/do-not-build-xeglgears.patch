@@ -1,0 +1,11 @@
+diff -uNr old/src/egl/opengl/Makefile.am new/src/egl/opengl/Makefile.am
+--- old/src/egl/opengl/Makefile.am	2018-02-23 09:50:21.000000000 +0100
++++ new/src/egl/opengl/Makefile.am	2020-10-25 23:40:14.243420191 +0100
+@@ -38,7 +38,6 @@
+ EGL_X11_DEMOS = \
+ 	eglgears_x11 \
+ 	egltri_x11 \
+-	xeglgears \
+ 	xeglthreads
+ endif
+ 
