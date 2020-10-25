@@ -1,0 +1,35 @@
+From e3f694496322d3679dd9b007dc3caa4343f0f376 Mon Sep 17 00:00:00 2001
+From: Khem Raj <raj.khem@gmail.com>
+Date: Tue, 11 Aug 2020 18:12:58 -0700
+Subject: [PATCH] plt.h: Do not define EFUSE_PARAMETER_TYPE_ENMT type enum in
+ header file
+
+gcc10 uses -fno-common by default and this causes multiple definitions
+of this enum in all files including plt.h file, therefore just define
+the type in header file
+
+Fixes
+arm-yoe-linux-musleabi-ld: misc_cmds.o:/usr/src/debug/wl18xx-calibrator/8.7.3-r0/git/./plt.h:402: multiple definition of `EFUSE_PARAMETER_TYPE_ENM'; nvs.o:/usr/src/debug/wl18xx-calibrator/8.7.3-r0/git/./plt.h:402: first defined here
+
+Upstream-Status: Pending
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+---
+ plt.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/plt.h b/plt.h
+index 8b534a9..43d5dbc 100644
+--- a/plt.h
++++ b/plt.h
+@@ -399,7 +399,7 @@ enum EFUSE_PARAMETER_TYPE_ENMT {
+ 	TX_BIP_PD_BUFFER_VBIAS_ERROR_E,
+ 	EFUSE_NUMBER_OF_PARAMETERS_E,
+ 	EFUSE_LAST_PARAMETER_E = (EFUSE_NUMBER_OF_PARAMETERS_E - 1)
+-} EFUSE_PARAMETER_TYPE_ENM;
++};
+ 
+ int get_mac_addr(int ifc_num, unsigned char *mac_addr);
+ 
+-- 
+2.28.0
+

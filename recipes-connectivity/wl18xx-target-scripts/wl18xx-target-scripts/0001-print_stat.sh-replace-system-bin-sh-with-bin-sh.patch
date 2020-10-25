@@ -1,0 +1,23 @@
+From ba1ac3862c8c3b2dbb615dc342b7fb1eaa96900f Mon Sep 17 00:00:00 2001
+From: Denys Dmytriyenko <denys@ti.com>
+Date: Fri, 10 Nov 2017 17:02:39 -0500
+Subject: [PATCH] print_stat.sh: replace /system/bin/sh with /bin/sh
+
+Signed-off-by: Denys Dmytriyenko <denys@ti.com>
+---
+ testing/print_stat.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/testing/print_stat.sh b/testing/print_stat.sh
+index 681a063..0a519f6 100755
+--- a/testing/print_stat.sh
++++ b/testing/print_stat.sh
+@@ -1,4 +1,4 @@
+-#!/system/bin/sh
++#!/bin/sh
+ 
+ PHY=`ls /sys/class/ieee80211/`
+ mkdir -p /debug
+-- 
+2.7.4
+
