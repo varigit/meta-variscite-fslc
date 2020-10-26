@@ -23,6 +23,7 @@ do_install_append() {
 	install -d ${D}${sysconfdir}/bluetooth
 	install -d ${D}${sysconfdir}/dbus-1/system.d
 	install -d ${D}${sysconfdir}/profile.d
+	install -m 0755 ${WORKDIR}/variscite-bt-common.sh ${D}${sysconfdir}/bluetooth
 	install -m 0644 ${WORKDIR}/variscite-bt.conf ${D}${sysconfdir}/bluetooth
 	install -m 0644 ${WORKDIR}/audio.conf ${D}/${sysconfdir}/bluetooth
 	install -m 0644 ${WORKDIR}/main.conf ${D}/${sysconfdir}/bluetooth
@@ -33,7 +34,6 @@ do_install_append() {
 		install -d ${D}${sysconfdir}/systemd/system/multi-user.target.wants
 		install -m 0644 ${WORKDIR}/variscite-bt.service ${D}${systemd_unitdir}/system
 		install -m 0755 ${WORKDIR}/variscite-bt ${D}${sysconfdir}/bluetooth
-		install -m 0755 ${WORKDIR}/variscite-bt-common.sh ${D}${sysconfdir}/bluetooth
 		install -m 0644 ${WORKDIR}/obex.service ${D}${systemd_unitdir}/system
 		install -m 0644 ${WORKDIR}/bluetooth.service ${D}${systemd_unitdir}/system
 
