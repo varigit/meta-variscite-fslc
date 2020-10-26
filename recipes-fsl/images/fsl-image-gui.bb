@@ -36,10 +36,10 @@ CORE_IMAGE_EXTRA_INSTALL += " \
 	packagegroup-fsl-tools-benchmark \
 	packagegroup-fsl-gstreamer1.0 \
 	packagegroup-fsl-gstreamer1.0-full \
-	${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'weston-init', '', d)} \
-        ${@bb.utils.contains('DISTRO_FEATURES', 'x11 wayland', 'weston-xwayland xterm', '', d)} \
-        ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'xterm', '', d)} \
-        ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'packagegroup-core-x11-sato-games', '', d)} \
+	${@bb.utils.contains('DISTRO_FEATURES', 'x11 wayland', 'weston-xwayland xterm', '', d)} \
+	${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'weston-init', \
+	   bb.utils.contains('DISTRO_FEATURES',     'x11', 'packagegroup-core-x11-sato-games', \
+							 '', d), d)} \
 	nodejs \
 	flex \
 	gcc \
