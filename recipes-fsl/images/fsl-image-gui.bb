@@ -59,6 +59,11 @@ IMAGE_INSTALL_append_imxgpu3d = " \
 	android-tools \
 "
 
+# only for DRM enabled machines
+IMAGE_INSTALL_append_imxdrm = " \
+	libdrm-tests \
+"
+
 systemd_disable_vt () {
     rm ${IMAGE_ROOTFS}${root_prefix}${sysconfdir}/systemd/system/getty.target.wants/getty@tty*.service
 }
