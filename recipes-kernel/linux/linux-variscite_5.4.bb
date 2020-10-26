@@ -27,7 +27,7 @@ LOCALVERSION_imx8qm-var-som = "-imx8qm"
 
 KBUILD_DEFCONFIG_var-som-mx6 = "imx_v7_var_defconfig"
 KBUILD_DEFCONFIG_imx6ul-var-dart = "imx_v7_var_defconfig"
-KBUILD_DEFCONFIG_imx8mq-var-dart = "imx8_var_defconfig"
+KBUILD_DEFCONFIG_imx8mq-var-dart = "imx8mq_var_dart_defconfig"
 KBUILD_DEFCONFIG_imx8mm-var-dart = "imx8_var_defconfig"
 KBUILD_DEFCONFIG_imx8mn-var-som = "imx8_var_defconfig"
 KBUILD_DEFCONFIG_imx8qxp-var-som = "imx8_var_defconfig"
