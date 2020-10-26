@@ -55,6 +55,6 @@ CORE_IMAGE_EXTRA_INSTALL += " \
 "
 
 # only for Android enabled machines
-IMAGE_INSTALL_imxgpu3d += " \
+IMAGE_INSTALL_append_imxgpu3d = " \
 	android-tools \
 "
