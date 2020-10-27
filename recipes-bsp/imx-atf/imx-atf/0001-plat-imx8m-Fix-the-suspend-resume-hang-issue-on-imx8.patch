@@ -1,0 +1,32 @@
+From 3de94ffbdf30d82db3e6e17aa865d8ed8ad98940 Mon Sep 17 00:00:00 2001
+From: Jacky Bai <ping.bai@nxp.com>
+Date: Thu, 22 Oct 2020 14:35:12 +0800
+Subject: [PATCH] plat: imx8m: Fix the suspend/resume hang issue on imx8mq b0
+
+It seems the DRAM APB clock root slice can NOT work normally
+if the PLLs is power down in DSM mode. So update this clock
+slice's setting explictly to make it work.
+
+Signed-off-by: Jacky Bai <ping.bai@nxp.com>
+---
+ plat/imx/imx8m/ddr/dram_retention.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/plat/imx/imx8m/ddr/dram_retention.c b/plat/imx/imx8m/ddr/dram_retention.c
+index 2dd79b611..685526f4b 100644
+--- a/plat/imx/imx8m/ddr/dram_retention.c
++++ b/plat/imx/imx8m/ddr/dram_retention.c
+@@ -126,6 +126,10 @@ void dram_exit_retention(void)
+ 	mmio_write_32(CCM_CCGR(5), 2);
+ 	mmio_write_32(CCM_SRC_CTRL(15), 2);
+ 
++	/* change the clock source of dram_apb_clk_root */
++	mmio_write_32(0x3038a088, (0x7 << 24) | (0x7 << 16));
++	mmio_write_32(0x3038a084, (0x4 << 24) | (0x3 << 16));
++
+ 	/* disable iso */
+ 	mmio_setbits_32(IMX_GPC_BASE + PU_PGC_UP_TRG, DDRMIX_PWR_REQ);
+ 	mmio_write_32(SRC_DDR1_RCR, 0x8F000006);
+-- 
+2.26.2
+
