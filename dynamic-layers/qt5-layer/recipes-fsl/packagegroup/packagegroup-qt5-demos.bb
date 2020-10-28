@@ -7,8 +7,6 @@ LICENSE = "MIT"
 inherit packagegroup
 
 RDEPENDS_${PN} += " \
-    qtbase-examples \
-    qtdeclarative-examples \
     qtsmarthome \
     qt5ledscreen \
     quitbattery \
@@ -18,8 +16,4 @@ RDEPENDS_${PN} += " \
     cinematicexperience \
     quitindicators \
     qt5-demo-extrafiles \
-"
-
-RDEPENDS_${PN}_append_imxgpu3d = " \
-    qt3d-examples \
 "

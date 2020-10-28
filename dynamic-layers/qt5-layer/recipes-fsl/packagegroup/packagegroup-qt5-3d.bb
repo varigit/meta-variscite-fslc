@@ -9,7 +9,6 @@ inherit packagegroup
 
 RDEPENDS_${PN} += " \
     qt3d \
-    qt3d-examples \
     qt3d-plugins \
     qt3d-qmlplugins \
     qt3d-tools \

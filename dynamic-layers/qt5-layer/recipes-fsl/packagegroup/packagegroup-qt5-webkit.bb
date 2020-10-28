@@ -10,5 +10,4 @@ inherit packagegroup
 RDEPENDS_${PN} += " \
     qtwebkit \
     qtwebkit-qmlplugins \
-    qtwebkit-examples-examples \
 "

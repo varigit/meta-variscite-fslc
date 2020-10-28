@@ -10,6 +10,5 @@ inherit packagegroup
 RDEPENDS_${PN} += " \
     qtwebengine \
     qtwebengine-qmlplugins \
-    qtwebengine-examples \
     qtwebbrowser \
 "
