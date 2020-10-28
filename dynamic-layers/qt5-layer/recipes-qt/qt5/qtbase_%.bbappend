@@ -6,23 +6,26 @@ SRC_URI_append = " \
 
 BACKEND_FB = "linuxfb"
 BACKEND_FB_imxgpu3d = "eglfs"
-BACKEND = "${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'xcb', \
-	   bb.utils.contains('DISTRO_FEATURES', 'wayland', 'wayland', '${BACKEND_FB}', d), d)}"
+BACKEND_WAYLAND = "wayland"
+BACKEND_WAYLAND_imxgpu3d = "wayland-egl"
+BACKEND = "${@bb.utils.contains('DISTRO_FEATURES', 'wayland', '${BACKEND_WAYLAND}', \
+	   bb.utils.contains('DISTRO_FEATURES', 'x11', 'xcb', '${BACKEND_FB}', d), d)}"
+QML_USE_SWCTX = "yes"
+QML_USE_SWCTX_imxgpu3d = "no"
 
 # build linuxfb backend if required
 PACKAGECONFIG_append = " fontconfig tslib ${@bb.utils.filter('BACKEND', 'linuxfb', d)}"
 
 do_install_append () {
 	if ${@bb.utils.contains('DISTRO','b2qt','false','true',d)}; then
-		if [ "${BACKEND}" = "linuxfb" ]; then
-			# this override eglfs for iMX6UL and iMX7
-			echo "export QT_QPA_PLATFORM=${BACKEND}" >> ${D}${sysconfdir}/profile.d/qt5.sh
-		elif [ "${BACKEND}" = "eglfs" ]; then
+		mkdir -p ${D}${sysconfdir}/profile.d
+		echo "export QT_QPA_PLATFORM=${BACKEND}" >> ${D}${sysconfdir}/profile.d/qt5.sh
+		if [ "${BACKEND}" = "eglfs" ]; then
 			echo "export QT_QPA_EGLFS_FORCEVSYNC=1" >> ${D}${sysconfdir}/profile.d/qt5.sh
 		elif [ "${BACKEND}" = "xcb" ]; then
 			echo "export DISPLAY=:0" >> ${D}${sysconfdir}/profile.d/qt5.sh
 		fi
-		if [ "${BACKEND_FB}" = "linuxfb" ]; then
+		if [ "${QML_USE_SWCTX}" = "yes" ]; then
 			# allow using QML with SW rendering for iMX6UL and iMX7
 			echo "export QMLSCENE_DEVICE=softwarecontext" >> ${D}${sysconfdir}/profile.d/qt5.sh
 		else
