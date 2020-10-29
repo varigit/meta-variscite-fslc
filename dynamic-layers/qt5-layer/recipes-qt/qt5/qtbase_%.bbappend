@@ -10,6 +10,8 @@ BACKEND_WAYLAND = "wayland"
 BACKEND_WAYLAND_imxgpu3d = "wayland-egl"
 BACKEND = "${@bb.utils.contains('DISTRO_FEATURES', 'wayland', '${BACKEND_WAYLAND}', \
 	   bb.utils.contains('DISTRO_FEATURES', 'x11', 'xcb', '${BACKEND_FB}', d), d)}"
+EGLFS_INTEGRATION_mx6 = "eglfs_viv"
+EGLFS_INTEGRATION_mx8 = "eglfs_kms"
 QML_USE_SWCTX = "yes"
 QML_USE_SWCTX_imxgpu3d = "no"
 
@@ -22,6 +24,7 @@ do_install_append () {
 		echo "export QT_QPA_PLATFORM=${BACKEND}" >> ${D}${sysconfdir}/profile.d/qt5.sh
 		if [ "${BACKEND}" = "eglfs" ]; then
 			echo "export QT_QPA_EGLFS_FORCEVSYNC=1" >> ${D}${sysconfdir}/profile.d/qt5.sh
+			echo "export QT_QPA_EGLFS_INTEGRATION=${EGLFS_INTEGRATION}" >> ${D}${sysconfdir}/profile.d/qt5.sh
 		elif [ "${BACKEND}" = "xcb" ]; then
 			echo "export DISPLAY=:0" >> ${D}${sysconfdir}/profile.d/qt5.sh
 		fi
