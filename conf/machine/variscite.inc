@@ -2,6 +2,8 @@ MACHINE_FEATURES += " pci bluetooth wifi"
 
 IMX_DEFAULT_BSP = "nxp"
 
+USE_VT = "0"
+
 KERNEL_IMAGETYPE_mx8 = "Image.gz"
 
 SOC_DEFAULT_WKS_FILE_mx8 = "imx-imx-boot-bootpart1.wks.in"
