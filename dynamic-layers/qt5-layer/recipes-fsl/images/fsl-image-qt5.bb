@@ -21,18 +21,21 @@ QT5_FONTS = " \
 QT5_IMAGE_INSTALL = " \
     packagegroup-qt5-demos \
     ${QT5_FONTS} \
-    ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'libxkbcommon', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'qtwayland qtwayland-plugins', '', d)} \
 "
 
 QT5_IMAGE_INSTALL_append_imxgpu3d = " \
     packagegroup-qt5-3d \
-    ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'packagegroup-qt5-webkit', '', d)} \
 "
 
-# Most of QtWebEngine demo are currently broken.
-# If you want to test them uncomment the following line
-# QT5_IMAGE_INSTALL_append_imxgpu3d = " packagegroup-qt5-webengine"
+# uncomment the following line to add webengine support
+# but remind to add also meta-python2 to the bblayere
+# QT5_IMAGE_INSTALL_append = " packagegroup-qt5-webengine"
+
+# uncomment the following line to add webkit support
+# but remind that is considered obsolete since Qt 5.7
+# QT5_IMAGE_INSTALL_append = " packagegroup-qt5-webkit"
+
 
 IMAGE_INSTALL += " \
     ${QT5_IMAGE_INSTALL} \
