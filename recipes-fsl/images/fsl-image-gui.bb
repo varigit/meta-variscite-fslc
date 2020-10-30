@@ -53,6 +53,7 @@ CORE_IMAGE_EXTRA_INSTALL += " \
 	minicom \
 	openssl \
 	can-utils \
+	udev-extraconf \
 "
 
 # only for Android enabled machines
