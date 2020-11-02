@@ -53,3 +53,8 @@ IMAGE_INSTALL_append_mx8 = " \
 "
 
 IMAGE_FSTYPES = "tar.gz wic.gz"
+
+# Wayland based distros add systemd to DISTRO_FEATURES
+# Remove sysvinit or systemd based on DISTRO_FEATURES to avoid conflicts
+DISTRO_FEATURES_BACKFILL_CONSIDERED_append = "${@bb.utils.contains('DISTRO_FEATURES', 'systemd', ' sysvinit', '', d)}"
+DISTRO_FEATURES_BACKFILL_CONSIDERED_append = "${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', ' systemd', '', d)}"
