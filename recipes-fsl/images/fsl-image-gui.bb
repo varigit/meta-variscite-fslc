@@ -52,6 +52,7 @@ CORE_IMAGE_EXTRA_INSTALL += " \
 	screen \
 	minicom \
 	openssl \
+	can-utils \
 "
 
 # only for Android enabled machines
