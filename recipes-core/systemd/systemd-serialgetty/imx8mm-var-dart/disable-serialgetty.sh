@@ -10,12 +10,12 @@ tty_service_enabled()
 
 som_is_var_som_mx8mm()
 {
-	grep -q VAR-SOM-MX8MM /sys/devices/soc0/machine
+	grep -q VAR-SOM-MX8M-MINI /sys/devices/soc0/machine
 }
 
 som_is_dart_mx8mm()
 {
-        grep -q DART-MX8MM /sys/devices/soc0/machine
+        grep -q DART-MX8M-MINI /sys/devices/soc0/machine
 }
 
 if som_is_var_som_mx8mm && tty_service_enabled ${UART0_SERVICE}; then

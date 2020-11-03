@@ -1,7 +1,7 @@
 # Return true if board is DART-MX8M-MINI
 board_is_dart_mx8m_mini()
 {
-	grep -q DART-MX8MM /sys/devices/soc0/machine
+	grep -q DART-MX8M-MINI /sys/devices/soc0/machine
 }
 
 # Setup WIFI control GPIOs
