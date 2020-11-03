@@ -31,6 +31,12 @@ som_is_var_som_mx8mm()
    grep -q VAR-SOM-MX8M-MINI /sys/devices/soc0/machine
 }
 
+# Return true if SOM is VAR-SOM-MX8M-NANO
+som_is_var_som_mx8mn()
+{
+   grep -q VAR-SOM-MX8M-NANO /sys/devices/soc0/machine
+}
+
 # Enable BT via GPIO(s)
 enable_bt()
 {
@@ -43,14 +49,12 @@ enable_bt()
   sleep 1
   echo 1 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
 
-  if soc_is_imx8 ; then
-    if ! som_is_var_som_mx8mm && [ ! -d /sys/class/gpio/gpio${BT_BUF_GPIO} ]; then
+  if soc_is_imx8 && ! som_is_var_som_mx8mm && ! som_is_var_som_mx8mn ; then
+    if [ ! -d /sys/class/gpio/gpio${BT_BUF_GPIO} ]; then
       echo ${BT_BUF_GPIO} >/sys/class/gpio/export
       echo "out" > /sys/class/gpio/gpio${BT_BUF_GPIO}/direction
     fi
-    if ! som_is_var_som_mx8mm; then
-       echo 0 > /sys/class/gpio/gpio${BT_BUF_GPIO}/value
-    fi
+    echo 0 > /sys/class/gpio/gpio${BT_BUF_GPIO}/value
   fi
 
 }
@@ -144,7 +148,7 @@ bt_stop()
   fi
 
   # BT_BUF down
-  if soc_is_imx8 && ! som_is_var_som_mx8mm; then
+  if soc_is_imx8 && ! som_is_var_som_mx8mm && ! som_is_var_som_mx8mn; then
     echo 1 > /sys/class/gpio/gpio${BT_BUF_GPIO}/value
   fi
 
