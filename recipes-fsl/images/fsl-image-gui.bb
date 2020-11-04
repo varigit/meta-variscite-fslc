@@ -54,6 +54,7 @@ CORE_IMAGE_EXTRA_INSTALL += " \
 	openssl \
 	can-utils \
 	udev-extraconf \
+	ntpdate \
 "
 
 # only for Android enabled machines
