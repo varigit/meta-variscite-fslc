@@ -27,7 +27,7 @@ index b7b3986..5a42555 100644
  	@rm -f u-boot.its $(dtbs_ddr4)
  
 -dtbs_ddr4_evk = evkddr4.dtb
-+dtbs_ddr4_evk = $(PLAT)-var-som.dtb $(PLAT)-var-som-rev10.dtb
++dtbs_ddr4_evk = $(PLAT)-var-som-symphony.dtb $(PLAT)-var-som-rev10-symphony.dtb
  $(dtbs_ddr4_evk):
  	./$(DTB_PREPROC) $(PLAT)-ddr4-evk.dtb $(dtbs_ddr4_evk)
  
