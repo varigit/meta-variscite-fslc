@@ -1,5 +1,12 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
+# With latest swupdate, libubootenv is provided by libubootenv.bb
+# For now, use libubootenv provided by legacy u-boot-fw-utils instead
+python () {
+    depends = d.getVar('DEPENDS', False)
+    d.setVar('DEPENDS', depends.replace("libubootenv","u-boot-fw-utils"))
+}
+
 SRC_URI += "\
 	file://background.jpg \
 	file://favicon.png \
