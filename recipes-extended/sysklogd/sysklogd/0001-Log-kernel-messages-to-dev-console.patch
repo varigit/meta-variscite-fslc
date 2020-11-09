@@ -1,0 +1,26 @@
+From 8b6baa3621b34e7f1e2c5b36b173d05c5bfe44f9 Mon Sep 17 00:00:00 2001
+From: Nate Drude <nate.d@variscite.com>
+Date: Mon, 9 Nov 2020 15:22:38 -0600
+Subject: [PATCH] Log kernel messages to /dev/console
+
+This was the default behavior in previous releases until this patch
+changed printk loglevel (/proc/sys/kernel/printk):
+https://github.com/troglobit/sysklogd/commit/8aa20603120534054decc18ce8900bedac8ca23d#diff-687507ddd9434e51145c42df221ea2cc7d42de2ceb4b60279fc951a8bce61151R389
+
+Signed-off-by: Nate Drude <nate.d@variscite.com>
+---
+ syslog.conf | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/syslog.conf b/syslog.conf
+index 8e4f9e2..3fea1e3 100644
+--- a/syslog.conf
++++ b/syslog.conf
+@@ -12,6 +12,7 @@ auth,authpriv.*			 /var/log/auth.log
+ #cron.*				/var/log/cron.log
+ #daemon.*			-/var/log/daemon.log
+ kern.*				-/var/log/kern.log
++kern.*				/dev/console
+ #lpr.*				-/var/log/lpr.log
+ mail.*				-/var/log/mail.log
+ #user.*				-/var/log/user.log
