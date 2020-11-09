@@ -65,4 +65,7 @@ pkg_postinst_kernel-devicetree_append_imx8qm-var-som () {
     ln -s imx8qm-var-spear-${DEFAULT_DTB}.dtb imx8qm-var-spear.dtb
 }
 
+# Added by meta-virtualization/recipes-kernel/linux/linux-yocto_5.4_virtualization.inc
+KERNEL_FEATURES_remove = "cfg/virtio.scc"
+
 COMPATIBLE_MACHINE = "(mx6|mx8)"
