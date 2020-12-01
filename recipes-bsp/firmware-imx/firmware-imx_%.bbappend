@@ -4,6 +4,8 @@ do_install_append() {
 	mv ${D}${base_libdir}/firmware/imx/hdmi/hdmirxfw.bin ${D}/boot
 	mv ${D}${base_libdir}/firmware/imx/hdmi/dpfw.bin ${D}/boot
 	rm -rf ${D}${base_libdir}/firmware/imx/hdmi
+	install -m 0644 ${S}/firmware/vpu/vpu_fw_imx8_dec.bin ${D}${nonarch_base_libdir}/firmware/vpu
+	install -m 0644 ${S}/firmware/vpu/vpu_fw_imx8_enc.bin ${D}${nonarch_base_libdir}/firmware/vpu
 }
 
 FILES_${PN}-hdmi += "/boot/"
