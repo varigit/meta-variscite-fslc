@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Install Yocto
+Comment=eMMC/NAND
+Exec=/usr/bin/xterm -e "/usr/bin/install_yocto.sh; read"
+Icon=media-flash
+Terminal=false
+Categories=GTK;Application;
+StartupNotify=true
