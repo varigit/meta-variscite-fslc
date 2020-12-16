@@ -5,6 +5,7 @@ IMX_JAILHOUSE_SRC ?= "git://source.codeaurora.org/external/imx/imx-jailhouse.git
 
 SRC_URI = "${IMX_JAILHOUSE_SRC};branch=${SRCBRANCH} \
            file://0001-scripts-include.mk-multilib-Fix-hardcoded-lib-in-fir.patch \
+           file://0002-tools-scripts-update-shebang-to-python3.patch \
            "
 
 SRCREV = "8bbe203ee7c1fc16198ce1bf964e54c90606c3c2"
