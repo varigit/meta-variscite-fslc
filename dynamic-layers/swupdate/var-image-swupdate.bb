@@ -16,6 +16,8 @@ require recipes-fsl/images/fsl-image-gui.bb
 CORE_IMAGE_EXTRA_INSTALL += " \
 	swupdate \
 	swupdate-www \
+	kernel-image \
+	kernel-devicetree \
 "
 
 IMAGE_FSTYPES = "tar.gz"

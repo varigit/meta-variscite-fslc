@@ -33,6 +33,16 @@ do_compile_imx6ul-var-dart () {
 	ln -s fw_printenv-nand tools/env/fw_printenv
 }
 
+do_compile_imx7-var-som () {
+	oe_runmake mx7dvar_som_defconfig
+	oe_runmake envtools
+	mv tools/env/fw_printenv tools/env/fw_printenv-mmc
+	oe_runmake mx7dvar_som_nand_defconfig
+	oe_runmake envtools
+	mv tools/env/fw_printenv tools/env/fw_printenv-nand
+	ln -s fw_printenv-nand tools/env/fw_printenv
+}
+
 do_compile_imx8mq-var-dart () {
 	oe_runmake imx8mq_var_dart_defconfig
 	oe_runmake envtools

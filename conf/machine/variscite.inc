@@ -34,6 +34,7 @@ MACHINE_EXTRA_RDEPENDS += " \
 	gptfdisk \
 	hostapd \
 	hdparm \
+	imx-kobs \
 	iw \
 	kernel-modules \
 	kmod \

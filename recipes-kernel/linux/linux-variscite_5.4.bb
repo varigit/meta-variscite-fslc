@@ -30,6 +30,7 @@ LOCALVERSION_imx8qm-var-som = "-imx8qm"
 
 KBUILD_DEFCONFIG_var-som-mx6 = "imx_v7_var_defconfig"
 KBUILD_DEFCONFIG_imx6ul-var-dart = "imx_v7_var_defconfig"
+KBUILD_DEFCONFIG_imx7-var-som = "imx_v7_var_defconfig"
 KBUILD_DEFCONFIG_imx8mq-var-dart = "imx8mq_var_dart_defconfig"
 KBUILD_DEFCONFIG_imx8mm-var-dart = "imx8_var_defconfig"
 KBUILD_DEFCONFIG_imx8mn-var-som = "imx8_var_defconfig"
@@ -71,4 +72,4 @@ pkg_postinst_kernel-devicetree_append_imx8qm-var-som () {
 # Added by meta-virtualization/recipes-kernel/linux/linux-yocto_5.4_virtualization.inc
 KERNEL_FEATURES_remove = "cfg/virtio.scc"
 
-COMPATIBLE_MACHINE = "(mx6|mx8)"
+COMPATIBLE_MACHINE = "(mx6|mx7|mx8)"
