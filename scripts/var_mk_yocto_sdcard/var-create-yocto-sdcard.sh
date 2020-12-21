@@ -13,7 +13,7 @@ readonly SCRIPT_POINT=${ABSOLUTE_DIRECTORY}
 
 readonly YOCTO_ROOT="${SCRIPT_POINT}/../../../.."
 
-if [[ -e ${YOCTO_ROOT}/b2qt-init-build-env ]] ; then
+if [[ -e ${YOCTO_ROOT}/sources/meta-boot2qt ]] ; then
 	readonly BSP_TYPE="B2QT"
 	readonly YOCTO_BUILD=${YOCTO_ROOT}/build-${MACHINE}
 	readonly YOCTO_DEFAULT_IMAGE=b2qt-embedded-qt5-image
