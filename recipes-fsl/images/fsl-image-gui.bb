@@ -68,6 +68,10 @@ IMAGE_INSTALL_append_imxdrm = " \
 	libdrm-tests \
 "
 
+CORE_IMAGE_EXTRA_INSTALL_append_mx8 = "\
+    packagegroup-fsl-tools-gpu \
+"
+
 systemd_disable_vt () {
     rm ${IMAGE_ROOTFS}${root_prefix}${sysconfdir}/systemd/system/getty.target.wants/getty@tty*.service
 }
