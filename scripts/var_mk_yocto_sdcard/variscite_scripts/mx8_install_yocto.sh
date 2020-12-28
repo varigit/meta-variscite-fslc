@@ -42,7 +42,7 @@ check_board()
 		fi
 	elif grep -q "i.MX8MQ" /sys/devices/soc0/soc_id; then
 		BOARD=imx8mq-var-dart
-		DTB_PREFIX=imx8mq-var-dart
+		DTB_PREFIX=imx8mq-var-dart-dt8mcustomboard
 		BLOCK=mmcblk0
 		BOOTLOADER_OFFSET=33
 		if [[ $DISPLAY != "lvds" && $DISPLAY != "hdmi" && \
@@ -190,7 +190,7 @@ install_rootfs_to_emmc()
 	if [[ ${BOARD} = "imx8mq-var-dart" ]]; then
 		# Create DTB symlinks
 		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-wifi-${DISPLAY}.dtb ${DTB_PREFIX}.dtb)
-		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-wifi-${DISPLAY}-cb12.dtb ${DTB_PREFIX}-cb12.dtb)
+		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}12-wifi-${DISPLAY}.dtb ${DTB_PREFIX}12.dtb)
 
 		# Update variscite-blacklist.conf
 		echo "blacklist fec" >> ${MOUNTDIR}/etc/modprobe.d/variscite-blacklist.conf
