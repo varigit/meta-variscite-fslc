@@ -101,7 +101,7 @@ echo "================================================"
 
 help() {
 	bn=`basename $0`
-	echo " Usage: MACHINE=<imx6ul-var-dart|imx7-var-som|imx8mq-var-dart|imx8mm-var-dart|imx8qxp-var-som|imx8qm-var-som|imx8mn-var-som> $bn <options> device_node"
+	echo " Usage: MACHINE=<var-som-mx6|imx6ul-var-dart|imx7-var-som|imx8mq-var-dart|imx8mm-var-dart|imx8qxp-var-som|imx8qm-var-som|imx8mn-var-som> $bn <options> device_node"
 	echo
 	echo " options:"
 	echo " -h		display this Help message"
@@ -140,15 +140,21 @@ case $MACHINE in
 	"imx7-var-som")
 		FAT_VOLNAME=BOOT-VARMX7
 		;;
+	"var-som-mx6")
+		FAT_VOLNAME=BOOT-VARMX6
+		;;
 	*)
 		help
 		exit 1
 esac
 
-if [[ $MACHINE = "imx6ul-var-dart" || $MACHINE = "imx7-var-som" ]]; then
+if [[ $MACHINE = "var-som-mx6" || $MACHINE = "imx6ul-var-dart" || $MACHINE = "imx7-var-som" ]]; then
 	BOOTLOAD_RESERVE_SIZE=4
 	BOOT_ROM_SIZE=12
 	HAS_UBI_IMAGES=1
+fi
+
+if [[ $MACHINE = "imx6ul-var-dart" || $MACHINE = "imx7-var-som" ]]; then
 	HAS_DESKTOP_ICONS=1
 fi
 
@@ -408,6 +414,9 @@ function copy_scripts
 
 	if [[ $MACHINE = "imx6ul-var-dart" || $MACHINE = "imx7-var-som" ]]; then
 		cp ${YOCTO_SCRIPTS_PATH}/mx6ul_mx7_install_yocto.sh	${P2_MOUNT_DIR}/usr/bin/install_yocto.sh
+	elif [[ $MACHINE = "var-som-mx6" ]]; then
+		cp ${YOCTO_SCRIPTS_PATH}/mx6_install_yocto.sh		${P2_MOUNT_DIR}/usr/bin/install_yocto.sh
+		cp ${YOCTO_SCRIPTS_PATH}/mx6_install_yocto_emmc.sh	${P2_MOUNT_DIR}/usr/bin/install_yocto_emmc.sh
 	else
 		cp ${YOCTO_SCRIPTS_PATH}/mx8_install_yocto.sh	${P2_MOUNT_DIR}/usr/bin/install_yocto.sh
 	fi
