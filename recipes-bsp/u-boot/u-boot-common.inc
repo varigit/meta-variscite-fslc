@@ -9,7 +9,7 @@ SRCBRANCH = "imx_v2020.04_5.4.24_2.1.0_var02"
 SRCREV = "777a7e331587a9a978e15b6b5f66f77e44c483a5"
 
 SRCBRANCH_var-som-mx6 = "imx_v2018.03_4.14.78_1.0.0_ga_var02"
-SRCREV_var-som-mx6 = "00a86ee32e2c7957fe7b57c83a165f0ec19d52bb"
+SRCREV_var-som-mx6 = "eed279256bc24cffeb97e91b594d56591a457380"
 UBOOT_INITIAL_ENV_var-som-mx6 = ""
 
 SRCBRANCH_imx6ul-var-dart = "imx_v2018.03_4.14.78_1.0.0_ga_var02"
