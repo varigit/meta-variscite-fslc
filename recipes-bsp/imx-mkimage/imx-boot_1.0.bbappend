@@ -13,8 +13,4 @@ do_compile_prepend() {
 	if [ -f ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/imx8mm-var-som-rev10-symphony.dtb ]; then
 		cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/imx8mm-var-som-rev10-symphony.dtb ${S}/iMX8M/
 	fi
-
-	if [ -f ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/imx8mn-var-som-rev10-symphony.dtb ]; then
-		cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/imx8mn-var-som-rev10-symphony.dtb ${S}/iMX8M/
-	fi
 }
