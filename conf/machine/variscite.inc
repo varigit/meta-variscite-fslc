@@ -27,9 +27,6 @@ PREFERRED_VERSION_gstreamer1.0-plugins-base_mx8 = "1.16.imx"
 PREFERRED_VERSION_gstreamer1.0-plugins-good_mx8 = "1.16.imx"
 PREFERRED_VERSION_gstreamer1.0-plugins-bad_mx8 = "1.16.imx"
 
-# Use swupdate 2019.11 with support for legacy u-boot-fw-utils
-PREFERRED_VERSION_swupdate = "2019.11"
-
 # Add VPU Firmware
 MACHINE_FIRMWARE_append_mx8 = " firmware-imx-vpu-imx8"
 
