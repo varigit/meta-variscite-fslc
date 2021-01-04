@@ -53,8 +53,8 @@ set_fw_env_config_to_emmc()
 set_fw_utils_to_emmc_on_sd_card()
 {
 	# Adjust u-boot-fw-utils for eMMC on the SD card
-	if [[ `readlink /sbin/fw_printenv` != "/sbin/fw_printenv-mmc" ]]; then
-		ln -sf /sbin/fw_printenv-mmc /sbin/fw_printenv
+	if [[ `readlink /etc/u-boot-initial-env` != "u-boot-initial-env-sd" ]]; then
+		ln -sf u-boot-initial-env-sd /etc/u-boot-initial-env
 	fi
 
 	if [[ -f /etc/fw_env.config ]]; then
@@ -65,9 +65,9 @@ set_fw_utils_to_emmc_on_sd_card()
 set_fw_utils_to_emmc_on_emmc()
 {
 	# Adjust u-boot-fw-utils for eMMC on the installed rootfs
-	rm -f ${mountdir_prefix}${rootfspart}/sbin/fw_printenv-nand
-	if [[ -f ${mountdir_prefix}${rootfspart}/sbin/fw_printenv-mmc ]]; then
-		mv ${mountdir_prefix}${rootfspart}/sbin/fw_printenv-mmc ${mountdir_prefix}${rootfspart}/sbin/fw_printenv
+	rm -f ${mountdir_prefix}${rootfspart}/etc/u-boot-initial-env-*nand*
+	if [[ -f ${mountdir_prefix}${rootfspart}/etc/u-boot-initial-env-sd ]]; then
+		ln -sf u-boot-initial-env-sd ${mountdir_prefix}${rootfspart}/etc/u-boot-initial-env
 	fi
 
 	if [[ -f ${mountdir_prefix}${rootfspart}/etc/fw_env.config ]]; then
@@ -89,8 +89,8 @@ set_fw_env_config_to_nand()
 set_fw_utils_to_nand_on_sd_card()
 {
 	# Adjust u-boot-fw-utils for NAND flash on the SD card
-	if [[ `readlink /sbin/fw_printenv` != "/sbin/fw_printenv-nand" ]]; then
-		ln -sf /sbin/fw_printenv-nand /sbin/fw_printenv
+	if [[ `readlink /etc/u-boot-initial-env` != "u-boot-initial-env-nand" ]]; then
+		ln -sf u-boot-initial-env-nand /etc/u-boot-initial-env
 	fi
 
 	if [[ -f /etc/fw_env.config ]]; then

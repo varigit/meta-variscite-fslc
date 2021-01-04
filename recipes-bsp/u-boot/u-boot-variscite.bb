@@ -19,6 +19,8 @@ BOOT_TOOLS = "imx-boot-tools"
 
 SRC_URI += "file://fw_env.config"
 
+UBOOT_INITIAL_ENV = "u-boot-initial-env"
+
 do_deploy_append_mx8m () {
     # Deploy the mkimage, u-boot-nodtb.bin and the U-Boot dtb for mkimage to generate boot binary
     if [ -n "${UBOOT_CONFIG}" ]
@@ -42,6 +44,10 @@ do_deploy_append_mx8m () {
         unset  i
     fi
 
+}
+
+do_install_append() {
+    ln -sf ${UBOOT_INITIAL_ENV}-${UBOOT_INITIAL_ENV_DEVICE} ${D}/${sysconfdir}/${UBOOT_INITIAL_ENV}
 }
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"

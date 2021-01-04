@@ -25,8 +25,8 @@ set_fw_env_config_to_nand()
 set_fw_utils_to_nand_on_sd_card()
 {
 	# Adjust u-boot-fw-utils for NAND flash on the SD card
-	if [[ `readlink /sbin/fw_printenv` != "/sbin/fw_printenv-nand" ]]; then
-		ln -sf /sbin/fw_printenv-nand /sbin/fw_printenv
+	if [[ `readlink /etc/u-boot-initial-env` != "u-boot-initial-env-nand" ]]; then
+		ln -sf u-boot-initial-env-nand /etc/u-boot-initial-env
 	fi
 
 	if [[ -f /etc/fw_env.config ]]; then
