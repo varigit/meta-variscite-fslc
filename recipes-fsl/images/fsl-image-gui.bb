@@ -21,6 +21,7 @@ IMAGE_FEATURES += " \
     debug-tweaks \
     nfs-server \
     tools-debug \
+    eclipse-debug \
     tools-testapps \
     ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', '', \
        bb.utils.contains('DISTRO_FEATURES',     'x11', 'x11-base x11-sato', \
@@ -43,6 +44,8 @@ CORE_IMAGE_EXTRA_INSTALL += " \
 							 '', d), d)} \
 	nodejs \
 	screen \
+	tcf-agent \
+	openssh-sftp-server \
 "
 
 # only for Android enabled machines
