@@ -42,20 +42,7 @@ CORE_IMAGE_EXTRA_INSTALL += " \
 	   bb.utils.contains('DISTRO_FEATURES',     'x11', 'packagegroup-core-x11-sato-games', \
 							 '', d), d)} \
 	nodejs \
-	flex \
-	gcc \
-	git \
-	m4 \
-	make \
-	iperf3 \
-	libtool \
-	strace \
 	screen \
-	minicom \
-	openssl \
-	can-utils \
-	udev-extraconf \
-	ntpdate \
 "
 
 # only for Android enabled machines
