@@ -132,7 +132,7 @@ case $MACHINE in
 		IMXBOOT_TARGET=flash_spl
 		;;
 	"imx8qxp-var-som")
-		IMXBOOT_TARGET=flash
+		IMXBOOT_TARGET=flash_spl
 		;;
 	"imx6ul-var-dart")
 		FAT_VOLNAME=BOOT-VAR6UL
