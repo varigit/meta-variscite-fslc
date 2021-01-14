@@ -41,7 +41,7 @@ DEFAULT_DTB_imx8mq-var-dart = "sd-lvds"
 DEFAULT_DTB_imx8qxp-var-som = "sd"
 DEFAULT_DTB_imx8qm-var-som = "lvds"
 DEFAULT_DTB_PREFIX_imx8mq-var-dart = "imx8mq-var-dart-dt8mcustomboard"
-DEFAULT_DTB_PREFIX_imx8qxp-var-som = "imx8qxp-var-som"
+DEFAULT_DTB_PREFIX_imx8qxp-var-som = "imx8qxp-var-som-symphony"
 DEFAULT_DTB_PREFIX_imx8qm-var-som = "imx8qm-var-som"
 
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
