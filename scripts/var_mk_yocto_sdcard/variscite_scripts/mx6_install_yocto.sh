@@ -12,6 +12,25 @@ KERNEL_DTB=""
 ROOTFS_DEV=""
 
 # $1 is the full path of the config file
+set_fw_env_config_to_sd()
+{
+	sed -i "/mtd/ s/^#*/#/" $1
+	sed -i "s/#*\/dev\/mmcblk./\/dev\/mmcblk1/" $1
+}
+
+set_fw_utils_to_sd_on_sd_card()
+{
+	# Adjust u-boot-fw-utils for eMMC on the SD card
+	if [[ `readlink /etc/u-boot-initial-env` != "u-boot-initial-env-sd" ]]; then
+		ln -sf u-boot-initial-env-sd /etc/u-boot-initial-env
+	fi
+
+	if [[ -f /etc/fw_env.config ]]; then
+		set_fw_env_config_to_sd /etc/fw_env.config
+	fi
+}
+
+# $1 is the full path of the config file
 set_fw_env_config_to_nand()
 {
 	sed -i "/mmcblk/ s/^#*/#/" $1
@@ -66,6 +85,8 @@ install_bootloader()
 			fw_setenv boot_device emmc
 			fw_setenv bootdir /boot
 		fi
+
+		set_fw_utils_to_sd_on_sd_card
 	fi
 }
 
@@ -99,6 +120,7 @@ install_rootfs()
 		install_rootfs_to_nand
 	else
 		/usr/bin/install_yocto_emmc.sh ${EMMC_EXTRA_ARGS}
+		set_fw_utils_to_sd_on_sd_card
 	fi
 }
 

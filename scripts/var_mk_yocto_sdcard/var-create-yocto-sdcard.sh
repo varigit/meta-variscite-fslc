@@ -136,12 +136,15 @@ case $MACHINE in
 		;;
 	"imx6ul-var-dart")
 		FAT_VOLNAME=BOOT-VAR6UL
+		SD_BLOCK_DEV=mmcblk0
 		;;
 	"imx7-var-som")
 		FAT_VOLNAME=BOOT-VARMX7
+		SD_BLOCK_DEV=mmcblk0
 		;;
 	"var-som-mx6")
 		FAT_VOLNAME=BOOT-VARMX6
+		SD_BLOCK_DEV=mmcblk1
 		;;
 	*)
 		help
@@ -353,6 +356,24 @@ function install_yocto
 	sync
 }
 
+function set_fw_env_config_to_sd
+{
+	sed -i "/mtd/ s/^#*/#/" ${P2_MOUNT_DIR}/etc/fw_env.config
+	sed -i "s/#*\/dev\/mmcblk./\/dev\/${SD_BLOCK_DEV}/" ${P2_MOUNT_DIR}/etc/fw_env.config
+}
+
+function set_fw_utils_to_sd_on_sd_card
+{
+	# Adjust u-boot-fw-utils for SD on the SD card
+	if [[ `readlink ${P2_MOUNT_DIR}/etc/u-boot-initial-env` != "u-boot-initial-env-sd" ]]; then
+		ln -sf u-boot-initial-env-sd ${P2_MOUNT_DIR}/etc/u-boot-initial-env
+	fi
+
+	if [[ -f ${P2_MOUNT_DIR}/etc/fw_env.config ]]; then
+		set_fw_env_config_to_sd
+	fi
+}
+
 function copy_images
 {
 	echo
@@ -377,6 +398,8 @@ function copy_images
 	fi
 
 	if [ ${HAS_UBI_IMAGES} = 1 ]; then
+		# Configure uboot-fw-utils for SD
+		set_fw_utils_to_sd_on_sd_card
 		# Copy images for NAND flash
 		for f in ${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME}_*.ubi; do
 			if [ -f "$f" ]; then
@@ -441,7 +464,7 @@ function copy_scripts
 			fi
 
 			if [[ ${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME} == var-image-swupdate* ]]; then
-				sed -i 's/install_yocto.sh/& -u/' ${P2_MOUNT_DIR}/usr/share/applications/${MACHINE}*yocto*emmc*.desktop
+				sed -i 's/install_yocto.sh/& -u/' ${P2_MOUNT_DIR}/usr/share/applications/${MACHINE}*yocto*.desktop
 			fi
 		fi
 	fi

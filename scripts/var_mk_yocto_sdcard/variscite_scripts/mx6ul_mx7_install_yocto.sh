@@ -50,6 +50,25 @@ set_fw_env_config_to_emmc()
 	sed -i "s/#*\/dev\/mmcblk./\/dev\/${block}/" $1
 }
 
+# $1 is the full path of the config file
+set_fw_env_config_to_sd()
+{
+	sed -i "/mtd/ s/^#*/#/" $1
+	sed -i "s/#*\/dev\/mmcblk./\/dev\/mmcblk0/" $1
+}
+
+set_fw_utils_to_sd_on_sd_card()
+{
+	# Adjust u-boot-fw-utils for eMMC on the SD card
+	if [[ `readlink /etc/u-boot-initial-env` != "u-boot-initial-env-sd" ]]; then
+		ln -sf u-boot-initial-env-sd /etc/u-boot-initial-env
+	fi
+
+	if [[ -f /etc/fw_env.config ]]; then
+		set_fw_env_config_to_sd /etc/fw_env.config
+	fi
+}
+
 set_fw_utils_to_emmc_on_sd_card()
 {
 	# Adjust u-boot-fw-utils for eMMC on the SD card
@@ -242,6 +261,8 @@ install_bootloader_to_emmc()
 			fw_setenv mmcrootpart 1  2> /dev/null
 			fw_setenv bootdir /boot
 		fi
+
+		set_fw_utils_to_sd_on_sd_card
 	fi
 }
 
