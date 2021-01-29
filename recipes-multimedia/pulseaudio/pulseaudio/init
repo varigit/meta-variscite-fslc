@@ -5,6 +5,13 @@ PIDDIR=/var/run/pulse
 PIDFILE=$PIDDIR/pid
 DAEMONUSER=pulse
 
+restore_alsa() {
+	while [ -z "$(pidof pulseaudio)" ]; do
+		sleep 0.5
+	done
+	alsactl -f /var/lib/alsa/asound.state restore
+}
+
 pulseaudio_start() {
 
 	if [ ! -d ${PIDDIR} ]; then
@@ -15,6 +22,8 @@ pulseaudio_start() {
 	start-stop-daemon -x ${DAEMON} -p ${PIDFILE} --start -- \
 		--system --disallow-exit --disable-shm --exit-idle-time=-1 \
 		--daemonize --log-target=syslog
+
+	restore_alsa &
 }
 
 pulseaudio_stop() {
