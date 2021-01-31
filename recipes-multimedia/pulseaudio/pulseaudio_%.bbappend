@@ -22,6 +22,7 @@ do_install_append() {
 		${D}/${sysconfdir}/pulse/system.pa
 
 	if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)}; then
+		install -m 0755 ${WORKDIR}/init ${D}/${sysconfdir}/pulse/variscite-pulse
 		install -d ${D}${sysconfdir}/systemd/system/multi-user.target.wants
 		install -m 0644 ${WORKDIR}/pulseaudio.service ${D}${sysconfdir}/systemd/system
 		ln -sf ${sysconfdir}/systemd/system/pulseaudio.service \

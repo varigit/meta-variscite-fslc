@@ -19,7 +19,7 @@ pulseaudio_start() {
 		chown ${DAEMONUSER}:${DAEMONUSER} ${PIDDIR}
 	fi
 
-	start-stop-daemon -x ${DAEMON} -p ${PIDFILE} --start -- \
+	/sbin/start-stop-daemon -x ${DAEMON} -p ${PIDFILE} --start -- \
 		--system --disallow-exit --disable-shm --exit-idle-time=-1 \
 		--daemonize --log-target=syslog
 
@@ -27,7 +27,7 @@ pulseaudio_start() {
 }
 
 pulseaudio_stop() {
-	start-stop-daemon -p ${PIDFILE} --stop --retry 5 || echo -n "...which is not running"
+	/sbin/start-stop-daemon -p ${PIDFILE} --stop --retry 5 || echo -n "...which is not running"
 }
 
 case "$1" in

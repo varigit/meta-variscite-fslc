@@ -3,8 +3,8 @@ Description=PulseAudio system server
 
 [Service]
 Type=forking
-ExecStart=/usr/bin/pulseaudio --system --disallow-exit --disable-shm --exit-idle-time=-1 --daemonize
-PIDFile=/run/pulse/pid
+ExecStart=/etc/pulse/variscite-pulse start
+ExecStop=/etc/pulse/variscite-pulse stop
 
 [Install]
 WantedBy=multi-user.target
