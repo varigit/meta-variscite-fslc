@@ -27,8 +27,11 @@ PREFERRED_VERSION_gstreamer1.0-plugins-base_mx8 = "1.16.imx"
 PREFERRED_VERSION_gstreamer1.0-plugins-good_mx8 = "1.16.imx"
 PREFERRED_VERSION_gstreamer1.0-plugins-bad_mx8 = "1.16.imx"
 
-# Add VPU Firmware
-MACHINE_FIRMWARE_append_mx8 = " firmware-imx-vpu-imx8"
+# Add VPU and Cortex M4/M7 firmware
+MACHINE_FIRMWARE_append_mx8 = " \
+	firmware-imx-vpu-imx8 \
+	freertos-variscite \
+	"
 
 MACHINE_EXTRA_RDEPENDS += " \
 	gptfdisk \
