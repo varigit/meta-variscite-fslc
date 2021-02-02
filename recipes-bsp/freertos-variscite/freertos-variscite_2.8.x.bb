@@ -6,7 +6,7 @@ SRCREV = "fa71caba163f20b950506807fbc6ea43277fd2cb"
 # "Development Tools" section for supported GCC version
 CM_GCC = "gcc-arm-none-eabi-9-2019-q4-major"
 
-SRC_URI = " \
+SRC_URI += " \
     git://github.com/varigit/freertos-variscite.git;protocol=git;branch=${MCUXPRESSO_BRANCH}; \
     https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2019q4/gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2;name=gcc-arm-none-eabi-9-2019-q4-major \
 "

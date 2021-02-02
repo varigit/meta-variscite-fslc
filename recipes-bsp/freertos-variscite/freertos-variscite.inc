@@ -4,6 +4,13 @@ LICENSE = "BSD"
 LIC_FILES_CHKSUM = "file://COPYING-BSD-3;md5=0858ec9c7a80c4a2cf16e4f825a2cc91"
 SECTION = "BSP"
 
+SRC_URI = " \
+    file://variscite-rproc-linux \
+    file://variscite-rproc-u-boot \
+    file://variscite-rproc-common.sh \
+    file://variscite-rproc.conf \
+"
+
 # inherit cmake
 DEPENDS = "cmake-native"
 
@@ -102,6 +109,14 @@ do_install() {
         ddr_debug \
     "
 
+    # Install scripts
+    install -d ${D}${sysconfdir}/remoteproc
+    install -m 0755 ${WORKDIR}/variscite-rproc-u-boot ${D}${sysconfdir}/remoteproc
+    install -m 0755 ${WORKDIR}/variscite-rproc-linux ${D}${sysconfdir}/remoteproc
+    install -m 0644 ${WORKDIR}/variscite-rproc-common.sh ${D}${sysconfdir}/remoteproc
+    install -m 0644 ${WORKDIR}/variscite-rproc.conf ${D}${sysconfdir}/remoteproc
+
+    # Install firmware
     install -d ${D}/lib/firmware/
     install -d ${D}/boot/
 
@@ -132,6 +147,7 @@ do_install() {
 }
 
 FILES_${PN} = " \
+	/etc/remoteproc \
 	/lib/firmware \
 	/boot \
 "
