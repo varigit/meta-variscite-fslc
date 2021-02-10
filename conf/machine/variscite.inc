@@ -47,6 +47,7 @@ MACHINE_EXTRA_RDEPENDS += " \
            bb.utils.contains('DISTRO_FEATURES', 'wayland', 'networkmanager', \
                                                        '', d), d)} \
 	packagegroup-tools-bluetooth \
+	bluez-alsa \
 	pm-utils \
 	rng-tools \
 	wpa-supplicant \
@@ -67,3 +68,6 @@ IMAGE_FSTYPES = "tar.gz wic.gz"
 # Remove sysvinit or systemd based on DISTRO_FEATURES to avoid conflicts
 DISTRO_FEATURES_BACKFILL_CONSIDERED_append = "${@bb.utils.contains('DISTRO_FEATURES', 'systemd', ' sysvinit', '', d)}"
 DISTRO_FEATURES_BACKFILL_CONSIDERED_append = "${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', ' systemd', '', d)}"
+
+# Use bluez-alsa instead of pulseaudio
+DISTRO_FEATURES_BACKFILL_CONSIDERED_append = " pulseaudio"
