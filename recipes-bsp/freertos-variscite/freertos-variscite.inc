@@ -35,17 +35,65 @@ CM_DEMOS_mx8qm = " \
     demo_apps/hello_world/cm4_core1 \
 "
 
+# If remoteproc is used to reload ddr firmware, special disable_cache firmware
+# must be reloaded between stop and start comments
+# For Example:
+#   echo cm_rpmsg_lite_pingpong_rtos_linux_remote.elf.ddr_debug > /sys/class/remoteproc/remoteproc0/firmware
+#   echo start > /sys/class/remoteproc/remoteproc0/state
+#   echo stop > /sys/class/remoteproc/remoteproc0/state
+
+#   echo cm_disable_cache.elf.debug > /sys/class/remoteproc/remoteproc0/firmware
+#   echo start > /sys/class/remoteproc/remoteproc0/state
+#   echo stop > /sys/class/remoteproc/remoteproc0/state
+
+#   echo cm_rpmsg_lite_str_echo_rtos_imxcm4.elf.ddr_debug > /sys/class/remoteproc/remoteproc0/firmware
+#   echo start > /sys/class/remoteproc/remoteproc0/state
+#   echo stop > /sys/class/remoteproc/remoteproc0/state
+CM_DEMOS_DISABLE_CACHE = ""
+CM_DEMOS_DISABLE_CACHE_mx8qxp = "demo_apps/disable_cache"
+CM_DEMOS_DISABLE_CACHE_mx8qm = "demo_apps/disable_cache/cm4_core0 demo_apps/disable_cache/cm4_core1"
+
+DISABLE_CACHE_PATCH="disable_cache.patch"
+SRC_URI_append_imx8qxp-var-som += "file://${DISABLE_CACHE_PATCH};apply=no"
+SRC_URI_append_imx8qxpb0-var-som += "file://${DISABLE_CACHE_PATCH};apply=no"
+SRC_URI_append_imx8qm-var-som += "file://${DISABLE_CACHE_PATCH};apply=no"
+
+compile_fw() {
+    DIR_GCC="$1"
+    cd ${DIR_GCC}
+    ./clean.sh
+    ./build_all.sh > /dev/null
+}
+
 do_compile() {
     # Configure ARMGCC
     export ARMGCC_DIR="${WORKDIR}/${CM_GCC}"
 
+    # Copy and patch hello_world demo to disable_cache demo
+    if [ -e "${WORKDIR}/${DISABLE_CACHE_PATCH}" ]; then
+        # Copy hello_world demo
+        cp -r ${S}/boards/${CM_BOARD}/demo_apps/hello_world/ ${S}/boards/${CM_BOARD}/demo_apps/disable_cache
+        # Rename hello_world strings to disable_cache
+        grep -rl hello_world ${S}/boards/${CM_BOARD}/demo_apps/disable_cache | xargs sed -i 's/hello_world/disable_cache/g'
+        # Rename hello_world files to disable_cache
+        find ${S}/boards/${CM_BOARD}/demo_apps/disable_cache/ -name '*hello_world*' -exec sh -c 'mv "$1" "$(echo "$1" | sed s/hello_world/disable_cache/)"' _ {} \;
+    fi
+
     # Build all demos in CM_DEMOS
     for CM_DEMO in ${CM_DEMOS}; do
-        DIR_GCC="${S}/boards/${CM_BOARD}/${CM_DEMO}/armgcc"
-        cd ${DIR_GCC}
-        ./clean.sh
-        ./build_all.sh > /dev/null
+        compile_fw "${S}/boards/${CM_BOARD}/${CM_DEMO}/armgcc"
     done
+
+    # Build firmware to reset cache
+    if [ -e "${WORKDIR}/${DISABLE_CACHE_PATCH}" ]; then
+        # Apply patch to disable cache for machine
+        cd ${S} && git apply ${WORKDIR}/${DISABLE_CACHE_PATCH}
+
+        # Build the firmware
+        for CM_DEMO in ${CM_DEMOS_DISABLE_CACHE}; do
+                compile_fw "${S}/boards/${CM_BOARD}/${CM_DEMO}/armgcc"
+        done
+    fi
 }
 
 do_install() {
@@ -70,6 +118,16 @@ do_install() {
             FILE_CM_FW="$(basename ${DIR_GCC}/${CM_BUILD_TARGET}/*.bin)"
             install -m 644 ${DIR_GCC}/${CM_BUILD_TARGET}/${FILE_CM_FW} ${D}/boot/cm_${FILE_CM_FW}.${CM_BUILD_TARGET}
         done
+    done
+
+    # Install disable_cache demos (all demos in CM_DEMOS_DISABLE_CACHE)
+    for CM_DEMO in ${CM_DEMOS_DISABLE_CACHE}; do
+        DIR_GCC="${S}/boards/${CM_BOARD}/${CM_DEMO}/armgcc"
+        # Install all build targets
+        CM_BUILD_TARGET="debug"
+        # Install elf
+        FILE_CM_FW="$(basename ${DIR_GCC}/${CM_BUILD_TARGET}/*.elf)"
+        install -m 644 ${DIR_GCC}/${CM_BUILD_TARGET}/${FILE_CM_FW} ${D}/lib/firmware/cm_${FILE_CM_FW}.${CM_BUILD_TARGET}
     done
 }
 
