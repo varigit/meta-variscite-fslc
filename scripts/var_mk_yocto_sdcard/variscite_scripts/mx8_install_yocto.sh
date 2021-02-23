@@ -190,7 +190,7 @@ install_rootfs_to_emmc()
 	if [[ ${BOARD} = "imx8mq-var-dart" ]]; then
 		# Create DTB symlinks
 		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-wifi-${DISPLAY}.dtb ${DTB_PREFIX}.dtb)
-		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}12-wifi-${DISPLAY}.dtb ${DTB_PREFIX}12.dtb)
+		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-legacy-wifi-${DISPLAY}.dtb ${DTB_PREFIX}-legacy.dtb)
 
 		# Update variscite-blacklist.conf
 		echo "blacklist fec" >> ${MOUNTDIR}/etc/modprobe.d/variscite-blacklist.conf
