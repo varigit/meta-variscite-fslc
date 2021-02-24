@@ -1,4 +1,4 @@
-inherit image-buildinfo
+INHERIT += "image-buildinfo"
 
 MACHINE_FEATURES += " pci bluetooth wifi"
 
