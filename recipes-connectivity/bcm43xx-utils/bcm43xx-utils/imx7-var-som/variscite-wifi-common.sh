@@ -1,11 +1,5 @@
 MX7_5G_FILE=/etc/wifi/wifi-5g
 
-# Check is SOM is DART-6UL-5G
-som_is_dart_6ul_5g()
-{
-	return 1
-}
-
 # Check is SOM is VAR-SOM-MX7-5G
 som_is_mx7_5g()
 {
@@ -58,13 +52,6 @@ wifi_pre_up()
 		echo ${BT_EN_GPIO} > /sys/class/gpio/export
 		echo out > /sys/class/gpio/gpio${BT_EN_GPIO}/direction
 	fi
-
-	if som_is_dart_6ul_5g; then
-		if [ ! -d /sys/class/gpio/gpio${WIFI_PWR_GPIO} ]; then
-			echo ${WIFI_PWR_GPIO} > /sys/class/gpio/export
-			echo out > /sys/class/gpio/gpio${WIFI_PWR_GPIO}/direction
-		fi
-	fi
 }
 
 # Power up WIFI chip
@@ -75,35 +62,17 @@ wifi_up()
 		echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
 	fi
 
-	if som_is_dart_6ul_5g; then
-		# WIFI power up
-		echo 1 > /sys/class/gpio/gpio${WIFI_PWR_GPIO}/value
-		usleep 10000
+	# WLAN_EN up
+	echo 1 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
 
-		# WLAN_EN up
-		echo 1 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
+	# BT_EN up
+	echo 1 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
 
-		# BT_EN up
-		echo 1 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+	# Wait 150ms at least
+	usleep 200000
 
-		# Wait 150ms at least
-		usleep 200000
-
-		# BT_EN down
-		echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
-	else
-		# WLAN_EN up
-		echo 1 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
-
-		# BT_EN up
-		echo 1 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
-
-		# Wait 150ms at least
-		usleep 200000
-
-		# BT_EN down
-		echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
-	fi
+	# BT_EN down
+	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
 
 	# Bind WIFI device to MMC controller
 	echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/bind
@@ -126,23 +95,11 @@ wifi_down()
 		echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
 	fi
 
-	if som_is_dart_6ul_5g; then
-		# WLAN_EN down
-		echo 0 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
+	# WLAN_EN down
+	echo 0 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
 
-		# BT_EN down
-		echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
-		usleep 10000
-
-		# WIFI power down
-		echo 0 > /sys/class/gpio/gpio${WIFI_PWR_GPIO}/value
-	else
-		# WLAN_EN down
-		echo 0 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
-
-		# BT_EN down
-		echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
-	fi
+	# BT_EN down
+	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
 }
 
 # Return true if WIFI should be started
@@ -157,15 +114,6 @@ wifi_should_not_be_started()
 # Return true if WIFI should not be stopped
 wifi_should_not_be_stopped()
 {
-	# Do not stop WIFI if booting from SD
-	if grep -q mmcblk0 /proc/cmdline; then
-		return 0
-	fi
-
-	# Do not stop WIFI if booting from eMMC without WIFI
-	if ! grep -qi WIFI /sys/devices/soc0/machine; then
-		return 0
-	fi
-
+	# Always stop WIFI on mx7
 	return 1
 }
