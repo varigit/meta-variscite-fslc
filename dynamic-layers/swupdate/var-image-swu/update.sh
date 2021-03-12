@@ -31,7 +31,7 @@ function get_update_device
 function format_update_device
 {
 	umount $UPDATE_ROOT
-	mkfs.ext4 $UPDATE_ROOT -F -L rootfs${UPDATE_PART}
+	mkfs.ext4 $UPDATE_ROOT -F -L rootfs${UPDATE_PART} -q
 }
 
 if [ $1 == "preinst" ]; then
