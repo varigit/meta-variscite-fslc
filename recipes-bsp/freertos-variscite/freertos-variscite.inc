@@ -61,6 +61,8 @@ CM_DEMOS_DISABLE_CACHE_mx8qxp = "demo_apps/disable_cache"
 CM_DEMOS_DISABLE_CACHE_mx8qm = "demo_apps/disable_cache/cm4_core0 demo_apps/disable_cache/cm4_core1"
 
 DISABLE_CACHE_PATCH="disable_cache.patch"
+DISABLE_CACHE_PATCH_imx8qxp-var-som="disable_cache_${PV}.patch"
+DISABLE_CACHE_PATCH_imx8qxpb0-var-som="disable_cache_${PV}.patch"
 SRC_URI_append_imx8qxp-var-som += "file://${DISABLE_CACHE_PATCH};apply=no"
 SRC_URI_append_imx8qxpb0-var-som += "file://${DISABLE_CACHE_PATCH};apply=no"
 SRC_URI_append_imx8qm-var-som += "file://${DISABLE_CACHE_PATCH};apply=no"
