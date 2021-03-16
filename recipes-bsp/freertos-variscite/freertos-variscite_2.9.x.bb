@@ -1,7 +1,7 @@
 # Copyright (C) 2021 Variscite
 include freertos-variscite.inc
 
-SRCREV = "a50bca477ba123ddba9cf3657f2af3aa2cd06c92"
+SRCREV = "47de77edd34f7a716bbb3ac4a34e0e6cf1145509"
 # See https://github.com/varigit/freertos-variscite/blob/mcuxpresso_sdk_2.9.x-var01/docs/MCUXpresso%20SDK%20Release%20Notes%20for%20EVK-MIMX8MN.pdf
 # "Development Tools" section for supported GCC version
 CM_GCC = "gcc-arm-none-eabi-9-2020-q2-update"
