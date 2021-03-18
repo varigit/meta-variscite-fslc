@@ -22,7 +22,7 @@ SRC_URI_append_imx7-var-som = " \
         file://03-eth.sh \
 "
 
-FILES_${PN} += "/etc/pm/sleep.d/*"
+FILES_${PN} += "${sysconfdir}/pm/sleep.d/*"
 
 do_install_append() {
 	install -d ${D}/${sysconfdir}/pm/sleep.d
