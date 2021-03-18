@@ -119,7 +119,7 @@ do_install() {
     install -m 0644 ${WORKDIR}/variscite-rproc.conf ${D}${sysconfdir}/remoteproc
 
     # Install firmware
-    install -d ${D}/lib/firmware/
+    install -d ${D}${nonarch_base_libdir}/firmware/
     install -d ${D}/boot/
 
     # Install all demos in CM_DEMOS
@@ -129,7 +129,7 @@ do_install() {
         for CM_BUILD_TARGET in ${CM_BUILD_TARGETS}; do
             # Install elf
             FILE_CM_FW="$(basename ${DIR_GCC}/${CM_BUILD_TARGET}/*.elf)"
-            install -m 644 ${DIR_GCC}/${CM_BUILD_TARGET}/${FILE_CM_FW} ${D}/lib/firmware/cm_${FILE_CM_FW}.${CM_BUILD_TARGET}
+            install -m 644 ${DIR_GCC}/${CM_BUILD_TARGET}/${FILE_CM_FW} ${D}${nonarch_base_libdir}/firmware/cm_${FILE_CM_FW}.${CM_BUILD_TARGET}
 
             # Install bin
             FILE_CM_FW="$(basename ${DIR_GCC}/${CM_BUILD_TARGET}/*.bin)"
@@ -144,13 +144,13 @@ do_install() {
         CM_BUILD_TARGET="debug"
         # Install elf
         FILE_CM_FW="$(basename ${DIR_GCC}/${CM_BUILD_TARGET}/*.elf)"
-        install -m 644 ${DIR_GCC}/${CM_BUILD_TARGET}/${FILE_CM_FW} ${D}/lib/firmware/cm_${FILE_CM_FW}.${CM_BUILD_TARGET}
+        install -m 644 ${DIR_GCC}/${CM_BUILD_TARGET}/${FILE_CM_FW} ${D}${nonarch_base_libdir}/firmware/cm_${FILE_CM_FW}.${CM_BUILD_TARGET}
     done
 }
 
 FILES_${PN} = " \
-	/etc/remoteproc \
-	/lib/firmware \
+	${sysconfdir}/remoteproc \
+	${nonarch_base_libdir}/firmware \
 	/boot \
 "
 
