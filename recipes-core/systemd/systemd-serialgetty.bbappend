@@ -5,8 +5,8 @@ SRC_URI_append_imx8mm-var-dart = " \
 	file://disable-serialgetty.service \
 "
 FILES_${PN}_append_imx8mm-var-dart = " \ 
-        /lib/systemd/system/* \
-        /etc/systemd/system/* \
+        ${systemd_unitdir}/system/* \
+        ${sysconfdir}/systemd/system/* \
 "
 
 do_install_append_imx8mm-var-dart() {
