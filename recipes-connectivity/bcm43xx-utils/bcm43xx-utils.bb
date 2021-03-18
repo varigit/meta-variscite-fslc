@@ -13,12 +13,9 @@ SRC_URI = " \
 "
 
 FILES_${PN} = " \ 
-	/etc/wifi/*  \
-	/etc/init.d/* \
-	/etc/rcS.d/* \
-	/etc/modprobe.d \
-	/lib/systemd/system/* \
-	/etc/systemd/system/* \
+	${sysconfdir}/wifi/*  \
+	${@bb.utils.contains('DISTRO_FEATURES', 'systemd', '${systemd_unitdir}/system/* ${sysconfdir}/systemd/system/multi-user.target.wants/*', \
+													   '${sysconfdir}/init.d ${sysconfdir}/rcS.d', d)} \
 "
 
 RDEPENDS_${PN}_imx8mq-var-dart = "i2c-tools"
