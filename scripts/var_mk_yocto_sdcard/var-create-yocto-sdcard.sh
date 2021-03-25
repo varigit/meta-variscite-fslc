@@ -16,7 +16,7 @@ readonly YOCTO_ROOT="${SCRIPT_POINT}/../../../.."
 if [[ -e ${YOCTO_ROOT}/sources/meta-boot2qt ]] ; then
 	readonly BSP_TYPE="B2QT"
 	readonly YOCTO_BUILD=${YOCTO_ROOT}/build-${MACHINE}
-	readonly YOCTO_DEFAULT_IMAGE=b2qt-embedded-qt5-image
+	readonly YOCTO_DEFAULT_IMAGE=b2qt-embedded-qt6-image
 else
 	readonly BSP_TYPE="YOCTO"
 	if [[ $MACHINE = "imx6ul-var-dart" || $MACHINE = "imx7-var-som" ]]; then
