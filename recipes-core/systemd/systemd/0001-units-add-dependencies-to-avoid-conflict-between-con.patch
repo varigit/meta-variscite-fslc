@@ -1,0 +1,40 @@
+From b0daa2a427954d9c7b016c5651d56cd827e72678 Mon Sep 17 00:00:00 2001
+From: Marco Contenti <marco.contenti@variscite.com>
+Date: Sat, 3 Apr 2021 19:30:27 +0200
+Subject: [PATCH] units: add dependencies to avoid conflict between connman and
+ systemd-networkd
+
+---
+ units/systemd-networkd.service.in | 2 +-
+ units/systemd-networkd.socket     | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/units/systemd-networkd.service.in b/units/systemd-networkd.service.in
+index 01931665a4..11df55d8b8 100644
+--- a/units/systemd-networkd.service.in
++++ b/units/systemd-networkd.service.in
+@@ -13,7 +13,7 @@ Documentation=man:systemd-networkd.service(8)
+ ConditionCapability=CAP_NET_ADMIN
+ DefaultDependencies=no
+ # systemd-udevd.service can be dropped once tuntap is moved to netlink
+-After=systemd-udevd.service network-pre.target systemd-sysusers.service systemd-sysctl.service
++After=systemd-udevd.service network-pre.target systemd-sysusers.service systemd-sysctl.service connman.service
+ Before=network.target multi-user.target shutdown.target
+ Conflicts=shutdown.target
+ Wants=network.target
+diff --git a/units/systemd-networkd.socket b/units/systemd-networkd.socket
+index 113306607b..75459efbff 100644
+--- a/units/systemd-networkd.socket
++++ b/units/systemd-networkd.socket
+@@ -12,7 +12,7 @@ Description=Network Service Netlink Socket
+ Documentation=man:systemd-networkd.service(8) man:rtnetlink(7)
+ ConditionCapability=CAP_NET_ADMIN
+ DefaultDependencies=no
+-Before=sockets.target
++Before=sockets.target systemd-networkd.service
+ 
+ [Socket]
+ ReceiveBuffer=8M
+-- 
+2.31.1
+
