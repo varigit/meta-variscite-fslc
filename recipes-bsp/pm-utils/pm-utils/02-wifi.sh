@@ -15,6 +15,10 @@ case $1 in
         ;;
 "resume")
         wifi_up
+        if [ -f /etc/init.d/connman ]; then
+                killall -9 wpa_supplicant
+                /etc/init.d/connman restart
+        fi
         ;;
 esac
 
