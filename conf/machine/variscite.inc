@@ -24,10 +24,11 @@ PREFERRED_PROVIDER_virtual/kernel = "linux-variscite"
 
 # Use i.MX Gstreamer Version
 MACHINE_GSTREAMER_1_0_PLUGIN_mx8 = "imx-gst1.0-plugin"
-PREFERRED_VERSION_gstreamer1.0_mx8 = "1.16.imx"
-PREFERRED_VERSION_gstreamer1.0-plugins-base_mx8 = "1.16.imx"
-PREFERRED_VERSION_gstreamer1.0-plugins-good_mx8 = "1.16.imx"
-PREFERRED_VERSION_gstreamer1.0-plugins-bad_mx8 = "1.16.imx"
+PREFERRED_VERSION_gstreamer1.0_mx8 ?= "1.16.2.imx"
+PREFERRED_VERSION_gstreamer1.0-plugins-base_mx8 ?= "1.16.2.imx"
+PREFERRED_VERSION_gstreamer1.0-plugins-good_mx8 ?= "1.16.3.imx"
+PREFERRED_VERSION_gstreamer1.0-plugins-bad_mx8 ?= "1.16.3.imx"
+PREFERRED_VERSION_gstreamer1.0-libav_mx8 ?= "1.16.0"
 
 # Add VPU and Cortex M4/M7 firmware
 MACHINE_FIRMWARE_append_mx8 = " \
