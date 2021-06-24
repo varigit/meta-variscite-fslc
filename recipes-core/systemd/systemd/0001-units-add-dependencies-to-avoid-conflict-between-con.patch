@@ -13,28 +13,25 @@ diff --git a/units/systemd-networkd.service.in b/units/systemd-networkd.service.
 index 01931665a4..11df55d8b8 100644
 --- a/units/systemd-networkd.service.in
 +++ b/units/systemd-networkd.service.in
-@@ -13,7 +13,7 @@ Documentation=man:systemd-networkd.service(8)
+@@ -13,7 +13,7 @@
  ConditionCapability=CAP_NET_ADMIN
  DefaultDependencies=no
  # systemd-udevd.service can be dropped once tuntap is moved to netlink
--After=systemd-udevd.service network-pre.target systemd-sysusers.service systemd-sysctl.service
-+After=systemd-udevd.service network-pre.target systemd-sysusers.service systemd-sysctl.service connman.service
+-After=systemd-networkd.socket systemd-udevd.service network-pre.target systemd-sysusers.service systemd-sysctl.service
++After=systemd-networkd.socket systemd-udevd.service network-pre.target systemd-sysusers.service systemd-sysctl.service connman.service
  Before=network.target multi-user.target shutdown.target
  Conflicts=shutdown.target
- Wants=network.target
+ Wants=systemd-networkd.socket network.target
 diff --git a/units/systemd-networkd.socket b/units/systemd-networkd.socket
 index 113306607b..75459efbff 100644
 --- a/units/systemd-networkd.socket
 +++ b/units/systemd-networkd.socket
-@@ -12,7 +12,7 @@ Description=Network Service Netlink Socket
- Documentation=man:systemd-networkd.service(8) man:rtnetlink(7)
- ConditionCapability=CAP_NET_ADMIN
- DefaultDependencies=no
--Before=sockets.target
-+Before=sockets.target systemd-networkd.service
+@@ -20,4 +20,4 @@
+ PassPacketInfo=yes
  
- [Socket]
- ReceiveBuffer=8M
+ [Install]
+-WantedBy=sockets.target
++WantedBy=sockets.target systemd-networkd.service
 -- 
 2.31.1
 
