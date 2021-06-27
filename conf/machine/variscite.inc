@@ -45,7 +45,7 @@ MACHINE_EXTRA_RDEPENDS += " \
 	kernel-modules \
 	kmod \
 	${@bb.utils.contains('DISTRO', 'b2qt', '', \
-           bb.utils.contains('DISTRO_FEATURES', 'wayland', 'networkmanager', \
+           bb.utils.contains('DISTRO_FEATURES', 'wayland', 'networkmanager networkmanager-nmcli', \
                                                        '', d), d)} \
 	packagegroup-tools-bluetooth \
 	bluez-alsa \
