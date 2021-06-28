@@ -18,6 +18,7 @@ RDEPENDS_${PN} += " \
 	procps \
 	ptpd \
 	linuxptp \
+	spidev-test \
 	iw \
 	can-utils \
 	cpufrequtils \
