@@ -51,6 +51,8 @@ CORE_IMAGE_EXTRA_INSTALL += " \
 # only for Android enabled machines
 IMAGE_INSTALL_append_imxgpu3d = " \
 	android-tools \
+	android-tools-adbd \
+	android-tools-fstools \
 "
 
 # only for DRM enabled machines
