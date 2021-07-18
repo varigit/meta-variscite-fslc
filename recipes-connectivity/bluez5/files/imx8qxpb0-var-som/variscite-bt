@@ -1,0 +1,116 @@
+#!/bin/sh -e
+#
+# Activate Bluetooth on Variscite VAR-SOM-MX8X
+#
+
+# GPIO pin to enable BT module
+BT_EN_GPIO=106
+
+# GPIO pin to control routing of UART signals
+# to BT module or SOM connector
+BT_BUF_GPIO=61
+
+# UART device connected to BT module
+BT_TTY_DEV=/dev/ttyLP0
+
+# Sterling LWB5 BT firmware
+BT_FIRMWARE=/lib/firmware/brcm/BCM4335C0.hcd
+
+# WIFI SDIO ID file
+WIFI_SDIO_ID_FILE=/sys/class/net/wlan0/device/device
+
+# Check if WIFI+BT combo module is available
+bt_found()
+{
+	# Check that WIFI HW was initialized succesfully
+	for i in $(seq 1 5); do
+		if [ -f ${WIFI_SDIO_ID_FILE} ]; then
+			return 0
+		else
+			sleep 1
+		fi
+	done
+
+	return 1
+}
+
+# Enable BT via GPIO(s)
+bt_enable()
+{
+	# Configure BT_EN_GPIO
+	if [ ! -d /sys/class/gpio/gpio${BT_EN_GPIO} ]; then
+		echo ${BT_EN_GPIO} >/sys/class/gpio/export
+		echo "out" > /sys/class/gpio/gpio${BT_EN_GPIO}/direction
+	fi
+
+	# Power up BT module
+	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+	sleep 1
+	echo 1 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+
+	# Configure BT_BUF_GPIO
+	if [ ! -d /sys/class/gpio/gpio${BT_BUF_GPIO} ]; then
+		echo ${BT_BUF_GPIO} >/sys/class/gpio/export
+		echo "out" > /sys/class/gpio/gpio${BT_BUF_GPIO}/direction
+	fi
+
+	# Route UART lines to BT module
+    	echo 0 > /sys/class/gpio/gpio${BT_BUF_GPIO}/value
+}
+
+# Start BT hardware
+bt_start()
+{
+	# Exit is booting from SD (WIFI+BT is not available)
+	grep -q mmcblk1 /proc/cmdline && exit 0
+
+	# Exit if BT module is not available
+	bt_found || exit 0
+
+	# Enable BT hardware
+	bt_enable
+
+	# Start BT firmware loading service
+	kill -9 $(pidof brcm_patchram_plus) 2>/dev/null || true
+	brcm_patchram_plus \
+			--patchram ${BT_FIRMWARE} \
+			--enable_hci \
+			--no2bytes \
+			--baudrate 3000000 \
+			--scopcm=1,0,0,0,0,0,0,0,0,0 \
+			--tosleep 1000 ${BT_TTY_DEV} &
+}
+
+# Stop BT hardware
+bt_stop()
+{
+	# Exit if BT interface is not available
+	[ -e /sys/class/bluetooth/hci0 ] || exit 0
+	
+	# Stop BT interface
+	hciconfig hci0 down
+
+	# Stop BT firmware loading service
+	kill -9 $(pidof brcm_patchram_plus) 2>/dev/null || true
+
+	# Route UART lines to SOM connector
+    	echo 1 > /sys/class/gpio/gpio${BT_BUF_GPIO}/value
+
+	# Power down BT module
+  	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+}
+
+###########################
+#  Execution starts here  #
+###########################
+case $1 in
+
+start)
+	bt_start
+	;;
+stop)
+	bt_stop
+	;;
+esac
+
+exit 0

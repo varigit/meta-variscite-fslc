@@ -1,0 +1,90 @@
+#!/bin/sh -e
+#
+# Activate Bluetooth on Variscite VAR-SOM-MX6/VAR-SOM-SOLO/DART-MX6
+#
+
+# GPIO pin to enable BT module
+BT_EN_GPIO=178
+
+# UART device connected to BT module
+BT_TTY_DEV=/dev/ttymxc1
+
+# WIFI SDIO ID file
+WIFI_SYSFS_FILE=/sys/class/net/wlan0
+
+# Check if WIFI+BT combo module is available
+bt_found()
+{
+	# Check that WIFI HW was initialized succesfully
+	for i in $(seq 1 5); do
+		if [ -e ${WIFI_SYSFS_FILE} ]; then
+			return 0
+		else
+			sleep 1
+		fi
+	done
+
+	return 1
+}
+
+# Enable BT via GPIO(s)
+bt_enable()
+{
+	# Configure BT_EN_GPIO
+	if [ ! -d /sys/class/gpio/gpio${BT_EN_GPIO} ]; then
+		echo ${BT_EN_GPIO} >/sys/class/gpio/export
+		echo "out" > /sys/class/gpio/gpio${BT_EN_GPIO}/direction
+	fi
+
+	# Power up BT module
+	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+	sleep 1
+	echo 1 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+}
+
+# Start BT hardware
+bt_start()
+{
+	# Exit if BT module is not available
+	bt_found || exit 0
+
+	# Enable BT hardware
+	bt_enable
+
+	# Start BT firmware loading service
+    	hciattach -t 10 -s 115200 ${BT_TTY_DEV} texas 3000000
+
+    	# Enable SCO over HCI
+    	hcitool cmd 0x3f 0x210 0x01 0x00 0x00 0xff
+}
+
+# Stop BT hardware
+bt_stop()
+{
+	# Exit if BT interface is not available
+	[ -e /sys/class/bluetooth/hci0 ] || exit 0
+
+	# Stop BT interface
+	hciconfig hci0 down
+
+	# Stop BT firmware loading service
+	kill -9 $(pidof hciattach) 2>/dev/null || true
+
+  	# Power down BT module
+	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+}
+
+###########################
+#  Execution starts here  #
+###########################
+case $1 in
+
+start)
+	bt_start
+	;;
+stop)
+	bt_stop
+	;;
+esac
+
+exit 0
