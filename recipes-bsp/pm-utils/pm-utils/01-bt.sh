@@ -1,15 +1,13 @@
 #!/bin/sh
 
-. /etc/bluetooth/variscite-bt.conf
-. /etc/bluetooth/variscite-bt-common.sh
+[ -x /etc/bluetooth/variscite-bt ] || exit 0
 
 case $1 in
 
 "suspend")
-        bt_stop
+        /etc/bluetooth/variscite-bt stop
         ;;
 "resume")
-        bt_start
+        /etc/bluetooth/variscite-bt start
         ;;
 esac
-
