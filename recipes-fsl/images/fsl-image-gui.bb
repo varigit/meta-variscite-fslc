@@ -46,6 +46,8 @@ CORE_IMAGE_EXTRA_INSTALL += " \
 	screen \
 	tcf-agent \
 	openssh-sftp-server \
+	libgpiod \
+	libgpiod-tools \
 "
 
 # only for Android enabled machines
