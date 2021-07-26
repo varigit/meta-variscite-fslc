@@ -7,9 +7,7 @@ DEPENDS += "${@bb.utils.contains('DISTRO_FEATURES','systemd','','update-rc.d-nat
 
 SRC_URI = " \
 	file://variscite-wifi \
-	file://variscite-wifi-common.sh \
 	file://variscite-wifi.service \
-	file://variscite-wifi.conf \
 	file://variscite-bt \
 	file://variscite-bt.service \
 "
@@ -30,8 +28,6 @@ S = "${WORKDIR}"
 
 do_install() {
 	install -d ${D}${sysconfdir}/wifi
-	install -m 0644 ${WORKDIR}/variscite-wifi.conf ${D}${sysconfdir}/wifi
-	install -m 0644 ${WORKDIR}/variscite-wifi-common.sh ${D}/${sysconfdir}/wifi
 	install -m 0755 ${WORKDIR}/variscite-wifi ${D}/${sysconfdir}/wifi
 
 	install -d ${D}${sysconfdir}/bluetooth
