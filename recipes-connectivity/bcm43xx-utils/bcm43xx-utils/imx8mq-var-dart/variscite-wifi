@@ -1,3 +1,54 @@
+#!/bin/bash -e
+#
+# Activate WIFI on Variscite DART-MX8M-MINI
+#
+
+# GPIO pin to supply WIFI power
+WIFI_PWR_GPIO=8
+
+# GPIO pin to enable WIFI module
+WIFI_EN_GPIO=66
+
+# GPIO pin to control routing of UART signals
+# to BT module or SOM connector
+BT_BUF_GPIO=133
+
+# GPIO pin to enable BT module
+BT_EN_GPIO=68
+
+# WIFI MMC host
+WIFI_MMC_HOST=30b50000.mmc
+
+# Return true if WIFI interface exists
+wifi_interface_exists()
+{
+	for i in $(seq 1 20); do
+		if [ -d /sys/class/net/wlan0 ]; then
+			return 0
+		else
+			sleep 1
+		fi
+	done
+
+	return 1
+}
+
+# Bind WIFI device to MMC controller
+wifi_mmc_bind()
+{
+	if [ -e /sys/bus/platform/drivers/sdhci-esdhc-imx/bind ]; then
+		echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/bind
+	fi
+}
+
+# Unbind WIFI device from MMC controller
+wifi_mmc_unbind()
+{
+	if [ -e /sys/bus/platform/drivers/sdhci-esdhc-imx/${WIFI_MMC_HOST} ]; then
+		echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
+	fi
+}
+
 # Setup WIFI control GPIOs
 wifi_pre_up()
 {
@@ -26,9 +77,7 @@ wifi_pre_up()
 wifi_up()
 {
 	# Unbind WIFI device from MMC controller
-	if [ -e /sys/bus/platform/drivers/sdhci-esdhc-imx/${WIFI_MMC_HOST} ]; then
-		echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
-	fi
+	wifi_mmc_unbind
 
 	# WIFI_PWR up
 	echo 1 > /sys/class/gpio/gpio${WIFI_PWR_GPIO}/value
@@ -53,41 +102,13 @@ wifi_up()
 	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
 	
 	# Bind WIFI device to MMC controller
-	echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/bind
+	wifi_mmc_bind
 	
 	# Load WIFI driver
 	modprobe brcmfmac
 
 	# Load Ethernet driver
 	modprobe fec
-}
-
-# Power down WIFI chip
-wifi_down()
-{
-	# Unload WIFI driver
-	modprobe -r brcmfmac
-
-	# Unload Ethernet driver
-	modprobe -r fec
-
-	# Unbind WIFI device from MMC controller
-	if [ -e /sys/bus/platform/drivers/sdhci-esdhc-imx/${WIFI_MMC_HOST} ]; then
-		echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
-	fi
-
-	# WIFI_EN down
-	echo 0 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
-
-	# BT_BUF down
-	echo 1 > /sys/class/gpio/gpio${BT_BUF_GPIO}/value
-
-	# BT_EN down
-	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
-	usleep 10000
-
-	# WIFI_PWR down
-	echo 0 > /sys/class/gpio/gpio${WIFI_PWR_GPIO}/value
 }
 
 # Return true if SOM has WIFI module assembled
@@ -110,7 +131,7 @@ wifi_should_not_be_started()
 	# Do not enable WIFI if it is already up
 	[ -d /sys/class/net/wlan0 ] && return 0
 
-	# Do not enable WIFI if booting from SD on DART-IMX8M
+	# Do not enable WIFI if booting from SD
 	if grep -q mmcblk1 /proc/cmdline; then
 		return 0
 	fi
@@ -133,7 +154,7 @@ wifi_should_not_be_started()
 # Return true if WIFI should not be stopped
 wifi_should_not_be_stopped()
 {
-	# Do not stop WIFI if booting from SD on DART-IMX8M
+	# Do not stop WIFI if booting from SD
 	if grep -q mmcblk1 /proc/cmdline; then
 		return 0
 	fi
@@ -152,3 +173,73 @@ wifi_should_not_be_stopped()
 
 	return 1
 }
+
+# Start WIFI hardware
+wifi_start()
+{
+	# Exit if WIFI should not be started
+	wifi_should_not_be_started && exit 0
+
+	# Setup WIFI control GPIOs
+	wifi_pre_up
+
+	# Try starting WIFI hardware
+	for i in $(seq 1 3); do
+		# Up WIFI
+		wifi_up
+
+		# Exit if WIFI interface exists
+		wifi_interface_exists && exit 0
+
+		# Down WIFI
+		wifi_down
+
+		# Wait enough time for discharge
+		sleep 5
+	done
+
+	exit 1
+}
+
+# Stop WIFI hardware
+wifi_stop()
+{
+	# Exit if WIFI should not be stopped
+	wifi_should_not_be_stopped && exit 0
+
+	# Unload WIFI driver
+	modprobe -r brcmfmac
+
+	# Unload Ethernet driver
+	modprobe -r fec
+
+	# Unbind WIFI device from MMC controller
+	wifi_mmc_unbind
+
+	# WIFI_EN down
+	echo 0 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
+
+	# BT_BUF down
+	echo 1 > /sys/class/gpio/gpio${BT_BUF_GPIO}/value
+
+	# BT_EN down
+	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+	usleep 10000
+
+	# WIFI_PWR down
+	echo 0 > /sys/class/gpio/gpio${WIFI_PWR_GPIO}/value
+}
+
+###########################
+#  Execution starts here  #
+###########################
+case $1 in
+start)
+	wifi_start
+	;;
+stop)
+	wifi_stop
+	;;
+esac
+
+exit 0
