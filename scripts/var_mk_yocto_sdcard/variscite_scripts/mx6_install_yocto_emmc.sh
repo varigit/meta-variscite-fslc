@@ -1,5 +1,5 @@
 #!/bin/bash
-# Meant to be called by install_emmc.sh
+# Meant to be called by install_yocto.sh
 set -e
 
 . /usr/bin/echos.sh
