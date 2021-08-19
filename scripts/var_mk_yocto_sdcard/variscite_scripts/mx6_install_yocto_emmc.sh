@@ -206,8 +206,8 @@ function install_bootloader
 {
 	echo
 	blue_underlined_bold_echo "Installing booloader"
-	sudo dd if=${imagesdir}/SPL-sd of=${node} bs=1K seek=1; sync
-	sudo dd if=${imagesdir}/u-boot.img-sd of=${node} bs=1K seek=69; sync
+	dd if=${imagesdir}/SPL-sd of=${node} bs=1K seek=1; sync
+	dd if=${imagesdir}/u-boot.img-sd of=${node} bs=1K seek=69; sync
 
 	if [[ $swupdate == 1 ]] ; then
 		echo
