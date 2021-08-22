@@ -99,6 +99,22 @@ wifi_up()
 	modprobe brcmfmac
 }
 
+# Power down WIFI chip
+wifi_down()
+{
+	# Unload WIFI driver
+	modprobe -r brcmfmac
+
+	# Unbind WIFI device from MMC controller
+	wifi_mmc_unbind
+
+	# WLAN_EN down
+	echo 0 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
+
+	# BT_EN down
+	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+}
+
 # Start WIFI hardware
 wifi_start()
 {
@@ -132,17 +148,8 @@ wifi_stop()
 	# Exit if WIFI should not be stopped
 	wifi_should_not_be_stopped && exit 0
 
-	# Unload WIFI driver
-	modprobe -r brcmfmac
-
-	# Unbind WIFI device from MMC controller
-	wifi_mmc_unbind
-
-	# WLAN_EN down
-	echo 0 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
-
-	# BT_EN down
-	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+	# Down WIFI
+	wifi_down
 }
 
 ###########################

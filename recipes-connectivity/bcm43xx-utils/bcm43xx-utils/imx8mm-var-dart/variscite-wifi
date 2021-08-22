@@ -139,6 +139,38 @@ wifi_up()
 	modprobe brcmfmac
 }
 
+# Power down WIFI chip
+wifi_down()
+{
+	# Unload WIFI driver
+	modprobe -r brcmfmac
+
+	# Unbind WIFI device from MMC controller
+	wifi_mmc_unbind
+
+	# WIFI_EN down
+	echo 0 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
+
+	# BT_BUF down
+	if som_is_dart_mx8m_mini; then
+		echo 1 > /sys/class/gpio/gpio${BT_BUF_GPIO}/value
+	fi
+
+	# BT_EN down
+	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+	usleep 10000
+
+	# WIFI_1V8 down
+	if som_is_dart_mx8m_mini; then
+		echo 1 > /sys/class/gpio/gpio${WIFI_1V8_GPIO}/value
+	else
+		echo 0 > /sys/class/gpio/gpio${WIFI_1V8_GPIO}/value
+	fi
+
+	# WIFI_3V3 down
+	echo 0 > /sys/class/gpio/gpio${WIFI_3V3_GPIO}/value
+}
+
 # Return true if SOM has WIFI module assembled
 wifi_is_available()
 {
@@ -211,33 +243,8 @@ wifi_stop()
 	# Exit if WIFI should not be stopped
 	wifi_should_not_be_stopped && exit 0
 
-	# Unload WIFI driver
-	modprobe -r brcmfmac
-
-	# Unbind WIFI device from MMC controller
-	wifi_mmc_unbind
-
-	# WIFI_EN down
-	echo 0 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
-
-	# BT_BUF down
-	if som_is_dart_mx8m_mini; then
-		echo 1 > /sys/class/gpio/gpio${BT_BUF_GPIO}/value
-	fi
-
-	# BT_EN down
-	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
-	usleep 10000
-
-	# WIFI_1V8 down
-	if som_is_dart_mx8m_mini; then
-		echo 1 > /sys/class/gpio/gpio${WIFI_1V8_GPIO}/value
-	else
-		echo 0 > /sys/class/gpio/gpio${WIFI_1V8_GPIO}/value
-	fi
-
-	# WIFI_3V3 down
-	echo 0 > /sys/class/gpio/gpio${WIFI_3V3_GPIO}/value
+	# Down WIFI
+	wifi_down
 }
 
 ###########################
