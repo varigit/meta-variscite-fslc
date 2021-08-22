@@ -111,6 +111,32 @@ wifi_up()
 	modprobe fec
 }
 
+# Power down WIFI chip
+wifi_down()
+{
+	# Unload WIFI driver
+	modprobe -r brcmfmac
+
+	# Unload Ethernet driver
+	modprobe -r fec
+
+	# Unbind WIFI device from MMC controller
+	wifi_mmc_unbind
+
+	# WIFI_EN down
+	echo 0 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
+
+	# BT_BUF down
+	echo 1 > /sys/class/gpio/gpio${BT_BUF_GPIO}/value
+
+	# BT_EN down
+	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+	usleep 10000
+
+	# WIFI_PWR down
+	echo 0 > /sys/class/gpio/gpio${WIFI_PWR_GPIO}/value
+}
+
 # Return true if SOM has WIFI module assembled
 wifi_is_available()
 {
@@ -207,27 +233,8 @@ wifi_stop()
 	# Exit if WIFI should not be stopped
 	wifi_should_not_be_stopped && exit 0
 
-	# Unload WIFI driver
-	modprobe -r brcmfmac
-
-	# Unload Ethernet driver
-	modprobe -r fec
-
-	# Unbind WIFI device from MMC controller
-	wifi_mmc_unbind
-
-	# WIFI_EN down
-	echo 0 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
-
-	# BT_BUF down
-	echo 1 > /sys/class/gpio/gpio${BT_BUF_GPIO}/value
-
-	# BT_EN down
-	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
-	usleep 10000
-
-	# WIFI_PWR down
-	echo 0 > /sys/class/gpio/gpio${WIFI_PWR_GPIO}/value
+	# Down WIFI
+	wifi_down
 }
 
 ###########################
