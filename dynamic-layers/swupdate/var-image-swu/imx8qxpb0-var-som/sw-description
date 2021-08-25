@@ -2,12 +2,12 @@ software =
 {
 	version = "0.1.0";
 
-	imx8qxp-var-som = {
+	imx8qxpb0-var-som = {
 		hardware-compatibility: [ "1.0" ];
 
 		files: (
 			{
-				filename = "var-image-swupdate-imx8qxp-var-som.tar.gz";
+				filename = "var-image-swupdate-imx8qxpb0-var-som.tar.gz";
 				type = "archive";
 				compressed = true;
 				device = "/dev/update";
