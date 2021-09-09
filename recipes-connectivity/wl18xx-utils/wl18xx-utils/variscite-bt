@@ -16,7 +16,7 @@ WIFI_SYSFS_FILE=/sys/class/net/wlan0
 bt_found()
 {
 	# Check that WIFI HW was initialized succesfully
-	for i in $(seq 1 5); do
+	for i in $(seq 1 15); do
 		if [ -e ${WIFI_SYSFS_FILE} ]; then
 			return 0
 		else
