@@ -119,8 +119,11 @@ wifi_down()
 # Return true if SOM has WIFI module assembled
 wifi_is_available()
 {
-	# For now assume WIFI is always available
-	return 0
+	if grep -q "som_wifi=no" "/proc/cmdline"; then
+		return 1
+	else
+		return 0
+	fi
 }
 
 # Return true if WIFI should not be started
