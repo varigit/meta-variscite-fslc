@@ -5,6 +5,7 @@ Documentation=https://sbabic.github.io/swupdate
 
 [Service]
 ExecStartPre=-/usr/bin/swupdate-env
+Environment=LC_CTYPE="en_US.utf8"
 EnvironmentFile=-/etc/default/swupdate
 ExecStart=/usr/bin/swupdate -v -H ${hardware}:1.0 -f /etc/swupdate.cfg $SWUPDATE_EXTRA_ARGS -w "" -p 'reboot'
 
