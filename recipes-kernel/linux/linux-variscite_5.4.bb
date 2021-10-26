@@ -75,7 +75,9 @@ pkg_postinst_kernel-devicetree_append_imx8qxpb0-var-som () {
 pkg_postinst_kernel-devicetree_append_imx8qm-var-som () {
     cd $D/boot
     ln -s ${DEFAULT_DTB_PREFIX}-${DEFAULT_DTB}.dtb ${DEFAULT_DTB_PREFIX}.dtb
+    ln -s imx8qp-var-som-${DEFAULT_DTB}.dtb imx8qp-var-som.dtb
     ln -s imx8qm-var-spear-${DEFAULT_DTB}.dtb imx8qm-var-spear.dtb
+    ln -s imx8qp-var-spear-${DEFAULT_DTB}.dtb imx8qp-var-spear.dtb
 }
 
 # Added by meta-virtualization/recipes-kernel/linux/linux-yocto_5.4_virtualization.inc
