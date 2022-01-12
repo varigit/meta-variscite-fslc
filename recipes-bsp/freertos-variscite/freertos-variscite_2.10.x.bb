@@ -7,7 +7,7 @@ SRCREV = "db2c47b339ab5ccaa923d4bc3de3a5222439fc15"
 CM_GCC = "gcc-arm-none-eabi-10-2020-q4-major"
 
 SRC_URI += " \
-    git://github.com/varigit/freertos-variscite.git;protocol=git;branch=${MCUXPRESSO_BRANCH}; \
+    git://github.com/varigit/freertos-variscite.git;protocol=https;branch=${MCUXPRESSO_BRANCH}; \
     https://developer.arm.com/-/media/Files/downloads/gnu-rm/10-2020q4/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2;name=gcc-arm-none-eabi-10-2020-q4-major \
 "
 
