@@ -109,7 +109,6 @@ help() {
 	echo " -a		Automatically set the rootfs partition size to fill the SD card (leaving spare ${SPARE_SIZE}MiB)"
 	echo " -r ROOTFS_NAME	select an alternative Rootfs for recovery images"
 	echo " 		(default: \"${YOCTO_RECOVERY_ROOTFS_PATH}/${YOCTO_DEFAULT_IMAGE}-\${MACHINE}\")"
-	echo " -n TEXT_FILE	add a release Notes text file"
 	echo
 }
 
@@ -187,9 +186,6 @@ while [ "$moreoptions" = 1 -a $# -gt 0 ]; do
 			YOCTO_RECOVERY_ROOTFS_MASK_PATH=`readlink -e "${1}.tar.gz"`;
 			YOCTO_RECOVERY_ROOTFS_PATH=`dirname ${YOCTO_RECOVERY_ROOTFS_MASK_PATH}`
 			YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME=`basename ${1}`
-	    ;;
-	    -n) shift;
-			RELEASE_NOTES_FILE=${1}
 	    ;;
 	    *)  moreoptions=0; node=$1 ;;
 	esac
@@ -460,10 +456,6 @@ function copy_scripts
 
 			if ! ls ${P2_MOUNT_DIR}/opt/images/Yocto/rootfs*.ubi &> /dev/null; then
 				rm -rf ${P2_MOUNT_DIR}/usr/share/applications/${MACHINE}*yocto*nand*.desktop
-			fi
-
-			if [ ${RELEASE_NOTES_FILE} ] && [ -f ${RELEASE_NOTES_FILE} ]; then
-				cp ${YOCTO_SCRIPTS_PATH}/release_notes.desktop	${P2_MOUNT_DIR}/usr/share/applications/
 			fi
 
 			if [[ ${YOCTO_RECOVERY_ROOTFS_BASE_IN_NAME} == var-image-swupdate* ]]; then
