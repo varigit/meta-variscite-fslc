@@ -112,6 +112,21 @@ install_rootfs_to_nand()
 	echo
 	blue_underlined_bold_echo "Installing UBI rootfs"
 	ubiformat /dev/mtd3 -f $MEDIA/$ROOTFS_IMAGE -y
+
+	if [[ $ROOTFS_IMAGE != "rootfs_128kbpeb.ubi" ]]; then
+		ubi0_mount_prefix=/run/media/ubi0_rootfs
+		# mount the rootfs partition@3
+		ubiattach /dev/ubi_ctrl -m 3
+		mkdir ${ubi0_mount_prefix}
+		mount -t ubifs ubi0:rootfs ${ubi0_mount_prefix}
+		# update the blocksize in fw_env.config
+		set_fw_env_config_to_nand ${ubi0_mount_prefix}/etc/fw_env.config
+		# unmount the rootfs partition
+		umount ${ubi0_mount_prefix}
+		rmdir ${ubi0_mount_prefix}
+		ubidetach /dev/ubi_ctrl -m 3
+		sync
+	fi
 }
 
 install_rootfs()

@@ -21,21 +21,3 @@ MULTIUBI_BUILD ?= "128kbpeb 256kbpeb"
 UBI_VOLNAME  = "rootfs"
 
 IMAGE_FSTYPES = "tar.gz multiubi wic.gz"
-
-# do multiubi last
-IMAGE_TYPEDEP_multiubi += "${IMAGE_FSTYPES}"
-IMAGE_TYPEDEP_multiubi_remove = "multiubi"
-
-multiubi_mkfs_prepend() {
-	# Update PEB size in fw_env.config (u-boot-fw-utils)
-	if [ -f ${IMAGE_ROOTFS}${sysconfdir}/fw_env.config ]; then
-		# Get PEB from UBINIZE_ARGS
-		MTD_ERASESIZE=`echo "$2" | tr ' =' '\n' | awk '/^-p$|^--peb-size$/{getline; print}'`
-		# Convert to bytes (decimal)
-		MTD_ERASESIZE=`echo $MTD_ERASESIZE | sed 's/MiB/ * 1024 KiB/;s/KiB/ * 1024/' | bc`
-		# Convert to hexadecimal
-		MTD_ERASESIZE=`printf 0x%x $MTD_ERASESIZE`
-
-		awk -i inplace -v n=4 -v ERASESIZE="${MTD_ERASESIZE}" '/\/dev\/mtd/{$(n)=ERASESIZE}1' ${IMAGE_ROOTFS}${sysconfdir}/fw_env.config
-	fi
-}
