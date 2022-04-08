@@ -1,6 +1,10 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
-SRC_URI += "\
+
+SRC_URI = "git://github.com/sbabic/swupdate.git;protocol=http \
+	file://defconfig \
+	file://swupdate \
+	file://swupdate.service \
 	file://head_bg.gif \
 	file://swupdate.cfg \
 	file://swupdate.default \
