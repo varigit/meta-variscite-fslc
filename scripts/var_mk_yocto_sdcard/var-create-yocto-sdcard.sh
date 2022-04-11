@@ -21,8 +21,13 @@ else
 	readonly BSP_TYPE="YOCTO"
 	if [[ $MACHINE = "imx6ul-var-dart" || $MACHINE = "imx7-var-som" ]]; then
 		readonly YOCTO_BUILD=${YOCTO_ROOT}/build_x11
-	else
+	elif [[ -d "${YOCTO_ROOT}/build_xwayland" ]]; then
 		readonly YOCTO_BUILD=${YOCTO_ROOT}/build_xwayland
+	elif [[ -d "${YOCTO_ROOT}/build_wayland" ]]; then
+		readonly YOCTO_BUILD=${YOCTO_ROOT}/build_wayland
+	else
+		echo "Unable to find directory to set YOCTO_BUILD to, exiting"
+		exit 1
 	fi
 	readonly YOCTO_DEFAULT_IMAGE=fsl-image-gui
 fi
