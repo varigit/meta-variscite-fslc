@@ -19,6 +19,7 @@ FILES_${PN} = " \
 			'${sysconfdir}/init.d ${sysconfdir}/rcS.d ${sysconfdir}/rc2.d ${sysconfdir}/rc3.d ${sysconfdir}/rc4.d ${sysconfdir}/rc5.d', d)} \
 "
 
+RDEPENDS_${PN}_imx6ul-var-dart = "i2c-tools"
 RDEPENDS_${PN}_imx8mq-var-dart = "i2c-tools"
 RDEPENDS_${PN}_imx8mm-var-dart = "i2c-tools"
 RDEPENDS_${PN}_imx8mn-var-som = "i2c-tools"
