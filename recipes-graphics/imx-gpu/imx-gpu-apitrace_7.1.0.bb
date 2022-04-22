@@ -5,7 +5,7 @@ DEPENDS = "virtual/libg2d imx-gpu-viv zlib libpng procps"
 
 RPROVIDES_${PN} += "imx-gpu-viv-tools-apitrace"
 
-SRC_URI = "git://github.com/apitrace/apitrace.git;nobranch=1;tag=7.1 \
+SRC_URI = "git://github.com/apitrace/apitrace.git;protocol=https;nobranch=1;tag=7.1 \
           file://0001-add-docs-HOWTO.markdown.patch \
           file://0002-add-docs-Freescale_apitrace_user_guide.markdown.patch \
           file://0003-add-docs-Freescale_apitrace.markdown.patch \
