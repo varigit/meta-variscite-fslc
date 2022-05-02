@@ -23,7 +23,7 @@ RDEPENDS_${PN}_imx6ul-var-dart = "i2c-tools"
 RDEPENDS_${PN}_imx8mq-var-dart = "i2c-tools"
 RDEPENDS_${PN}_imx8mm-var-dart = "i2c-tools"
 RDEPENDS_${PN}_imx8mn-var-som = "i2c-tools"
-RDEPENDS_${PN}_append = " bash base-files"
+RDEPENDS_${PN}_append = " base-files"
 
 S = "${WORKDIR}"
 

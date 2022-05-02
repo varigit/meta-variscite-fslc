@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/sh -e
 #
 # Activate WIFI on Variscite VAR-SOM-MX7
 #
