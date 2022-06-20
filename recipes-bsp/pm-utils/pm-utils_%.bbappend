@@ -34,6 +34,10 @@ SRC_URI_append_imx8mq-var-dart = " \
         file://03-eth.sh \
 "
 
+SRC_URI_append_imx8qm-var-som = " \
+        file://03-eth.sh \
+"
+
 FILES_${PN} += "${sysconfdir}/pm/sleep.d/*"
 
 do_install_append() {
@@ -73,6 +77,11 @@ do_install_append_imx8qxpb0-var-som() {
 }
 
 do_install_append_imx8mq-var-dart() {
+        install -d ${D}/${sysconfdir}/pm/sleep.d
+        install -m 0755 ${WORKDIR}/03-eth.sh ${D}/${sysconfdir}/pm/sleep.d
+}
+
+do_install_append_imx8qm-var-som() {
         install -d ${D}/${sysconfdir}/pm/sleep.d
         install -m 0755 ${WORKDIR}/03-eth.sh ${D}/${sysconfdir}/pm/sleep.d
 }
