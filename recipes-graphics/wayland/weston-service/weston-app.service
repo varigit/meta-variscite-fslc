@@ -1,0 +1,11 @@
+[Unit]
+Description=Weston App launch service
+After=weston.target
+
+[Service]
+Type=forking
+ExecStart=/etc/weston/weston-app.sh start
+ExecStop=/etc/weston/weston-app.sh stop
+
+[Install]
+WantedBy=multi-user.target
