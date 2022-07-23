@@ -15,6 +15,8 @@ EGLFS_INTEGRATION_mx8 = "eglfs_kms"
 QML_USE_SWCTX = "yes"
 QML_USE_SWCTX_imxgpu3d = "no"
 
+PACKAGECONFIG_PLATFORM_imxgpu3d += "eglfs"
+
 # build linuxfb backend if required
 PACKAGECONFIG_append = " fontconfig tslib ${@bb.utils.filter('BACKEND', 'linuxfb', d)}"
 
