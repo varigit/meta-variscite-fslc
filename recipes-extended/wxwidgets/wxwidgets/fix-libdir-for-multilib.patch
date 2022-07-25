@@ -1,0 +1,83 @@
+wxWidgets hardcodes libdir with 'lib' and does not support multilib which will
+change it. Respect variable wxPLATFORM_LIB_DIR to support libdir be configurable.
+
+Upstream-Status: Pending
+
+Signed-off-by: Kai Kang <kai.kang@windriver.com>
+---
+ CMakeLists.txt              | 2 +-
+ build/cmake/config.cmake    | 2 +-
+ build/cmake/functions.cmake | 6 +++---
+ build/cmake/install.cmake   | 6 +++---
+ 4 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a49ecd3883..80a046b9e0 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -45,7 +45,7 @@ include(build/cmake/policies.cmake NO_POLICY_SCOPE)
+ # Initialize variables for quick access to wx root dir in sub dirs
+ set(wxSOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+ set(wxBINARY_DIR ${CMAKE_BINARY_DIR})
+-set(wxOUTPUT_DIR ${wxBINARY_DIR}/lib)
++set(wxOUTPUT_DIR ${wxBINARY_DIR}/lib${wxPLATFORM_LIB_DIR})
+ 
+ # parse the version number from wx/version.h and include in wxMAJOR_VERSION and wxMINOR_VERSION
+ file(READ "${wxSOURCE_DIR}/include/wx/version.h" WX_VERSION_H_CONTENTS)
+diff --git a/build/cmake/config.cmake b/build/cmake/config.cmake
+index b359560bc0..11686b55ab 100644
+--- a/build/cmake/config.cmake
++++ b/build/cmake/config.cmake
+@@ -76,7 +76,7 @@ function(wx_write_config_inplace)
+     execute_process(
+         COMMAND
+         "${CMAKE_COMMAND}" -E ${COPY_CMD}
+-        "${CMAKE_CURRENT_BINARY_DIR}/lib/wx/config/inplace-${TOOLCHAIN_FULLNAME}"
++        "${CMAKE_CURRENT_BINARY_DIR}/lib${wxPLATFORM_LIB_DIR}/wx/config/inplace-${TOOLCHAIN_FULLNAME}"
+         "${CMAKE_CURRENT_BINARY_DIR}/wx-config"
+         )
+ endfunction()
+diff --git a/build/cmake/functions.cmake b/build/cmake/functions.cmake
+index 43c7c18ed6..a374670c0c 100644
+--- a/build/cmake/functions.cmake
++++ b/build/cmake/functions.cmake
+@@ -102,9 +102,9 @@ function(wx_set_common_target_properties target_name)
+     cmake_parse_arguments(wxCOMMON_TARGET_PROPS "DEFAULT_WARNINGS" "" "" ${ARGN})
+ 
+     set_target_properties(${target_name} PROPERTIES
+-        LIBRARY_OUTPUT_DIRECTORY "${wxOUTPUT_DIR}${GEN_EXPR_DIR}${wxPLATFORM_LIB_DIR}"
+-        ARCHIVE_OUTPUT_DIRECTORY "${wxOUTPUT_DIR}${GEN_EXPR_DIR}${wxPLATFORM_LIB_DIR}"
+-        RUNTIME_OUTPUT_DIRECTORY "${wxOUTPUT_DIR}${GEN_EXPR_DIR}${wxPLATFORM_LIB_DIR}"
++        LIBRARY_OUTPUT_DIRECTORY "${wxOUTPUT_DIR}${GEN_EXPR_DIR}"
++        ARCHIVE_OUTPUT_DIRECTORY "${wxOUTPUT_DIR}${GEN_EXPR_DIR}"
++        RUNTIME_OUTPUT_DIRECTORY "${wxOUTPUT_DIR}${GEN_EXPR_DIR}"
+         )
+ 
+     if(wxBUILD_PIC)
+diff --git a/build/cmake/install.cmake b/build/cmake/install.cmake
+index 9a2ce91d7f..635376ba63 100644
+--- a/build/cmake/install.cmake
++++ b/build/cmake/install.cmake
+@@ -29,11 +29,11 @@ if(WIN32_MSVC_NAMING)
+ else()
+     install(
+         DIRECTORY "${wxSETUP_HEADER_PATH}"
+-        DESTINATION "lib/wx/include")
++        DESTINATION "lib${wxPLATFORM_LIB_DIR}/wx/include")
+ 
+     install(
+         FILES "${wxOUTPUT_DIR}/wx/config/${wxBUILD_FILE_ID}"
+-        DESTINATION "lib/wx/config"
++        DESTINATION "lib${wxPLATFORM_LIB_DIR}/wx/config"
+         PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+                     GROUP_EXECUTE GROUP_READ
+                     WORLD_EXECUTE WORLD_READ
+@@ -42,7 +42,7 @@ else()
+     install(DIRECTORY DESTINATION "bin")
+     install(CODE "execute_process( \
+         COMMAND ${CMAKE_COMMAND} -E create_symlink \
+-        ${CMAKE_INSTALL_PREFIX}/lib/wx/config/${wxBUILD_FILE_ID} \
++        ${CMAKE_INSTALL_PREFIX}/lib${wxPLATFORM_LIB_DIR}/wx/config/${wxBUILD_FILE_ID} \
+         ${CMAKE_INSTALL_PREFIX}/bin/wx-config \
+         )"
+     )

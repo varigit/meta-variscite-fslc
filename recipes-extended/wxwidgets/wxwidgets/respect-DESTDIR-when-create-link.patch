@@ -1,0 +1,47 @@
+There are errors during do install. So link files 'wx-config' and 'wxrc' are
+not created, and rename failed either:
+
+| CMake Error: failed to create symbolic link '/usr/bin/wx-config': Permission denied
+| Error renaming from "/usr/bin/wxrc" to "/usr/bin/wxrc-3.1": No such file or directory
+| CMake Error: failed to create symbolic link '/usr/bin/wxrc': Permission denied
+
+Respect variable 'DESTDIR' to make it work as expect.
+
+Upstream-Status: Pending
+
+Signed-off-by: Kai Kang <kai.kang@windriver.com>
+---
+ build/cmake/install.cmake        | 4 ++--
+ build/cmake/utils/CMakeLists.txt | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/build/cmake/install.cmake b/build/cmake/install.cmake
+index 635376ba63..8b1bf40c5b 100644
+--- a/build/cmake/install.cmake
++++ b/build/cmake/install.cmake
+@@ -42,8 +42,8 @@ else()
+     install(DIRECTORY DESTINATION "bin")
+     install(CODE "execute_process( \
+         COMMAND ${CMAKE_COMMAND} -E create_symlink \
+-        ${CMAKE_INSTALL_PREFIX}/lib${wxPLATFORM_LIB_DIR}/wx/config/${wxBUILD_FILE_ID} \
+-        ${CMAKE_INSTALL_PREFIX}/bin/wx-config \
++        ../lib${wxPLATFORM_LIB_DIR}/wx/config/${wxBUILD_FILE_ID} \
++        \$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/wx-config \
+         )"
+     )
+ endif()
+diff --git a/build/cmake/utils/CMakeLists.txt b/build/cmake/utils/CMakeLists.txt
+index 47bca6f34a..a13e3ec227 100644
+--- a/build/cmake/utils/CMakeLists.txt
++++ b/build/cmake/utils/CMakeLists.txt
+@@ -39,8 +39,8 @@ if(wxUSE_XRC)
+ 
+         wx_install(CODE "execute_process( \
+             COMMAND ${CMAKE_COMMAND} -E create_symlink \
+-            ${CMAKE_INSTALL_PREFIX}/bin/${wxrc_output_name}${EXE_SUFFIX} \
+-            ${CMAKE_INSTALL_PREFIX}/bin/wxrc${EXE_SUFFIX} \
++            ${wxrc_output_name}${EXE_SUFFIX} \
++            \$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/wxrc${EXE_SUFFIX} \
+             )"
+         )
+     endif()
