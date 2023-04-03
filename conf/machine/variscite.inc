@@ -1,3 +1,4 @@
+require variscite-mirrors.inc
 INHERIT += "image-buildinfo"
 
 MACHINE_FEATURES += " pci bluetooth wifi"
