@@ -55,16 +55,9 @@ do_start() {
 		exit 1
 		;;
 	*)
-		state=`fw_printenv ustate 2> /dev/null | cut -f 2 -d'='`
-		if [ "$state" == "1" ]; then
-			EXTRA_ARGS="-c 2"
-		else
-			EXTRA_ARGS=""
-		fi
-
 		cd /home/root
 		echo "Starting $DESC ..."
-		exec exec env LC_CTYPE="en_US.utf8" $DAEMON -v -H ${hardware}:1.0 -f /etc/swupdate.cfg $SWUPDATE_EXTRA_ARGS -u "$EXTRA_ARGS" -w "" -p 'reboot' &
+		exec env LC_CTYPE="en_US.utf8" $DAEMON -v -H ${hardware}:1.0 -f /etc/swupdate.cfg $SWUPDATE_EXTRA_ARGS -w "" -p 'reboot' &
 		exit 0
 		;;
 	esac
