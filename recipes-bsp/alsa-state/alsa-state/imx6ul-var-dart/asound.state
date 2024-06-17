@@ -164,3 +164,546 @@ state.wm8731audio {
 		}
 	}
 }
+state.wm8904audio {
+	control.1 {
+		iface MIXER
+		name 'EQ1 Volume'
+		value 12
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 24'
+			dbmin -1200
+			dbmax 1200
+			dbvalue.0 0
+		}
+	}
+	control.2 {
+		iface MIXER
+		name 'EQ2 Volume'
+		value 12
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 24'
+			dbmin -1200
+			dbmax 1200
+			dbvalue.0 0
+		}
+	}
+	control.3 {
+		iface MIXER
+		name 'EQ3 Volume'
+		value 12
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 24'
+			dbmin -1200
+			dbmax 1200
+			dbvalue.0 0
+		}
+	}
+	control.4 {
+		iface MIXER
+		name 'EQ4 Volume'
+		value 12
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 24'
+			dbmin -1200
+			dbmax 1200
+			dbvalue.0 0
+		}
+	}
+	control.5 {
+		iface MIXER
+		name 'EQ5 Volume'
+		value 12
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 24'
+			dbmin -1200
+			dbmax 1200
+			dbvalue.0 0
+		}
+	}
+	control.6 {
+		iface MIXER
+		name 'Digital Capture Volume'
+		value.0 96
+		value.1 96
+		comment {
+			access 'read write'
+			type INTEGER
+			count 2
+			range '0 - 119'
+			dbmin -9999999
+			dbmax 1725
+			dbvalue.0 0
+			dbvalue.1 0
+		}
+	}
+	control.7 {
+		iface MIXER
+		name 'Left Caputure Mode'
+		value Single-Ended
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 Single-Ended
+			item.1 'Differential Line'
+			item.2 'Differential Mic'
+		}
+	}
+	control.8 {
+		iface MIXER
+		name 'Right Capture Mode'
+		value Single-Ended
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 Single-Ended
+			item.1 'Differential Line'
+			item.2 'Differential Mic'
+		}
+	}
+	control.9 {
+		iface MIXER
+		name 'Capture Volume'
+		value.0 24
+		value.1 24
+		comment {
+			access 'read write'
+			type INTEGER
+			count 2
+			range '0 - 31'
+		}
+	}
+	control.10 {
+		iface MIXER
+		name 'Capture Switch'
+		value.0 true
+		value.1 true
+		comment {
+			access 'read write'
+			type BOOLEAN
+			count 2
+		}
+	}
+	control.11 {
+		iface MIXER
+		name 'High Pass Filter Switch'
+		value true
+		comment {
+			access 'read write'
+			type BOOLEAN
+			count 1
+		}
+	}
+	control.12 {
+		iface MIXER
+		name 'High Pass Filter Mode'
+		value Hi-fi
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 Hi-fi
+			item.1 'Voice 1'
+			item.2 'Voice 2'
+			item.3 'Voice 3'
+		}
+	}
+	control.13 {
+		iface MIXER
+		name 'ADC 128x OSR Switch'
+		value true
+		comment {
+			access 'read write'
+			type BOOLEAN
+			count 1
+		}
+	}
+	control.14 {
+		iface MIXER
+		name 'Digital Playback Boost Volume'
+		value 0
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 3'
+			dbmin 0
+			dbmax 1800
+			dbvalue.0 0
+		}
+	}
+	control.15 {
+		iface MIXER
+		name 'Digital Playback Volume'
+		value.0 96
+		value.1 96
+		comment {
+			access 'read write'
+			type INTEGER
+			count 2
+			range '0 - 96'
+			dbmin -9999999
+			dbmax 0
+			dbvalue.0 0
+			dbvalue.1 0
+		}
+	}
+	control.16 {
+		iface MIXER
+		name 'Headphone Volume'
+		value.0 45
+		value.1 45
+		comment {
+			access 'read write'
+			type INTEGER
+			count 2
+			range '0 - 63'
+			dbmin -5700
+			dbmax 600
+			dbvalue.0 -1200
+			dbvalue.1 -1200
+		}
+	}
+	control.17 {
+		iface MIXER
+		name 'Headphone Switch'
+		value.0 true
+		value.1 true
+		comment {
+			access 'read write'
+			type BOOLEAN
+			count 2
+		}
+	}
+	control.18 {
+		iface MIXER
+		name 'Headphone ZC Switch'
+		value.0 true
+		value.1 true
+		comment {
+			access 'read write'
+			type BOOLEAN
+			count 2
+		}
+	}
+	control.19 {
+		iface MIXER
+		name 'Line Output Volume'
+		value.0 57
+		value.1 57
+		comment {
+			access 'read write'
+			type INTEGER
+			count 2
+			range '0 - 63'
+			dbmin -5700
+			dbmax 600
+			dbvalue.0 0
+			dbvalue.1 0
+		}
+	}
+	control.20 {
+		iface MIXER
+		name 'Line Output Switch'
+		value.0 true
+		value.1 true
+		comment {
+			access 'read write'
+			type BOOLEAN
+			count 2
+		}
+	}
+	control.21 {
+		iface MIXER
+		name 'Line Output ZC Switch'
+		value.0 true
+		value.1 true
+		comment {
+			access 'read write'
+			type BOOLEAN
+			count 2
+		}
+	}
+	control.22 {
+		iface MIXER
+		name 'EQ Switch'
+		value false
+		comment {
+			access 'read write'
+			type BOOLEAN
+			count 1
+		}
+	}
+	control.23 {
+		iface MIXER
+		name 'DRC Switch'
+		value false
+		comment {
+			access 'read write'
+			type BOOLEAN
+			count 1
+		}
+	}
+	control.24 {
+		iface MIXER
+		name 'DRC Path'
+		value ADC
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 ADC
+			item.1 DAC
+		}
+	}
+	control.25 {
+		iface MIXER
+		name 'DAC OSRx2 Switch'
+		value false
+		comment {
+			access 'read write'
+			type BOOLEAN
+			count 1
+		}
+	}
+	control.26 {
+		iface MIXER
+		name 'DAC Deemphasis Switch'
+		value false
+		comment {
+			access 'read write'
+			type BOOLEAN
+			count 1
+		}
+	}
+	control.27 {
+		iface MIXER
+		name 'Digital Sidetone Volume'
+		value.0 0
+		value.1 0
+		comment {
+			access 'read write'
+			type INTEGER
+			count 2
+			range '0 - 15'
+			dbmin -3600
+			dbmax 900
+			dbvalue.0 -3600
+			dbvalue.1 -3600
+		}
+	}
+	control.28 {
+		iface MIXER
+		name 'DMIC Mux'
+		value DMIC1
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 DMIC1
+			item.1 DMIC2
+		}
+	}
+	control.29 {
+		iface MIXER
+		name 'Capture Input'
+		value DMIC
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 ADC
+			item.1 DMIC
+		}
+	}
+	control.30 {
+		iface MIXER
+		name 'Left Capture Mux'
+		value IN1L
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 IN1L
+			item.1 IN2L
+			item.2 IN3L
+		}
+	}
+	control.31 {
+		iface MIXER
+		name 'Left Capture Inverting Mux'
+		value IN1L
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 IN1L
+			item.1 IN2L
+			item.2 IN3L
+		}
+	}
+	control.32 {
+		iface MIXER
+		name 'Right Capture Mux'
+		value IN1R
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 IN1R
+			item.1 IN2R
+			item.2 IN3R
+		}
+	}
+	control.33 {
+		iface MIXER
+		name 'Right Capture Inverting Mux'
+		value IN1R
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 IN1R
+			item.1 IN2R
+			item.2 IN3R
+		}
+	}
+	control.34 {
+		iface MIXER
+		name 'AIFOUTL Mux'
+		value Left
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 Left
+			item.1 Right
+		}
+	}
+	control.35 {
+		iface MIXER
+		name 'AIFOUTR Mux'
+		value Right
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 Left
+			item.1 Right
+		}
+	}
+	control.36 {
+		iface MIXER
+		name 'DACL Mux'
+		value Left
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 Left
+			item.1 Right
+		}
+	}
+	control.37 {
+		iface MIXER
+		name 'DACR Mux'
+		value Right
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 Left
+			item.1 Right
+		}
+	}
+	control.38 {
+		iface MIXER
+		name 'Left Sidetone'
+		value None
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 None
+			item.1 Left
+			item.2 Right
+		}
+	}
+	control.39 {
+		iface MIXER
+		name 'Right Sidetone'
+		value None
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 None
+			item.1 Left
+			item.2 Right
+		}
+	}
+	control.40 {
+		iface MIXER
+		name 'HPL Mux'
+		value DAC
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 DAC
+			item.1 Bypass
+		}
+	}
+	control.41 {
+		iface MIXER
+		name 'HPR Mux'
+		value DAC
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 DAC
+			item.1 Bypass
+		}
+	}
+	control.42 {
+		iface MIXER
+		name 'LINEL Mux'
+		value DAC
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 DAC
+			item.1 Bypass
+		}
+	}
+	control.43 {
+		iface MIXER
+		name 'LINER Mux'
+		value DAC
+		comment {
+			access 'read write'
+			type ENUMERATED
+			count 1
+			item.0 DAC
+			item.1 Bypass
+		}
+	}
+}
