@@ -346,7 +346,7 @@ usage()
 	echo " Usage: $0 OPTIONS"
 	echo
 	echo " OPTIONS:"
-	echo " -b <dart6ul|som6ul|som6ul_symphony|mx7>  Board model (DART-6UL/VAR-SOM-6UL/VAR-SOM-MX7) - optional, autodetected if not provided."
+	echo " -b <dart6ul|som6ul|som6ul_symphony|mx7>  Board model (DART-6UL/VAR-SOM-6UL on Concerto-Board/VAR-SOM-6UL on Symphony-Board/VAR-SOM-MX7) - optional, autodetected if not provided."
 	echo " -r <nand|emmc>		storage device (NAND flash/eMMC) - optional, autodetected if not provided."
 	echo " -v <wifi|sd>		DART-6UL/VAR-SOM-6UL mmc0 device (WiFi/SD card) - mandatory in case of 6UL with NAND flash; ignored otherwise."
 	echo " -m			VAR-SOM-MX7 optional Cortex-M4 support; ignored in case of 6UL."
