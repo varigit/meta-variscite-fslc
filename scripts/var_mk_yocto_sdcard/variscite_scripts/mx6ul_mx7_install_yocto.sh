@@ -43,6 +43,35 @@ check_images()
 	fi
 }
 
+# Detect if the SOM has a codec
+detect_codec_is_available()
+{
+	# A codec chip is expected at i2c address 0x1a
+	return $(i2cdetect -y 1 0x1a 0x1a | grep -iq -e 'uu' -e '1a')
+}
+
+# Detect the codec chip
+detect_codec_chip()
+{
+	if detect_codec_is_available; then
+		# Read codec chip ID
+		id=$(i2cget -f -y 1 0x1a 0x0 w 2>/dev/null)
+
+		if [ $? -eq 2 ]; then
+			echo "wm8731" # expected error (write-only device)
+		else
+			# Check codec chip ID
+			if [ "$id" == "0x0489" ]; then
+				echo "wm8904"
+			else
+				echo "n/a"
+			fi
+		fi
+	else
+		echo "n/a"
+	fi
+}
+
 # $1 is the full path of the config file
 set_fw_env_config_to_emmc()
 {
@@ -362,6 +391,8 @@ elif [[ $SOC == i.MX7D ]] ; then
 	fi
 fi
 
+CODEC=`detect_codec_chip`
+
 while getopts :b:r:v:mu OPTION;
 do
 	case $OPTION in
@@ -470,6 +501,10 @@ if [[ $STORAGE_DEV == "nand" ]] ; then
 			elif [[ $DART6UL_VARIANT == "sd" ]] ; then
 				KERNEL_DTB=imx6ull-var-dart-sd_nand.dtb
 			fi
+		fi
+
+		if [[ -n $CODEC && $CODEC == "wm8731" ]]; then
+			KERNEL_DTB="${KERNEL_DTB%.dtb}-${CODEC}.dtb"
 		fi
 	elif [[ $BOARD == "mx7" ]] ; then
 		KERNEL_DTB=imx7d-var-som-nand${VARSOMMX7_VARIANT}.dtb
