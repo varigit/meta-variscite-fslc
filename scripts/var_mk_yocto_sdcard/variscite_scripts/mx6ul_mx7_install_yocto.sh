@@ -101,7 +101,7 @@ set_fw_utils_to_nand_on_sd_card()
 install_bootloader_to_nand()
 {
 	echo
-	blue_underlined_bold_echo "Installing booloader"
+	blue_underlined_bold_echo "Installing bootloader"
 
 	flash_erase /dev/mtd0 0 0 2> /dev/null
 	kobs-ng init -x $IMGS_PATH/$SPL_IMAGE --search_exponent=1 -v > /dev/null
@@ -224,7 +224,7 @@ format_emmc_parts()
 install_bootloader_to_emmc()
 {
 	echo
-	blue_underlined_bold_echo "Installing booloader"
+	blue_underlined_bold_echo "Installing bootloader"
 
 	dd if=${IMGS_PATH}/${SPL_IMAGE} of=${node} bs=1K seek=1; sync
 	dd if=${IMGS_PATH}/${UBOOT_IMAGE} of=${node} bs=1K seek=69; sync
