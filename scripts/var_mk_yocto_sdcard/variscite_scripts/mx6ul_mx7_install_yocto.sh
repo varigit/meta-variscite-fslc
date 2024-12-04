@@ -539,12 +539,18 @@ elif [[ $STORAGE_DEV == "emmc" ]] ; then
 		if [[ $BOARD == "mx6ul" || $BOARD == "mx6ul5g" ]] ; then
 			KERNEL_DTBS="imx6ul-var-dart-emmc_wifi.dtb
 				     imx6ul-var-dart-5g-emmc_wifi.dtb
-				     imx6ul-var-dart-sd_emmc.dtb"
+				     imx6ul-var-dart-sd_emmc.dtb
+				     imx6ul-var-dart-emmc_wifi-wm8731.dtb
+				     imx6ul-var-dart-5g-emmc_wifi-wm8731.dtb
+				     imx6ul-var-dart-sd_emmc-wm8731.dtb"
 			FAT_VOLNAME=BOOT-VAR6UL
 		elif [[ $BOARD == "mx6ull" || $BOARD == "mx6ull5g" ]] ; then
 			KERNEL_DTBS="imx6ull-var-dart-emmc_wifi.dtb
 				     imx6ull-var-dart-5g-emmc_wifi.dtb
-				     imx6ull-var-dart-sd_emmc.dtb"
+				     imx6ull-var-dart-sd_emmc.dtb
+				     imx6ull-var-dart-emmc_wifi-wm8731.dtb
+				     imx6ull-var-dart-5g-emmc_wifi-wm8731.dtb
+				     imx6ull-var-dart-sd_emmc-wm8731.dtb"
 			FAT_VOLNAME=BOOT-VAR6ULL
 		fi
 	elif [[ $BOARD == "mx7" ]] ; then
