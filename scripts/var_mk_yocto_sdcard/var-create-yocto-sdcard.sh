@@ -120,6 +120,10 @@ else
 	exit 1
 fi
 
+if [[ $MACHINE = "imx6ul-var-dart" ]]; then
+	BOOT_ROM_SIZE=12
+fi
+
 TEMP_DIR=./var_tmp
 P1_MOUNT_DIR=${TEMP_DIR}/${FAT_VOLNAME}
 P2_MOUNT_DIR=${TEMP_DIR}/rootfs
