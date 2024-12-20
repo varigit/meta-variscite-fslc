@@ -8,5 +8,6 @@ MIRRORS += "\
     https://source.codeaurora.org/external/imx/ https://github.com/nxp-imx/ \n \
     http://source.codeaurora.org/external/imx/ http://github.com/nxp-imx/ \n \
     gitsm://source.codeaurora.org/external/imx/ gitsm://github.com/nxp-imx/ \n \
+    http://share.basyskom.com/demos/smarthome_src.tar.gz https://artifacts.toradex.com/artifactory/tdxref-oe-prod-frankfurt/dunfell-5.x.y/release/4/sources/smarthome_src.tar.gz \n \
 "
 
