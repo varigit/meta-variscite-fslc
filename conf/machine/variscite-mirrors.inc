@@ -11,3 +11,9 @@ MIRRORS += "\
     http://share.basyskom.com/demos/smarthome_src.tar.gz https://artifacts.toradex.com/artifactory/tdxref-oe-prod-frankfurt/dunfell-5.x.y/release/4/sources/smarthome_src.tar.gz \n \
 "
 
+# Force nobranch to fix renamed default branches for particular recipes
+INHERIT += "srcuri-force-nobranch"
+
+SRCURI_FORCE_NOBRANCH_LIST ??= " \
+    glslang git://github.com/KhronosGroup/glslang \n \
+"
