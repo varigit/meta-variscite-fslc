@@ -12,6 +12,7 @@ MIRRORS += "\
     http://sourceforge.net/projects/linuxptp/files/v1.6/ https://software-dl.ti.com/processor-sdk-mirror/sources \n \
     http://sourceforge.net/projects/linuxptp/files/v1.6/ https://variscite-public.nyc3.cdn.digitaloceanspaces.com/mirror/sources/ \n \
     http://share.basyskom.com/demos/ https://artifacts.toradex.com/artifactory/tdxref-oe-prod-frankfurt/dunfell-5.x.y/release/4/sources/ \n \
+    http://threadingbuildingblocks.org/sites/default/files/software_releases/source/ https://petalinux.xilinx.com/sswreleases/rel-v2017.3/sources/aarch64-xilinx-linux/tbb-4.1-r20130314/ \n \
     ${DEBIAN_MIRROR} https://snapshot.debian.org/archive/debian/20150212T040413Z/pool \n \
 "
 
