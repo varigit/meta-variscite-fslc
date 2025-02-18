@@ -5,6 +5,7 @@ MIRRORS += "\
     git://git.yoctoproject.org/.* git://git.yoctoproject.org/git/PATH;protocol=https \n \
     git://.*/.*                   git://HOST/PATH;protocol=https \n \
     git://source.codeaurora.org/external/imx/ git://github.com/nxp-imx/ \n \
+    git://git.videolan.org/x264.git git://github.com/mirror/x264 \n \
     https://source.codeaurora.org/external/imx/ https://github.com/nxp-imx/ \n \
     http://source.codeaurora.org/external/imx/ http://github.com/nxp-imx/ \n \
     gitsm://source.codeaurora.org/external/imx/ gitsm://github.com/nxp-imx/ \n \
