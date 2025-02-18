@@ -21,4 +21,5 @@ INHERIT += "srcuri-force-nobranch"
 SRCURI_FORCE_NOBRANCH_LIST ??= " \
     puzzles git://git.tartarus.org/simon/puzzles.git \n \
     ostree git://github.com/ostreedev/ostree.git \n \
+    systemd git://github.com/systemd/systemd.git \n \
 "
