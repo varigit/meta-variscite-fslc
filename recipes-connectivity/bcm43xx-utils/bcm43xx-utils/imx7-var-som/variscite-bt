@@ -18,6 +18,9 @@ BT_FIRMWARE_LWB5=/lib/firmware/brcm/BCM4335C0.hcd
 # Sterling LWB5 WIFI SDIO ID
 WIFI_5G_SDIO_ID=0x4339
 
+# Murata IW61x WIFI SDIO ID
+WIFI_IW61X_SDIO_ID=0x0205
+
 # WIFI SDIO ID file
 WIFI_SDIO_ID_FILE=/sys/class/net/wlan0/device/device
 
@@ -81,7 +84,7 @@ bt_enable()
 }
 
 # Start BT hardware
-bt_start()
+bt_start_bcm43xx()
 {
 	# Exit if BT module is not available
 	bt_found || exit 0
@@ -108,7 +111,7 @@ bt_start()
 }
 
 # Stop BT hardware
-bt_stop()
+bt_stop_bcm43xx()
 {
 	# Exit if BT interface is not available
 	[ -e /sys/class/bluetooth/hci0 ] || exit 0
@@ -119,8 +122,114 @@ bt_stop()
 	# Stop BT firmware loading service
 	kill -9 $(pidof brcm_patchram_plus) 2>/dev/null || true
 
-  	# Power down BT module
+	# Power down BT module
 	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+}
+
+bt_detect_chip()
+{
+	BT_CHIP=bcm43xx
+	if bt_found; then
+		if [ "$(cat "${WIFI_SDIO_ID_FILE}")" = "${WIFI_IW61X_SDIO_ID}" ]; then
+			BT_CHIP=iw61x
+		fi
+	fi
+}
+
+bt_start_iw61x()
+{
+	[ -e /sys/class/bluetooth/hci0 ] && return 0
+
+	bt_enable
+
+	# Initialize and attach the BT device at 115200
+	hciattach ${BT_TTY_DEV} any 115200 flow
+	usleep 500000
+	hciconfig hci0 up
+
+	# Use hcitool to change the baud rate
+	# Arguments:
+	#   0x3f    : HCI_CMD_GROUP_VENDOR_SPECIFIC
+	#   0x0009  : HCI_CMD_UART_BAUD
+	#   0xc0 0xc6 0x2d 0x00: 3000000
+	hcitool -i hci0 cmd 0x3f 0x0009 0xc0 0xc6 0x2d 0x00
+	kill -9 $(pidof hciattach) 2>/dev/null || true
+	usleep 500000
+
+	# Reattach at 3Mbps
+	hciattach ${BT_TTY_DEV} any 3000000 flow
+
+	for i in $(seq 1 100); do
+		if hciconfig | grep -q "hci"; then
+			break
+		fi
+		usleep 100000
+	done
+
+	# Wait until the HCI interface comes up
+	if ! hciconfig | grep -q "hci"; then
+		echo "Error: HCI interface did not come up"
+		return 1
+	fi
+
+	# Wait until the Bluetooth MAC address is not 00:00:00:00:00:00
+	for i in $(seq 1 100); do
+		if [ "$(hciconfig | grep "BD Address" | awk '{print $3}')" != "00:00:00:00:00:00" ]; then
+			break
+		fi
+		usleep 100000
+	done
+
+	if [ "$(hciconfig | grep "BD Address" | awk '{print $3}')" = "00:00:00:00:00:00" ]; then
+		echo "Error: Bluetooth MAC address is 00:00:00:00:00:00"
+		return 1
+	fi
+
+	sleep 0.5
+}
+
+bt_stop_iw61x()
+{
+	# Bring hci0 up if it's down
+	if hciconfig hci0 | grep -q "DOWN"; then
+		hciconfig hci0 up
+	fi
+
+	# Use hcitool to change the baud rate
+	# Arguments:
+	#   0x3f    : HCI_CMD_GROUP_VENDOR_SPECIFIC
+	#   0x0009  : HCI_CMD_UART_BAUD
+	#   0x00 0x02 0x1C 0x00: 115200
+	hcitool -i hci0 cmd 0x3f 0x0009 0x00 0xC2 0x01 0x00
+	sleep 0.5
+
+	# Kill any running hciattach processes
+	kill -9 $(pidof hciattach) 2>/dev/null || true
+
+	# Power down BT module
+	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+}
+
+bt_start()
+{
+	bt_detect_chip
+
+	if [ "${BT_CHIP}" = "bcm43xx" ]; then
+		bt_start_bcm43xx
+	else
+		bt_start_iw61x
+	fi
+}
+
+bt_stop()
+{
+	bt_detect_chip
+
+	if [ "${BT_CHIP}" = "bcm43xx" ]; then
+		bt_stop_bcm43xx
+	else
+		bt_stop_iw61x
+	fi
 }
 
 ###########################

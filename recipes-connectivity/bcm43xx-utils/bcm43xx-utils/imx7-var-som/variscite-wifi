@@ -12,6 +12,9 @@ BT_EN_GPIO=14
 # WIFI MMC host controller
 WIFI_MMC_HOST=30b50000.usdhc
 
+# EEPROM v2 magic indicating a SOM with IW61x
+EEPROM_V2_MAGIC=0x3745
+
 # Return true if WIFI interface exists
 wifi_interface_exists()
 {
@@ -116,7 +119,7 @@ wifi_down()
 }
 
 # Start WIFI hardware
-wifi_start()
+wifi_start_bcm43xx()
 {
 	# Exit if WIFI should not be started
 	wifi_should_not_be_started && exit 0
@@ -143,13 +146,74 @@ wifi_start()
 }
 
 # Stop WIFI hardware
-wifi_stop()
+wifi_stop_bcm43xx()
 {
 	# Exit if WIFI should not be stopped
 	wifi_should_not_be_stopped && exit 0
 
 	# Down WIFI
 	wifi_down
+}
+
+# Return true if the SOM has IW61x WIFI
+wifi_is_iw61x()
+{
+	command -v i2cget >/dev/null 2>&1 || return 1
+
+	magic=$(i2cget -f -y 0 0x50 0x00 w 2>/dev/null || true)
+	[ "$magic" = "${EEPROM_V2_MAGIC}" ]
+}
+
+wifi_detect_chip()
+{
+	WIFI_CHIP="bcm43xx"
+	if wifi_is_iw61x; then
+		WIFI_CHIP="iw61x"
+	fi
+}
+
+disable_network_interface()
+{
+	iface=$1
+	if ip link show "$iface" >/dev/null 2>&1; then
+		ip link set dev "$iface" down
+		usleep 100000
+	fi
+}
+
+wifi_start_iw61x()
+{
+	modprobe moal mod_para=nxp/wifi_mod_para.conf
+}
+
+wifi_stop_iw61x()
+{
+	disable_network_interface wlan0
+	disable_network_interface uap0
+	disable_network_interface wfd0
+	modprobe -r moal || true
+}
+
+wifi_start()
+{
+	wifi_detect_chip
+
+	if [ "${WIFI_CHIP}" = "bcm43xx" ]; then
+		wifi_start_bcm43xx
+	else
+		wifi_start_iw61x
+	fi
+}
+
+wifi_stop()
+{
+	wifi_detect_chip
+
+	if [ "${WIFI_CHIP}" = "bcm43xx" ]; then
+		wifi_stop_bcm43xx
+	else
+		wifi_stop_iw61x
+	fi
 }
 
 ###########################

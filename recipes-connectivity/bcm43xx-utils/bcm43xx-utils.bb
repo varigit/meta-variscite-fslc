@@ -11,6 +11,18 @@ SRC_URI = " \
 	file://variscite-bt \
 	file://variscite-bt.service \
 "
+SRC_URI += " \
+	file://iw61x-connman-main.conf \
+	file://99-iw61x-unmanaged-devices.conf \
+"
+
+PACKAGES += "${PN}-iw61x"
+
+ALLOW_EMPTY_${PN}-iw61x = "1"
+
+PACKAGECONFIG ??= ""
+PACKAGECONFIG[connman] = ",,,"
+PACKAGECONFIG[networkmanager] = ",,,"
 
 FILES_${PN} = " \ 
 	${sysconfdir}/wifi/*  \
@@ -18,8 +30,13 @@ FILES_${PN} = " \
 	${@bb.utils.contains('DISTRO_FEATURES', 'systemd', '${systemd_unitdir}/system/* ${sysconfdir}/systemd/system/multi-user.target.wants/*', \
 			'${sysconfdir}/init.d ${sysconfdir}/rcS.d ${sysconfdir}/rc2.d ${sysconfdir}/rc3.d ${sysconfdir}/rc4.d ${sysconfdir}/rc5.d', d)} \
 "
+FILES_${PN}-iw61x = " \
+	${sysconfdir}/connman/main.conf \
+	${sysconfdir}/NetworkManager/conf.d/99-iw61x-unmanaged-devices.conf \
+"
 
 RDEPENDS_${PN}_imx6ul-var-dart = "i2c-tools"
+RDEPENDS_${PN}_imx7-var-som = "i2c-tools"
 RDEPENDS_${PN}_imx8mq-var-dart = "i2c-tools"
 RDEPENDS_${PN}_imx8mm-var-dart = "i2c-tools"
 RDEPENDS_${PN}_imx8mn-var-som = "i2c-tools"
@@ -51,6 +68,20 @@ do_install() {
 
 		ln -s ${sysconfdir}/bluetooth/variscite-bt ${D}${sysconfdir}/init.d/variscite-bt
 		update-rc.d -r ${D} variscite-bt start 99 2 3 4 5 .
+	fi
+}
+
+do_install_append() {
+	if [ "${@bb.utils.contains('PACKAGECONFIG', 'connman', 'yes', 'no', d)}" = "yes" ]; then
+		install -d ${D}${sysconfdir}/connman
+		install -m 0644 ${WORKDIR}/iw61x-connman-main.conf \
+			${D}${sysconfdir}/connman/main.conf
+	fi
+
+	if [ "${@bb.utils.contains('PACKAGECONFIG', 'networkmanager', 'yes', 'no', d)}" = "yes" ]; then
+		install -d ${D}${sysconfdir}/NetworkManager/conf.d
+		install -m 0644 ${WORKDIR}/99-iw61x-unmanaged-devices.conf \
+			${D}${sysconfdir}/NetworkManager/conf.d
 	fi
 }
 
