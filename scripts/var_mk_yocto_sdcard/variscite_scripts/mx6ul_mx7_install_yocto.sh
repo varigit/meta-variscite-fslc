@@ -533,7 +533,11 @@ if [[ $STORAGE_DEV == "nand" ]] ; then
 			KERNEL_DTB="${soc}-${som}-${carrier}-${STORAGE_DEV}-${mx6ul_mmc0_dev}.dtb"
 		fi
 	elif [[ $BOARD == "mx7" ]] ; then
-		KERNEL_DTB="imx7d-var-som-nand${VARSOMMX7_VARIANT}.dtb"
+		if [[ -n $CODEC && $CODEC == "wm8731" ]]; then
+			KERNEL_DTB="imx7d-var-som-nand${VARSOMMX7_VARIANT}-${CODEC}.dtb"
+		else
+			KERNEL_DTB="imx7d-var-som-nand${VARSOMMX7_VARIANT}.dtb"
+		fi
 	fi
 
 	printf "Installing Device Tree file: "
