@@ -72,6 +72,20 @@ detect_codec_chip()
 	fi
 }
 
+# Detect VAR-SOM-MX7 EEPROM magic (first 2 bytes)
+detect_mx7_som_ver()
+{
+	local magic
+
+	magic=$(i2cget -f -y 0 0x50 0x00 w 2>/dev/null)
+
+	case "$magic" in
+		0x3745) echo "v2" ;;
+		0x3744) echo "v1" ;;
+		*) echo "v1" ;;
+	esac
+}
+
 # $1 is the full path of the config file
 set_fw_env_config_to_emmc()
 {
@@ -423,6 +437,10 @@ elif [[ $SOC == i.MX7D ]] ; then
 fi
 
 CODEC=`detect_codec_chip`
+VARSOMMX7_VER=""
+if [[ $BOARD == "mx7" ]] ; then
+	VARSOMMX7_VER=`detect_mx7_som_ver`
+fi
 
 while getopts :b:r:v:mu OPTION;
 do
@@ -533,11 +551,17 @@ if [[ $STORAGE_DEV == "nand" ]] ; then
 			KERNEL_DTB="${soc}-${som}-${carrier}-${STORAGE_DEV}-${mx6ul_mmc0_dev}.dtb"
 		fi
 	elif [[ $BOARD == "mx7" ]] ; then
-		if [[ -n $CODEC && $CODEC == "wm8731" ]]; then
-			KERNEL_DTB="imx7d-var-som-nand${VARSOMMX7_VARIANT}-${CODEC}.dtb"
-		else
-			KERNEL_DTB="imx7d-var-som-nand${VARSOMMX7_VARIANT}.dtb"
+		ver_suffix=""
+		if [[ $VARSOMMX7_VER == "v2" ]]; then
+			ver_suffix="-v2"
 		fi
+
+		codec_suffix=""
+		if [[ -n $CODEC && $CODEC == "wm8731" ]]; then
+			codec_suffix="-${CODEC}"
+		fi
+
+		KERNEL_DTB="imx7d-var-som${ver_suffix}-nand${VARSOMMX7_VARIANT}${codec_suffix}.dtb"
 	fi
 
 	printf "Installing Device Tree file: "
@@ -570,7 +594,7 @@ elif [[ $STORAGE_DEV == "emmc" ]] ; then
 		FAT_VOLNAME=BOOT-VAR6UL
 	elif [[ $BOARD == "mx7" ]] ; then
 		block=mmcblk2
-		KERNEL_DTBS="imx7d-var-som-emmc*.dtb"
+		KERNEL_DTBS="imx7d-var-som-emmc*.dtb imx7d-var-som-v2-emmc*.dtb"
 		FAT_VOLNAME=BOOT-VARMX7
 	fi
 	node=/dev/${block}
