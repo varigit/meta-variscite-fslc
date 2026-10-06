@@ -18,7 +18,7 @@ SRCREV_imx6ul-var-dart = "f3764c66fe7d0bdaa3363f63c70239e0c30cb355"
 UBOOT_INITIAL_ENV_DEVICE_imx6ul-var-dart = "nand"
 
 SRCBRANCH_imx7-var-som = "imx_v2018.03_4.14.78_1.0.0_ga_var03"
-SRCREV_imx7-var-som = "f35c17a0ca0009c6beaea2fa4b19ddc68aebc6ca"
+SRCREV_imx7-var-som = "99ff9671d51ddad22f5a64f5f23a50f8938690dd"
 UBOOT_INITIAL_ENV_DEVICE_imx7-var-som = "nand"
 
 SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH}"
